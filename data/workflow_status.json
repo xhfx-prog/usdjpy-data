@@ -1,0 +1,22 @@
+{
+  "latest": {
+    "recorded_at_utc": "2026-11-02T13:38:34.691043+00:00",
+    "event": "schedule",
+    "run_id": "41454729478",
+    "run_attempt": "1",
+    "fetch_outcome": "success",
+    "job_status_before_publish": "success",
+    "sha": "9ae0efd687a0594adc40bf538191b29a3b14f299"
+  },
+  "recent_runs": [
+    {
+      "recorded_at_utc": "2026-11-02T13:38:34.691043+00:00",
+      "event": "schedule",
+      "run_id": "41454729478",
+      "run_attempt": "1",
+      "fetch_outcome": "success",
+      "job_status_before_publish": "success",
+      "sha": "9ae0efd687a0594adc40bf538191b29a3b14f299"
+    }
+  ]
+}

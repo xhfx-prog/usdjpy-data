@@ -14,7 +14,7 @@ DATA = Path('data')
 HISTORY = DATA / 'history_1min'
 DATA.mkdir(exist_ok=True)
 HISTORY.mkdir(exist_ok=True)
-RETENTION_DAYS = 56
+RETENTION_DAYS = 10  # Calendar days: covers at least five standard FX sessions
 
 def is_closed(timestamp_utc):
     ny = timestamp_utc.astimezone(NY)

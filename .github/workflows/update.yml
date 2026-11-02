@@ -3,7 +3,7 @@ name: Update USDJPY Data
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '7,22,37,52 * * * *'
 
 permissions:
   contents: write
@@ -18,6 +18,9 @@ jobs:
     timeout-minutes: 5
 
     steps:
+      - name: Record runner start timestamp
+        run: date -u +%Y-%m-%dT%H:%M:%S.%NZ > /tmp/usdjpy_runner_started_utc
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -40,11 +43,24 @@ jobs:
         run: |
           python - <<'PY'
           import json, os
-          from datetime import datetime, timezone
+          from datetime import datetime, timezone, timedelta
           from pathlib import Path
           p = Path('data/workflow_status.json')
+          now = datetime.now(timezone.utc)
+          start_path = Path('/tmp/usdjpy_runner_started_utc')
+          started = start_path.read_text().strip() if start_path.exists() else None
+          started_at = datetime.fromisoformat(started.replace('Z','+00:00')) if started else None
+          # The theoretical slot is an estimate, NOT the actual scheduled event timestamp.
+          schedule_minutes = (7, 22, 37, 52)
+          slot = (started_at or now).replace(second=0, microsecond=0)
+          while slot.minute not in schedule_minutes:
+              slot -= timedelta(minutes=1)
           event = {
-              'recorded_at_utc': datetime.now(timezone.utc).isoformat(),
+              'runner_started_at_utc': started,
+              'estimated_previous_cron_slot_utc': slot.isoformat() if os.getenv('GITHUB_EVENT_NAME') == 'schedule' else None,
+              'runner_start_delay_from_estimated_slot_seconds': round((started_at-slot).total_seconds(),1) if started_at and os.getenv('GITHUB_EVENT_NAME') == 'schedule' else None,
+              'schedule_expression': os.getenv('GITHUB_EVENT_SCHEDULE'),
+              'recorded_at_utc': now.isoformat(),
               'event': os.getenv('GITHUB_EVENT_NAME'),
               'run_id': os.getenv('GITHUB_RUN_ID'),
               'run_attempt': os.getenv('GITHUB_RUN_ATTEMPT'),
@@ -54,6 +70,7 @@ jobs:
           }
           previous = json.loads(p.read_text(encoding='utf-8')) if p.exists() else {}
           history = previous.get('recent_runs', [])
+          history = [h for h in history if not (h.get('run_id') == event['run_id'] and h.get('run_attempt') == event['run_attempt'])]
           history.append(event)
           p.parent.mkdir(exist_ok=True)
           p.write_text(json.dumps({'latest':event, 'recent_runs':history[-100:]}, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')

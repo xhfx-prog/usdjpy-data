@@ -3,7 +3,7 @@
   "symbol": "USD/JPY",
   "interval": "1day",
   "timezone": "Exchange timezone",
-  "fetched_at": "2026-11-02T06:51:41.740507+00:00",
+  "fetched_at": "2026-11-02T08:16:39.624658+00:00",
   "data": {
     "meta": {
       "symbol": "USD/JPY",
@@ -18,7 +18,7 @@
         "open": "157.55424",
         "high": "157.9957",
         "low": "157.44351",
-        "close": "157.85581"
+        "close": "157.67503"
       },
       {
         "datetime": "2026-11-01",

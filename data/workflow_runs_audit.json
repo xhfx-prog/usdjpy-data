@@ -1,0 +1,141 @@
+{
+  "audited_at_utc": "2026-11-02T16:24:13.015408+00:00",
+  "source": "GitHub REST API /actions/workflows/update.yml/runs",
+  "note": "Run created_at is NOT the intended cron slot; a missing slot may reflect skipped scheduling.",
+  "total_count": 11,
+  "recent_runs": [
+    {
+      "id": 41481093910,
+      "event": "schedule",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-02T16:24:06Z",
+      "run_started_at": "2026-11-02T16:24:06Z",
+      "updated_at": "2026-11-02T16:24:09Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/41481093910",
+      "head_sha": "76df65ecc90b44da2ef7e5430ec6d64a56a2adfc"
+    },
+    {
+      "id": 41470048785,
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-02T15:16:59Z",
+      "run_started_at": "2026-11-02T15:16:59Z",
+      "updated_at": "2026-11-02T15:17:22Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/41470048785",
+      "head_sha": "9f447576ff419366d0f0db7639307029c1c29d5d"
+    },
+    {
+      "id": 41454729478,
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-02T13:38:28Z",
+      "run_started_at": "2026-11-02T13:38:28Z",
+      "updated_at": "2026-11-02T13:38:39Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/41454729478",
+      "head_sha": "9ae0efd687a0594adc40bf538191b29a3b14f299"
+    },
+    {
+      "id": 41444291903,
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-02T12:23:24Z",
+      "run_started_at": "2026-11-02T12:23:24Z",
+      "updated_at": "2026-11-02T12:23:36Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/41444291903",
+      "head_sha": "2ddc812483e1fa402db95c57e3c5914a6097d2a3"
+    },
+    {
+      "id": 41437261601,
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-02T11:29:37Z",
+      "run_started_at": "2026-11-02T11:29:37Z",
+      "updated_at": "2026-11-02T11:29:47Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/41437261601",
+      "head_sha": "90fcec04650ce4d92e9e1b2c0769aa43a6af7845"
+    },
+    {
+      "id": 41429841436,
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-02T10:34:08Z",
+      "run_started_at": "2026-11-02T10:34:08Z",
+      "updated_at": "2026-11-02T10:34:22Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/41429841436",
+      "head_sha": "da65069cc00e2105568de760583463ddcb26e000"
+    },
+    {
+      "id": 41424461335,
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-02T09:54:35Z",
+      "run_started_at": "2026-11-02T09:54:35Z",
+      "updated_at": "2026-11-02T09:54:50Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/41424461335",
+      "head_sha": "ea4c3142a3cc2e7b489c407b4f118134607dc255"
+    },
+    {
+      "id": 41422908773,
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-02T09:42:55Z",
+      "run_started_at": "2026-11-02T09:42:55Z",
+      "updated_at": "2026-11-02T09:43:54Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/41422908773",
+      "head_sha": "a72f632fe6655555a4f1a6721687c5992f5e2ac9"
+    },
+    {
+      "id": 41421259743,
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-02T09:30:46Z",
+      "run_started_at": "2026-11-02T09:30:46Z",
+      "updated_at": "2026-11-02T09:30:56Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/41421259743",
+      "head_sha": "bfd188d98e75d4bb1b8df1aaa22073ad8f89db66"
+    },
+    {
+      "id": 41411858612,
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-02T08:16:34Z",
+      "run_started_at": "2026-11-02T08:16:34Z",
+      "updated_at": "2026-11-02T08:16:43Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/41411858612",
+      "head_sha": "534b23cc20ec4e3e4f1581650805aeabd2ec4af2"
+    },
+    {
+      "id": 41402584246,
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-02T06:51:35Z",
+      "run_started_at": "2026-11-02T06:51:35Z",
+      "updated_at": "2026-11-02T06:51:45Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/41402584246",
+      "head_sha": "bbc78c1d31ecd0f23629993e8572a98cc3f6b65a"
+    }
+  ],
+  "status": "success"
+}

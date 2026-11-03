@@ -1,0 +1,8 @@
+{
+  "request_id": "news-training-pilot-2026-11-04T00-15JST",
+  "purpose": "Pilot historical-news retrieval and regression tests before full overnight backtest",
+  "per_month": 2,
+  "max_cases": 6,
+  "sleep_seconds": 0.8,
+  "holdout_from": "2026-08"
+}

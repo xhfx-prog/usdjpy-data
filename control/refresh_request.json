@@ -1,6 +1,6 @@
 {
-  "request_id": "architecture-hourly-tail-range-test-2026-11-03-3",
+  "request_id": "chatgpt-on-demand-2026-11-03T13:11:00Z",
   "requested_by": "chatgpt",
-  "reason": "Check missing older hourly range without repeating future calls",
-  "note": "Request latest data from configured GitHub Actions pipeline."
+  "reason": "Refresh USDJPY 1min for current 22:11 JST short position assessment",
+  "note": "Update latest OHLC before trade levels."
 }

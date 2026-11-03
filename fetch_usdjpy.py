@@ -1,3 +1,8 @@
+"""USD/JPY collection: 10-day minute, 370-day hourly, 10-year daily archive.
+
+Runtime hourly or on-demand. Daily and hourly archives are updated incrementally.
+Data coverage manifests report what actually exists, not the configured target.
+"""
 import json
 import os
 import urllib.parse
@@ -7,142 +12,226 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 UTC = timezone.utc
-JST = ZoneInfo('Asia/Tokyo')
-NY = ZoneInfo('America/New_York')
+JST = ZoneInfo("Asia/Tokyo")
+NY = ZoneInfo("America/New_York")
 NOW = datetime.now(UTC)
-DATA = Path('data')
-HISTORY = DATA / 'history_1min'
-DATA.mkdir(exist_ok=True)
-HISTORY.mkdir(exist_ok=True)
-RETENTION_DAYS = 10  # Calendar days: covers at least five standard FX sessions
+DATA = Path("data")
+MINS = DATA / "history_1min"
+HOURS = DATA / "history_1h"
+DAYS = DATA / "history_1day"
+for folder in (DATA, MINS, HOURS, DAYS):
+    folder.mkdir(exist_ok=True, parents=True)
 
-def is_closed(timestamp_utc):
-    ny = timestamp_utc.astimezone(NY)
-    return (ny.weekday() == 5 or
-            (ny.weekday() == 4 and ny.hour >= 17) or
-            (ny.weekday() == 6 and ny.hour < 17))
+MIN_RETENTION_DAYS = 10
+HOUR_RETENTION_DAYS = 370
+DAY_RETENTION_DAYS = 3653
+STATE_PATH = DATA / "archive_state.json"
 
-def parse_jst(s):
-    return datetime.strptime(s, '%Y-%m-%d %H:%M:%S').replace(tzinfo=JST)
 
-def existing(path):
-    if not path.exists():
+def read(path):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
         return {}
-    return json.loads(path.read_text(encoding='utf-8'))
 
-def saved_bars(path):
-    return existing(path).get('data', {}).get('values', [])
 
-def normalize(bars, interval):
-    found = {}
-    for bar in bars:
-        try:
-            o, h, l, c = (float(bar[k]) for k in ('open', 'high', 'low', 'close'))
-            if not (0 < l <= o <= h and l <= c <= h):
-                continue
-            if interval != '1day':
-                start = parse_jst(bar['datetime'])
-                if is_closed(start.astimezone(UTC)):
-                    continue
-                minutes = 1 if interval == '1min' else 60
-                if start + timedelta(minutes=minutes) > NOW.astimezone(JST):
-                    continue
-            found[bar['datetime']] = {k:bar[k] for k in ('datetime','open','high','low','close')}
-        except (KeyError, ValueError, TypeError):
-            continue
-    return [found[k] for k in sorted(found, reverse=True)]
+def values(path):
+    return read(path).get("data", {}).get("values", [])
 
-def payload(interval, bars, **extra):
-    return {
-        'source':'Twelve Data', 'symbol':'USD/JPY', 'interval':interval,
-        'timezone':'Exchange timezone' if interval == '1day' else 'Asia/Tokyo',
-        'fetched_at':NOW.isoformat(), **extra,
-        'data':{'status':'ok','values':bars}
-    }
 
 def store(path, obj):
-    content = json.dumps(obj, ensure_ascii=False, separators=(',', ':'))
-    path.write_text(content, encoding='utf-8')
+    encoded = json.dumps(obj, ensure_ascii=False, separators=(",", ":")) + "\n"
+    if path.exists() and path.read_text(encoding="utf-8") == encoded:
+        return
+    path.parent.mkdir(exist_ok=True, parents=True)
+    path.write_text(encoded, encoding="utf-8")
 
-def fetch(interval, size):
-    params = urllib.parse.urlencode({
-        'symbol':'USD/JPY','interval':interval,'outputsize':size,
-        'timezone':'Asia/Tokyo','apikey':os.environ['TWELVE_API_KEY']
-    })
-    req = urllib.request.Request('https://api.twelvedata.com/time_series?' + params,
-                                 headers={'User-Agent':'USDJPY-Data-Collector'})
-    with urllib.request.urlopen(req, timeout=40) as res:
-        answer = json.load(res)
-    if answer.get('status') != 'ok' or not answer.get('values'):
-        raise RuntimeError(f'{interval}: {answer.get("message", "Missing OHLC")}')
-    bars = normalize(answer['values'], interval)
-    if not bars:
-        raise RuntimeError(f'{interval}: no confirmed market candles')
-    return bars
 
-def is_due(interval, hours):
-    old = existing(DATA / f'usdjpy_{interval}.json')
+def is_closed(ts):
+    ny = ts.astimezone(NY)
+    return ny.weekday() == 5 or (ny.weekday() == 4 and ny.hour >= 17) or (ny.weekday() == 6 and ny.hour < 17)
+
+
+def parse_jst(s):
+    return datetime.strptime(s, "%Y-%m-%d %H:%M:%S").replace(tzinfo=JST)
+
+
+def normalize(rows, interval):
+    unique = {}
+    for row in rows:
+        try:
+            o, h, l, c = [float(row[k]) for k in ("open", "high", "low", "close")]
+            if not (0 < l <= o <= h and l <= c <= h):
+                continue
+            stamp = row["datetime"]
+            if interval == "1day":
+                # Daily labels use provider exchange time; discard the current day
+                # because it is not a confirmed close.
+                if date.fromisoformat(stamp[:10]) >= NOW.astimezone(JST).date():
+                    continue
+            else:
+                dt = parse_jst(stamp)
+                if is_closed(dt.astimezone(UTC)):
+                    continue
+                if dt + timedelta(minutes=1 if interval == "1min" else 60) > NOW.astimezone(JST):
+                    continue
+            unique[stamp] = {k: row[k] for k in ("datetime", "open", "high", "low", "close")}
+        except (ValueError, KeyError, TypeError):
+            continue
+    return [unique[k] for k in sorted(unique, reverse=True)]
+
+
+def payload(interval, rows, **extra):
+    return {
+        "source": "Twelve Data", "symbol": "USD/JPY", "interval": interval,
+        "timezone": "Exchange timezone" if interval == "1day" else "Asia/Tokyo",
+        "fetched_at": NOW.isoformat(), **extra,
+        "data": {"status": "ok", "values": rows}
+    }
+
+
+def fetch(interval, outputsize, end_date=None):
+    params = {
+        "symbol": "USD/JPY", "interval": interval, "outputsize": outputsize,
+        "timezone": "Asia/Tokyo", "apikey": os.environ["TWELVE_API_KEY"]
+    }
+    if end_date:
+        params["end_date"] = end_date
+    url = "https://api.twelvedata.com/time_series?" + urllib.parse.urlencode(params)
+    req = urllib.request.Request(url, headers={"User-Agent": "USDJPY-Data-Collector"})
+    with urllib.request.urlopen(req, timeout=40) as response:
+        result = json.load(response)
+    if result.get("status") != "ok" or not result.get("values"):
+        raise RuntimeError(f"{interval} feed failed: {result.get('message', 'missing OHLC')}")
+    rows = normalize(result["values"], interval)
+    if not rows:
+        raise RuntimeError(f"{interval} feed: no confirmed candles")
+    return rows
+
+
+def due(last_timestamp, hours):
     try:
-        timestamp = datetime.fromisoformat(old['fetched_at'].replace('Z','+00:00'))
-        return NOW - timestamp >= timedelta(hours=hours)
-    except (KeyError, TypeError, ValueError):
+        return NOW - datetime.fromisoformat(last_timestamp.replace("Z", "+00:00")) >= timedelta(hours=hours)
+    except (AttributeError, ValueError, TypeError):
         return True
 
+
+def archive(interval, root, rows, name_fn, cutoff):
+    grouped = {}
+    for bar in rows:
+        if bar["datetime"][:10] < cutoff:
+            continue
+        grouped.setdefault(name_fn(bar["datetime"]), []).append(bar)
+    for name, batch in grouped.items():
+        path = root / (name + ".json")
+        prior = normalize(values(path), interval)
+        merged = normalize(prior + batch, interval)
+        merged = [b for b in merged if b["datetime"][:10] >= cutoff]
+        if merged != prior:
+            store(path, payload(interval, merged, partition=name))
+    for path in root.glob("*.json"):
+        old = normalize(values(path), interval)
+        kept = [b for b in old if b["datetime"][:10] >= cutoff]
+        if not kept:
+            path.unlink()
+        elif kept != old:
+            store(path, payload(interval, kept, partition=path.stem))
+
+
+def manifest(root, interval, split):
+    result = []
+    for path in sorted(root.glob("*.json"), reverse=True):
+        rows = values(path)
+        if rows:
+            result.append({
+                split: path.stem, "path": str(path), "count": len(rows),
+                "first": rows[-1]["datetime"], "last": rows[0]["datetime"]
+            })
+    store(DATA / ("history_" + interval + "_index.json"), {
+        "updated_at": NOW.isoformat(), "interval": interval,
+        "retention_calendar_days": {"1min": 10, "1h": 370, "1day": 3653}[interval],
+        "sessions" if interval == "1min" else "partitions": result,
+        "actual_oldest": result[-1]["first"] if result else None,
+        "actual_newest": result[0]["last"] if result else None,
+        "total_bars": sum(item["count"] for item in result)
+    })
+
+
 if is_closed(NOW):
-    print('FX weekend: API calls skipped')
+    print("FX weekend: no API requests")
     raise SystemExit(0)
 
-# One API call per 15-minute run; 180 candles for overlap, 1500 after long gaps.
-recent_path = DATA / 'usdjpy_1min.json'
-previous = normalize(saved_bars(recent_path), '1min')
-if previous:
-    gap = (NOW.astimezone(JST) - parse_jst(previous[0]['datetime'])).total_seconds()/60
-    outputsize = 1500 if gap > 150 else 180
+state = read(STATE_PATH)
+errors = []
+today = NOW.astimezone(JST).date()
+minute_cutoff = (today - timedelta(days=MIN_RETENTION_DAYS)).isoformat()
+hour_cutoff = (today - timedelta(days=HOUR_RETENTION_DAYS)).isoformat()
+day_cutoff = (today - timedelta(days=DAY_RETENTION_DAYS)).isoformat()
+
+# Every run fetches recent 1-minute candles and fills missed intervals.
+previous = normalize(values(DATA / "usdjpy_1min.json"), "1min")
+gap = (NOW.astimezone(JST) - parse_jst(previous[0]["datetime"])).total_seconds()/60 if previous else 100000
+recent = fetch("1min", 1500 if gap > 150 else 180)
+combined = normalize(previous + recent, "1min")
+if (NOW.astimezone(JST) - parse_jst(combined[0]["datetime"])) > timedelta(minutes=35):
+    raise RuntimeError("Minute feed too stale; no data persisted")
+archive("1min", MINS, combined, lambda s: s[:10], minute_cutoff)
+store(DATA / "usdjpy_1min.json", payload("1min", combined[:1500]))
+manifest(MINS, "1min", "date_jst")
+print("1min refreshed:", combined[0]["datetime"])
+
+# 1-hour candles: rolling 370-day archive, partitioned by calendar month.
+# Bootstrap requests up to 5000 + 2200 older bars once, as supported by provider.
+hourly_last = read(DATA / "usdjpy_1h.json")
+if due(hourly_last.get("fetched_at"), 1):
+    try:
+        if not state.get("hourly_bootstrap_completed"):
+            batch = fetch("1h", 5000)
+            archive("1h", HOURS, batch, lambda s: s[:7], hour_cutoff)
+            oldest = batch[-1]["datetime"]
+            if oldest[:10] > hour_cutoff:
+                older_end = (parse_jst(oldest) - timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")
+                older = fetch("1h", 2200, end_date=older_end)
+                archive("1h", HOURS, older, lambda s: s[:7], hour_cutoff)
+            state["hourly_bootstrap_completed"] = True
+        else:
+            batch = fetch("1h", 200)
+            archive("1h", HOURS, batch, lambda s: s[:7], hour_cutoff)
+        # Small compatibility feed for ordinary analysis, do not load full year.
+        store(DATA / "usdjpy_1h.json", payload("1h", batch[:200]))
+    except Exception as exc:
+        errors.append("1h: " + str(exc))
 else:
-    outputsize = 1500
-new = fetch('1min', outputsize)
-combined = normalize(previous + new, '1min')
-if not combined or (NOW.astimezone(JST) - parse_jst(combined[0]['datetime'])) > timedelta(minutes=35):
-    raise RuntimeError('Minute feed too stale; archive not changed')
+    print("1h refresh not yet due")
+archive("1h", HOURS, [], lambda s: s[:7], hour_cutoff)
+manifest(HOURS, "1h", "month_jst")
 
-# Preserve completed minutes in daily archives; do not rewrite unchanged days.
-by_day = {}
-for bar in combined:
-    by_day.setdefault(bar['datetime'][:10], []).append(bar)
-for day, bars in by_day.items():
-    path = HISTORY / f'{day}.json'
-    old = normalize(saved_bars(path), '1min')
-    merged = normalize(old + bars, '1min')
-    if merged != old:
-        store(path, payload('1min', merged, session_date_jst=day))
+# Daily history is a separate event-study archive: once per day max,
+# newest 7 candles only after initial 10-year bootstrap; never repeatedly
+# overwrite historical years. Provider exchange-day labels are preserved.
+if due(state.get("daily_last_attempt_utc"), 24):
+    state["daily_last_attempt_utc"] = NOW.isoformat()
+    try:
+        if not state.get("daily_bootstrap_completed"):
+            daily_batch = fetch("1day", 3500)
+            state["daily_bootstrap_completed"] = True
+        else:
+            daily_batch = fetch("1day", 7)
+        archive("1day", DAYS, daily_batch, lambda s: s[:4], day_cutoff)
+        state["daily_last_success_utc"] = NOW.isoformat()
+        recent_daily = normalize(values(DATA / "usdjpy_1day.json") + daily_batch, "1day")
+        # Preserve legacy 200-bar daily view without frequent remote requests.
+        store(DATA / "usdjpy_1day.json", payload("1day", recent_daily[:200]))
+    except Exception as exc:
+        errors.append("1day: " + str(exc))
+archive("1day", DAYS, [], lambda s: s[:4], day_cutoff)
+manifest(DAYS, "1day", "year_exchange")
+state["last_run_utc"] = NOW.isoformat()
+state["errors"] = errors
+store(STATE_PATH, state)
 
-# Recent feed is compact; detailed historical days are loaded on demand.
-store(recent_path, payload('1min', combined[:1500]))
-
-cutoff = NOW.astimezone(JST).date() - timedelta(days=RETENTION_DAYS)
-for path in HISTORY.glob('????-??-??.json'):
-    if date.fromisoformat(path.stem) < cutoff:
-        path.unlink()
-
-index = []
-for path in sorted(HISTORY.glob('????-??-??.json'), reverse=True):
-    bars = saved_bars(path)
-    if bars:
-        index.append({'date_jst':path.stem, 'path':str(path), 'count':len(bars),
-                      'first':bars[-1]['datetime'], 'last':bars[0]['datetime']})
-store(DATA / 'history_1min_index.json', {'updated_at':NOW.isoformat(),
-                                       'retention_calendar_days':RETENTION_DAYS,
-                                       'sessions':index})
-print(f'1min: API fetched {len(new)}, latest {len(combined[:1500])}, archived {len(index)} days')
-
-# Context timeframes need fewer requests than 1min.
-for interval, hours in [('1h', 1), ('1day', 6)]:
-    if is_due(interval, hours):
-        fetched = fetch(interval, 200)
-        store(DATA / f'usdjpy_{interval}.json', payload(interval, fetched))
-        print(f'{interval}: refreshed {len(fetched)}')
-
-# Prevent obsolete 5min/15min/4h files from being mistaken for fresh data.
-for interval in ('5min','15min','4h'):
-    (DATA / f'usdjpy_{interval}.json').unlink(missing_ok=True)
-print('USDJPY update completed')
+for obsolete in ("5min", "15min", "4h"):
+    (DATA / ("usdjpy_" + obsolete + ".json")).unlink(missing_ok=True)
+if errors:
+    print("Archive warnings:", errors)
+print("USDJPY update complete")

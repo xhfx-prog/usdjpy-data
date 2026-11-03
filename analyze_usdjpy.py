@@ -402,6 +402,75 @@ def session_opening_behavior(minute, asof):
     return result
 
 
+
+def ema_series(values, period):
+    """Standard EMA, with a simple-average seed to avoid startup distortion."""
+    if len(values) < period:
+        return []
+    seed = statistics.mean(values[:period])
+    result = [None] * (period - 1) + [seed]
+    for value in values[period:]:
+        result.append(result[-1] + (value-result[-1]) * 2/(period+1))
+    return result
+
+
+def describe_timeframe(rows, name):
+    """Measure each timeframe independently; never overwrite its parent."""
+    if len(rows) < 55:
+        return {"state": "INSUFFICIENT_HISTORY", "bars": len(rows)}
+    closes = [x["c"] for x in rows]
+    e20 = ema_series(closes, 20)
+    e50 = ema_series(closes, 50)
+    current, fast, slow = closes[-1], e20[-1], e50[-1]
+    recent = rows[-min(12, len(rows)-50):]
+    volatility = atr(rows)
+    if not volatility or volatility <= 0:
+        return {"state": "INSUFFICIENT_VOLATILITY", "bars": len(rows)}
+    # The indicator periods are conventional observation windows, not
+    # arbitrary 20-/50-bar requirements for range formation.
+    slope = (fast - e20[-6])/5
+    alignment = "UP" if current > fast > slow else ("DOWN" if current < fast < slow else "MIXED")
+    # Slope is normalized by the timeframe's own volatility.
+    slope_units = slope / volatility
+    turning_high = pivots(rows[-min(100,len(rows)):], "h", 2)
+    turning_low = pivots(rows[-min(100,len(rows)):], "l", 2)
+    swing_state = "UNRESOLVED"
+    if len(turning_high) >= 2 and len(turning_low) >= 2:
+        uh = turning_high[-1]["price"] > turning_high[-2]["price"]
+        ul = turning_low[-1]["price"] > turning_low[-2]["price"]
+        dh = turning_high[-1]["price"] < turning_high[-2]["price"]
+        dl = turning_low[-1]["price"] < turning_low[-2]["price"]
+        swing_state = "UP" if uh and ul else ("DOWN" if dh and dl else "MIXED")
+    # Record trend evidence separately: a consolidation does not cancel an
+    # established parent trend merely because local candles move sideways.
+    up_votes = int(alignment=="UP") + int(slope_units > 0.035) + int(swing_state=="UP")
+    down_votes = int(alignment=="DOWN") + int(slope_units < -0.035) + int(swing_state=="DOWN")
+    direction = "UP" if up_votes >= 2 and up_votes > down_votes else (
+        "DOWN" if down_votes >= 2 and down_votes > up_votes else "UNRESOLVED")
+    width = max(b["h"] for b in recent)-min(b["l"] for b in recent)
+    # Width is reported continuously, rather than turning one elapsed bar
+    # into a discontinuous rule for whether a box exists.
+    return {"state": direction, "alignment": alignment,
+            "swing_structure": swing_state,
+            "ema20": n(fast), "ema50": n(slow),
+            "ema20_slope_per_bar": n(slope),
+            "ema20_slope_in_atr": n(slope_units),
+            "recent_observed_width": n(width),
+            "recent_width_in_atr": n(width/volatility),
+            "recent_window_bars": len(recent), "atr14": n(volatility),
+            "bars": len(rows), "last_complete_bar": rows[-1]["t"]}
+
+
+def multi_timeframe_structure(daily, h4, h1, m15, m5, minute):
+    # Output in descending timeframe order. Every classification stands
+    # independently; the 1-minute result cannot replace the daily/1h view.
+    ordered = (("1day", daily), ("4h", h4), ("1h", h1),
+               ("15min", m15), ("5min", m5), ("1min", minute))
+    frames = {name: describe_timeframe(rows, name) for name,rows in ordered}
+    parent = next((frames[k]["state"] for k in ("4h","1h","1day")
+                   if frames[k]["state"] in ("UP","DOWN")), "UNRESOLVED")
+    return frames, parent
+
 def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
     asof=asof.astimezone(JST)
     if not minute:
@@ -418,6 +487,7 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
     pl=upper_plateau(minute,asof)
     shock=shock_and_recovery(minute)
     ls=levels(h5,h15,h1,h4,daily,latest["c"])
+    timeframe_states, parent_direction = multi_timeframe_structure(daily,h4,h1,h15,h5,minute)
     hour6=h1[-6:]
     ups=sum(hour6[i]["h"]>hour6[i-1]["h"] and hour6[i]["l"]>hour6[i-1]["l"]
             for i in range(1,len(hour6)))
@@ -431,6 +501,12 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
     if stale:
         phase="UNAVAILABLE_STALE"
         bias="NO_CURRENT_DIRECTION"
+    elif parent_direction=="UP":
+        phase="UPTREND_WITH_LOCAL_CONSOLIDATION" if pl else "UPTREND"
+        bias="UP_CANDIDATE"
+    elif parent_direction=="DOWN":
+        phase="DOWNTREND_WITH_LOCAL_CONSOLIDATION" if pl else "DOWNTREND"
+        bias="DOWN_CANDIDATE"
     elif recent_fade and recovered:
         phase="FAILED_CEILING_WITH_SHOCK_REBOUND"
         bias="TRANSITION_NO_DIRECTIONAL_EDGE"
@@ -440,18 +516,11 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
     elif recovered:
         phase="SHOCK_REBOUND_UNCONFIRMED"
         bias="TRANSITION_NO_DIRECTIONAL_EDGE"
-    elif ups>=4 and downs<=1:
-        phase="RISING_HOURLY_STRUCTURE"
-        bias="UP_CANDIDATE"
-    elif downs>=4 and ups<=1:
-        phase="FALLING_HOURLY_STRUCTURE"
-        bias="DOWN_CANDIDATE"
     else:
         phase="RANGE_OR_UNRESOLVED"
         bias="NO_DIRECTIONAL_EDGE"
-    # Invariant: a failed well-tested ceiling rules out unqualified uptrend claims.
-    if recent_fade and bias=="UP_CANDIDATE":
-        raise AssertionError("contradictory_bullish_claim_vs_failed_plateau")
+    # Unlike the former 6-candle rule, local pullbacks and plateaus cannot
+    # override independently measured 1h/4h trend evidence.
     session=session_info(asof,minute)
     first_res=next((x for x in ls["resistance"] if x["center"]>latest["c"]+0.005),None)
     first_sup=next((x for x in ls["support"] if x["center"]<latest["c"]-0.005),None)
@@ -475,7 +544,9 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
              "complete_1h":len(h1),"complete_4h":len(h4),
              "day_candles":len(daily),"hourly_atr14":atr(h1),
              "last_complete_5min":h5[-1]["t"],"last_complete_1h":h1[-1]["t"]},
-        "market_structure":{"hourly_higher_high_higher_low_pairs_last5":ups,
+        "market_structure":{"timeframe_assessments":timeframe_states,
+                            "parent_direction":parent_direction,
+                            "hourly_higher_high_higher_low_pairs_last5":ups,
                             "hourly_lower_high_lower_low_pairs_last5":downs,
                             "prior_hours_rising":past_up,
                             "upper_stall":pl,

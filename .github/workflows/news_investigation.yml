@@ -1,0 +1,91 @@
+name: Investigate World News Around USDJPY Move
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/news_scan_request.json'
+  workflow_dispatch:
+    inputs:
+      move_at_jst:
+        description: 'Move start ISO8601 with offset, e.g. 2026-11-03T22:30:00+09:00'
+        required: true
+        type: string
+      pre_minutes:
+        description: 'How many minutes before move to search'
+        required: false
+        default: '45'
+        type: string
+      post_minutes:
+        description: 'Include post-move context as NON-causes'
+        required: false
+        default: '10'
+        type: string
+      hints:
+        description: 'Optional actors/topics, comma separated (broad search always runs)'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: usdjpy-news-scan
+  cancel-in-progress: false
+
+jobs:
+  investigate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Test world news chronology and failure handling
+        run: python -m unittest discover -s tests -p 'test_world_news.py' -v
+
+      - name: Investigate market move with world news FIRST
+        env:
+          INPUT_MOVE: ${{ inputs.move_at_jst }}
+          INPUT_PRE: ${{ inputs.pre_minutes }}
+          INPUT_POST: ${{ inputs.post_minutes }}
+          INPUT_HINTS: ${{ inputs.hints }}
+          EVENT_TYPE: ${{ github.event_name }}
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          request_path = Path("control/news_scan_request.json")
+          request = json.loads(request_path.read_text(encoding="utf-8")) if request_path.exists() else {}
+          if os.environ["EVENT_TYPE"] == "workflow_dispatch":
+              move = os.environ["INPUT_MOVE"]
+              pre = os.environ.get("INPUT_PRE") or "45"
+              post = os.environ.get("INPUT_POST") or "10"
+              hints = os.environ.get("INPUT_HINTS") or ""
+              request_id = "workflow_dispatch-" + os.environ.get("GITHUB_RUN_ID", "unknown")
+          else:
+              move = request["move_at_jst"]
+              pre = str(request.get("pre_minutes", 45))
+              post = str(request.get("post_minutes", 10))
+              hints = ",".join(request.get("hints", []))
+              request_id = request.get("request_id", "missing")
+          cmd = ["python", "investigate_world_news.py", "--move-at", move,
+                 "--pre-minutes", pre, "--post-minutes", post,
+                 "--hints", hints, "--request-id", request_id]
+          subprocess.run(cmd, check=True)
+          PY
+
+      - name: Publish news investigation JSON
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/news_trigger_latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish world news investigation"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi

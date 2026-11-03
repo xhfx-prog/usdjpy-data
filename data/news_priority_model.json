@@ -1,23 +1,29 @@
 {
   "schema_version": "1.0.0",
   "source": "data/news_priority_training_latest.json",
-  "generated_at_utc": "2026-11-03T15:15:48+00:00",
+  "generated_at_utc": "2026-11-03T15:26:40+00:00",
   "training_period_end_jst": "2026-11-04",
   "allow_live_prior": false,
   "shadow_model_ready": false,
-  "holdout": {},
-  "reason": "INSUFFICIENT_HISTORICAL_NEWS_OR_HOLDOUT_COVERAGE",
+  "holdout": {
+    "auc_priority_shock_vs_quiet": 0.321,
+    "chance_baseline": 0.5,
+    "n_shocks": 9,
+    "n_quiet": 9,
+    "period": "2026-08 onward"
+  },
+  "reason": "HOLDOUT_NOT_BETTER_THAN_CHANCE",
   "adoption_gate": "Daily retrospective associations must pass prospective intraday validation before affecting live ranking",
   "category_prior_points": {
     "fed_us_rates": 0.0,
-    "boj_japan_rates": 0.0,
-    "us_inflation": 0.0,
+    "boj_japan_rates": 1.22,
+    "us_inflation": -0.46,
     "us_employment": 0.0,
-    "us_politics_tariffs": 0.86,
-    "geopolitics_war_peace": 0.86,
-    "energy_supply": 2.08,
+    "us_politics_tariffs": 0.13,
+    "geopolitics_war_peace": -0.29,
+    "energy_supply": 1.41,
     "risk_financial_system": 0.0,
-    "china_economy": 0.0,
+    "china_economy": -2.08,
     "intervention": 0.0
   },
   "note": "Association-only. Never assert that commentary proves causation."

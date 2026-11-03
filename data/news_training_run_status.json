@@ -1,10 +1,16 @@
 {
-  "request_id": "news-training-daily-pilot-retry-2026-11-04T00JST",
-  "recorded_at_utc": "2026-11-03T15:15:48.229105+00:00",
-  "github_run_id": "41661997100",
-  "job_status": null,
+  "request_id": "news-training-12month-full-2026-11-03T15:17:05.975Z",
+  "recorded_at_utc": "2026-11-03T15:26:40.383179+00:00",
+  "github_run_id": "41662285943",
+  "job_status": "success",
   "model_written": true,
   "model_usable": false,
-  "model_reason": "INSUFFICIENT_HISTORICAL_NEWS_OR_HOLDOUT_COVERAGE",
-  "holdout": {}
+  "model_reason": "HOLDOUT_NOT_BETTER_THAN_CHANCE",
+  "holdout": {
+    "auc_priority_shock_vs_quiet": 0.321,
+    "chance_baseline": 0.5,
+    "n_shocks": 9,
+    "n_quiet": 9,
+    "period": "2026-08 onward"
+  }
 }

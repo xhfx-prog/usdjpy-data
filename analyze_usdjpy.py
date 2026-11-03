@@ -502,11 +502,13 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
         phase="UNAVAILABLE_STALE"
         bias="NO_CURRENT_DIRECTION"
     elif parent_direction=="UP":
-        phase="UPTREND_WITH_LOCAL_CONSOLIDATION" if pl else "UPTREND"
-        bias="UP_CANDIDATE"
+        phase=("UPTREND_WITH_LOCAL_REJECTION" if recent_fade else
+               "UPTREND_WITH_LOCAL_CONSOLIDATION" if pl else "UPTREND")
+        bias="UPTREND_PULLBACK_UNCONFIRMED" if recent_fade else "UP_CANDIDATE"
     elif parent_direction=="DOWN":
-        phase="DOWNTREND_WITH_LOCAL_CONSOLIDATION" if pl else "DOWNTREND"
-        bias="DOWN_CANDIDATE"
+        phase=("DOWNTREND_WITH_LOCAL_REBOUND" if recovered else
+               "DOWNTREND_WITH_LOCAL_CONSOLIDATION" if pl else "DOWNTREND")
+        bias="DOWNTREND_REBOUND_UNCONFIRMED" if recovered else "DOWN_CANDIDATE"
     elif recent_fade and recovered:
         phase="FAILED_CEILING_WITH_SHOCK_REBOUND"
         bias="TRANSITION_NO_DIRECTIONAL_EDGE"

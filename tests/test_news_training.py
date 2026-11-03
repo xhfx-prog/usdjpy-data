@@ -39,6 +39,35 @@ class TrainTests(unittest.TestCase):
         self.assertEqual(len([x for x in s if x["kind"]=="quiet_control"]),2)
         self.assertTrue(all(x["month"]=="2026-03" for x in s))
 
+    def test_daily_sampling_uses_calendar_date_not_hour(self):
+        start=datetime.fromisoformat("2026-05-04T00:00:00+09:00")
+        hourly=[]
+        for d in range(20):
+            for h in range(22):
+                dt=start+timedelta(days=d,hours=h)
+                high=159.0+(d%6)*.1
+                hourly.append({"t":dt,"high":high,"low":158.5,
+                    "open":158.5,"close":high,"range_pips":(high-158.5)*100})
+        out=t.daily_samples(hourly,per_month=2)
+        self.assertEqual(len(out),4)
+        self.assertTrue(all(row["hour_jst"] is None for row in out))
+        self.assertTrue(all(row["study_hours_observed"]==22 for row in out))
+        self.assertEqual(len([row for row in out if row["kind"]=="quiet_control"]),2)
+
+    def test_daily_rss_does_not_claim_intraday_early_knowledge(self):
+        dt=datetime.fromisoformat("2026-05-07T00:00:00+09:00")
+        item_time=datetime.fromisoformat("2026-05-07T14:15:00+09:00")
+        xml=("<rss><channel><item><title>Qatar Iran ceasefire proposal</title>"
+             "<link>https://example.org/peace</link><pubDate>"+
+             item_time.strftime("%a, %d %b %Y %H:%M:%S %z")+
+             "</pubDate></item></channel></rss>").encode()
+        def fake(url): return xml
+        result=t.analyze_daily_articles({"bar_start_jst":dt.isoformat()},dt,
+                                        fetcher=fake,sleep_seconds=0)
+        self.assertIn("geopolitics_war_peace",result["daily_topics"])
+        self.assertEqual(result["chronology"],"CALENDAR_DATE_ONLY_NOT_A_VERIFIED_EARLY_TRIGGER")
+        self.assertFalse(result["world_daily_headlines"][0]["intraday_event_time_verified"])
+
     def test_sparse_article_coverage_cannot_enable_model(self):
         rows=[]
         for month in ["2026-01","2026-02","2026-03","2026-04",

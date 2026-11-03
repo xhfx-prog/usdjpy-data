@@ -1,6 +1,6 @@
 {
-  "request_id": "chatgpt-on-demand-2026-11-03T14:04:56.435Z",
+  "request_id": "analysis-engine-integration-2026-11-03T14:16:43.623Z",
   "requested_by": "chatgpt",
-  "reason": "Need fresh USDJPY 1m candles 22:30-23:05 JST 2026-11-03 to verify NY-session sharp drop and reversal to 158.20",
-  "note": "Trigger fetch then inspect data timestamp and workflow status before analysis."
+  "reason": "Run first end-to-end USDJPY analysis engine integration with fixed Nov 3 regression tests",
+  "note": "Verify tests and analysis_latest.json, then update status."
 }

@@ -1,88 +1,178 @@
 {
   "schema_version": "1.0.0",
-  "generated_at_utc": "2026-11-03T15:12:22+00:00",
+  "generated_at_utc": "2026-11-03T15:15:48+00:00",
   "requested_lookback_days": 365,
   "market_bars_available": 6206,
   "actual_oldest_jst": "2025-11-04T01:00:00+09:00",
   "actual_newest_jst": "2026-11-03T22:00:00+09:00",
-  "sampling": "largest hourly range vs quiet matched-hour controls, per calendar month",
+  "sampling": "largest daily range vs quiet matched-weekday controls, per month",
+  "granularity": "daily",
   "hourly_bar_not_exact_move_onset": true,
-  "article_coverage": "Google News RSS historical titles only; not full article bodies",
-  "news_time_rule": "publication cannot prove actual event timestamp",
-  "recap_usage": "ex-post educational weak labels only; no pre-event model features",
+  "article_coverage": "Google News RSS historical headlines only; not full article bodies",
+  "news_time_rule": "Historical daily association only; RSS publication time cannot certify earliest dissemination",
+  "recap_usage": "Ex-post educational weak labels only; NEVER train with recaps as prior observable news",
   "network_errors": 0,
   "cases": [
     {
       "kind": "quiet_control",
       "month": "2025-11",
-      "bar_start_jst": "2025-11-11T21:00:00+09:00",
-      "hour_jst": 21,
-      "range_pips": 10.401,
-      "hour_return_pips": -5.7,
+      "bar_start_jst": "2025-11-13T00:00:00+09:00",
+      "hour_jst": null,
+      "study_date_jst": "2025-11-13",
+      "range_pips": 69.499,
+      "hour_return_pips": null,
+      "daily_return_pips": -47.0,
+      "study_hours_observed": 24,
       "news": {
         "sources": [
           {
             "type": "world",
             "status": "ok",
-            "articles": 7
+            "articles": 48
           },
           {
             "type": "fx_recap",
             "status": "ok",
-            "articles": 2
+            "articles": 5
           }
         ],
-        "world_prestart": [],
-        "world_within_hour": [],
-        "recap_post_hour": [],
-        "world_after_hour": [],
-        "prestart_categories": [],
-        "hour_categories": [],
-        "recap_explanations": []
+        "daily_topics": [
+          "fed_us_rates",
+          "geopolitics_war_peace",
+          "us_inflation",
+          "us_politics_tariffs"
+        ],
+        "recap_explanations": [],
+        "world_daily_headlines": [
+          {
+            "title": "The Fed - Report on the Economic Well-Being of U.S. Households in 2024 - May 2025 - Overall - Federal Reserve (.gov)",
+            "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxNb1gyZmZPYmFXYmNrNC1zNVJvbUdCYzRBQ2h3Sm1mbFV3V0g4Q3hKUm9FNENIR2ZCOEtTM2Q1aUJUN3Q1RERYSUMzOXJvS3ctR1RnTDg2SlU4WEtfMi1EcmpaWkFrY1ctMUQ3TGo0ZGpIdGlHbXc0blNndURFbFFyZ0hTeDhrby1hRFl0al83SnE1Rm9KM01ZejVTYTVlVzRsOW9vVnNpMTk0LUFfTl9nVHo4eENNOXBaazB3a2NkMkw0VlZO?oc=5",
+            "source_pub_utc": "2025-11-13T08:00:00+00:00",
+            "category_hints": [
+              "fed_us_rates"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "HUD and Treasury Build on First Lady Melania Trump’s Fostering the Future Initiative - U.S. Department of Housing and Urban Development (HUD) (.gov)",
+            "url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTFBWTmlDRmc5NFNPajhYYUlCLWJYNGhJaVNhTThrSEJNMF9sT1o3U1NySmw3VWQ1MGFvWlB0MnMzdGZLNlJSdy1jR1FqU090UQ?oc=5",
+            "source_pub_utc": "2025-11-13T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Trump’s Attacks on Multilateralism Make America Weaker, Not Stronger - Center for American Progress",
+            "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQZUdtVTBtMXhtVzJZcmptZXIxV1M3U3U4bWVVNzZKcmNodGJhTEZLZnQzRnMwMkdEZ3ZFb200NVR5cS1wZTVtMjZ0VVkxUnVBX2JhYXQ2NHVtODF1NlBtc3B4OERfM0J5VldtcFFHcy1OMmlpak9PLVg4UjdpdlR5SU8tdEJVdnpNRWhrRENiSGthTFVEVUJFbGZacFZ1WmYzZzEwcFBYUkRibWtF?oc=5",
+            "source_pub_utc": "2025-11-13T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "U.S.-Israeli Relations Are Undergoing a Profound Shift - Carnegie Endowment for International Peace",
+            "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxNOVAzT2FSakR3OEozWXdsYXJqZUpsWW44aHdnMXVnZ0FaMXNNUVZaVHpiUkVRQXk0Ni1ORkVVTEZuSFQtUGs2UVZ3OC03WHRMZWd4a0RHMk4zRF9LRElEQzc5cVNPQlZWQ294VHJSZjRnOExGSXN6ZlQ0cVBkaEl0Z2JxcFdaRWRaWW1kUEZpYzItbmg4NldpZ0NsMktJRDh3ZTdSdlF3?oc=5",
+            "source_pub_utc": "2025-11-13T08:00:00+00:00",
+            "category_hints": [],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "The State of Generative AI Adoption in 2025 - Federal Reserve Bank of St. Louis",
+            "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxQMGl5ZFczdlZBSnFBc2FMaDQzMGFhczBQVFlKQ3ZwQXZONEJjdTZwdk81MEppZ3E1cnhpeEJzTmJTc29YejNGTkIwUEpiZDhNQ2pXUUxRbkVVWThjYTNSWmFWZHpaWmtnN2RMa1pweFEyZ2I0TTRzZWk0Tlhnal95YjFvQjVpUGtYMXlIWA?oc=5",
+            "source_pub_utc": "2025-11-13T08:00:00+00:00",
+            "category_hints": [
+              "fed_us_rates"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Pharmaceutical Policy in Motion: Updates on the Trump Administration’s Drug Pricing Initiatives - Mintz",
+            "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxNUlZhVW9NRVp0bUREdDhRTWFIZ2tjQTdHNkVIYmFrUEhFWlcwb01PQkNoeUpiZ1dqMnA1Z1B0Ykh3X1JGelZxOVQ5UEFtQ0VPVWJ5TlRkbWNpZmo5Z2NGOURlLTR0T0VLUTJYNXM4anRfbTFzaEU4dUgydGozYmxZbndGdkpKVk15ZEIwdllKeHRxUzZPWnRPUTkwMlZ1Z1BvUjBWcXhrSlNublE?oc=5",
+            "source_pub_utc": "2025-11-13T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "BBC apologizes to Trump over misleading edit, but rejects basis for defamation claim - PBS",
+            "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPWWFxaHhFaFpPZnBuYzlCS09DT2FhMjlsM2pGT3BHS2EzaVNCQnkzVkxnc2lDNS1qX1EtY0wwNG9UUm1DQnlLcXdCVHpsY3ZnYmc4UnVMeDZNX3lhQ3JJR0pVdnQxMFYzWVN4dDJiTFI3ajh6MkVSNU9MdzFTWVpTMXhHY1hrc2o2MVRrN2prNDlqWWt0WDN3TVRmbWcybEk5TW9MQzFLYzJPSm56bDlSZ1AyQkdycWRBamU2VTBB0gHDAUFVX3lxTE1Ed0JJTGlQWnFGaE1MLUJxZ3dlM3U3VFh1OEc3c3dBUC1HbGlQa2lXbnlZa1dmSjI0OHhmb1VKQjI2SlZmTW51YWNZSlQ4NDBHeVdQeFhQd3luZ1dQUDBhRXh2cEpMWE1aRTg5dzdtUkxMNlIwVlVTeDdwTmwxbzdSMGFOZDRQclRPUS1zWEo5V1FSdmdUUHBhVXdfWl9GT21xUUZTMEEzTHNFV3FrWG5uZGk4cFB1OFRvejJYbkd2NWNIaw?oc=5",
+            "source_pub_utc": "2025-11-13T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "California cuts major methane leaks as Trump turns his back on science - California State Portal | CA.gov",
+            "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxOb1k2NGQ5LTlVVG9YX3prUXJ0aDQxMUl3WF9fM1U2Qm9fZUJFSkQ1X3ktQm9rMnd3U1l6cmczMTFCc1BKN0FLQTNlZ1NPRC1pQ2EyRUdBZTRHcXBUb2hJN1RCZDBiUzRWZDRkYy03UzFhR0V6SlRsWWluVmhPbWVUengwaEg2a250by1zSm9VbVBpYUxvV2QwYlVJT0h4amZwQTV1WkhKZ3o?oc=5",
+            "source_pub_utc": "2025-11-13T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "The Trump Administration’s Hostility to Legal Immigration Harms America’s Global Leadership in Innovation - Center for American Progress",
+            "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxNTFhhTnJqYkJYWGpKenBzTTNiNTRIcWp0anh5czZMTHFRRGltU0dvZ2loQTU0bVpmRXRVQ19OUEJwTExmV1dPVUo0V2I5bmx3ODZya015NTBQbWpNMFN3Z2lrR2x5b0toU29tSm1LX1FldUVwVGNXMl9fUTcxQXlmeUFrY05PSXU2cDVlcXRnX2dBQld3aExRM09nSDE2X3Z4OF9ZYXd6OGFNWlcxSlVvVlNwZFd1eTJMZl9fZkJrZDJkMUJmSkR1LWFSR2lpQTVmQzEzazBzNFJnNDNYeWc?oc=5",
+            "source_pub_utc": "2025-11-13T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "President Trump and the First Lady Participate in an Executive Order Signing - The White House (.gov)",
+            "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQRjZGT01VaTNYb3dwX01IUDVQNmUxNkcyUDgzSlRsckl2R1Ewd1NXTWxyZEphYXY4eEZvNUZYS3RBNmhYOFZJQ3BUYmZfWDBMNlFyVTZCTnB3bERIREZkZk1LVDMyTzBwZy1NSXQ2UjM1STJmQjNHSS1WR2JwbDhqZEF1dGwtaG5BeTc0dWtzVWFUZFBUTDVEQ1BBX2twVk11VDgzS29lcUdVV2NvdXZmaw?oc=5",
+            "source_pub_utc": "2025-11-13T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Trump signs spending bill to end longest shutdown in US history - BBC",
+            "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5GZjZ5aTdxVmdfMmJoemFzQXFZb2Y5NkZNaUxGSmQ2WFRSaTRQYkJtaGxHNzhQSlh5Z1pTWF9abjUtSFZNck84NkN5SHQzXzNoY29DWWROZXg3QQ?oc=5",
+            "source_pub_utc": "2025-11-13T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Trump signs government funding bill, ending record 43-day shutdown - PBS",
+            "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQelVDZnNaNERSb0hNblMwTlBhd09jZWZBOU1IX1hIQXJQSTg4UWlHS3Yxejh4Q1dlNVRDS2RLa0dYU1VPNFlYMDVBTG1qQTM0aFl5T0lVcWpBb0dpYnhmUkdOTU1IZ3BrOGpaZmg3SHg1b0toWVpSNnRQWGtKVE5HUVo1bXdvbml3T3JWdXFCTThkU2FHaG9YSWkzMjJnNkRVTHpERVBn0gGrAUFVX3lxTE5XRUpDb1Z2WU9vN3RjUUQ3M21ObVlCbzF4d2wyYmxQdGYwMm1KTGZGcVAzYlN2RTNaN2lrcHluUUFIVnNpWXBaUmotaTM3SERDUmcySXFMcE5vdUNrLVhpbS14WXpkaDYtb2o4LVNDTjdud1dpTENuSTQ1UkJQVXBZSzlFVUlxMV9tSXQ0Y21GM0g5YmEzZzNqemlOazBjWi1qSEJYb1ZSaVBuMA?oc=5",
+            "source_pub_utc": "2025-11-13T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          }
+        ],
+        "fx_daily_educational_headlines": [],
+        "daily_world_count": 25,
+        "daily_fx_recap_count": 0,
+        "chronology": "CALENDAR_DATE_ONLY_NOT_A_VERIFIED_EARLY_TRIGGER"
       }
     },
     {
       "kind": "large_move",
       "month": "2025-11",
-      "bar_start_jst": "2025-11-14T21:00:00+09:00",
-      "hour_jst": 21,
-      "range_pips": 86.0,
-      "hour_return_pips": -83.8,
+      "bar_start_jst": "2025-11-19T00:00:00+09:00",
+      "hour_jst": null,
+      "study_date_jst": "2025-11-19",
+      "range_pips": 158.4,
+      "hour_return_pips": null,
+      "daily_return_pips": 138.9,
+      "study_hours_observed": 24,
       "news": {
         "sources": [
           {
             "type": "world",
             "status": "ok",
-            "articles": 40
-          },
-          {
-            "type": "fx_recap",
-            "status": "ok",
-            "articles": 4
-          }
-        ],
-        "world_prestart": [],
-        "world_within_hour": [],
-        "recap_post_hour": [],
-        "world_after_hour": [],
-        "prestart_categories": [],
-        "hour_categories": [],
-        "recap_explanations": []
-      }
-    },
-    {
-      "kind": "quiet_control",
-      "month": "2025-11",
-      "bar_start_jst": "2025-11-17T22:00:00+09:00",
-      "hour_jst": 22,
-      "range_pips": 8.4,
-      "hour_return_pips": 4.5,
-      "news": {
-        "sources": [
-          {
-            "type": "world",
-            "status": "ok",
-            "articles": 6
+            "articles": 47
           },
           {
             "type": "fx_recap",
@@ -90,22 +180,162 @@
             "articles": 7
           }
         ],
-        "world_prestart": [],
-        "world_within_hour": [],
-        "recap_post_hour": [],
-        "world_after_hour": [],
-        "prestart_categories": [],
-        "hour_categories": [],
-        "recap_explanations": []
+        "daily_topics": [
+          "energy_supply",
+          "fed_us_rates",
+          "geopolitics_war_peace",
+          "us_politics_tariffs"
+        ],
+        "recap_explanations": [],
+        "world_daily_headlines": [
+          {
+            "title": "The Golden Age of Travel Starts with You: Trump’s Transportation Secretary Sean P. Duffy Unveils New Civility Campaign Ahead of Busy Holiday Travel Season - Department of Transportation (.gov)",
+            "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQNGFFT1UtNlFFQ0cxT191M3FLanZBWEpnNjBzeTJ2dENCRmpFX3JPLVNLTGUtUFdZWDRjbENHU0RSUGU3aGl6N21kUEZKb2ZqUThFWlhpOHgwSXVrNnlWM3pTd1pDeFFMcG5vWmFVQUFoYkU3RWxaYVduUFQwZ0EyckdXdXhmcG9fbzlRNnNBX2lQSFlLcXdXZDFqY25QbUs1NnNxQ0V1M1lBVW5tdTN1aUd6Q2lITUhfOU9NS0JSMl9WX01FdmZqOHhB?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Good News You May Have Missed: Everyday Proof the Trump Agenda Is Delivering - The White House (.gov)",
+            "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQMG9mbFg4NkpEajQwSE1KWTBQd3BmVFdPTUJTdm1MajZCcE43dWgteE5KUC1ENGJqcVdOcThmZi1XZmVyZHk5SFBMVTRxQXZLTDl6OXExb0NtVzdMTnJ0ZWVFRU5ZQnVYNmVIaHZPbGdMSUhUOC1XRWtRT3dWdW00eFc5M0diSi1OUVlFRHpRODV6YUxKdnlFQXAyVWxSd2dYbk45dmJTOURaelFnMWVQVVNpOF9DLV95SWlYbQ?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Given the United States’ New Tariff Policy, Latin American and Caribbean Countries Should Diversify their Trade Relations and Strengthen Regional Integration - Comisión Económica para América Latina y el Caribe",
+            "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQaXV5QXVVb3hlU0xXMmxYdEJ6S19wUWVETkVNQnV0SEh6blpRNzZuZjVYaTg1YWctRGJ4RUpvWGtIYnVrMEVxVmZncDVWNGRZR0xha1BqUmpvaVR6anRxTUp3d19Wd0hXYlBTWk9wODMyMG9HTkJtcFQzdGhpV0xpZGhPcVN6WE9iYlJETVFMWUJaRklIT1Brd3h2WVUtMUplN2FGWmVEN19KODFzbFVKYVpKVHJsaGF2MDlTTTlTYw?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Treasury Sanctions Former Canadian Olympian and Notorious Narcotrafficker Ryan Wedding - U.S. Department of the Treasury (.gov)",
+            "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE5NT0gzU2MwUzhCUlpabFZ3VUw0al9CNjUzYnpSaEFHZUpvZUZWMUt6TDF0Qk5vUFN5UU9qUUxXWXYycUtHTERsZzJHYzZNOC1oazMtYWV0UjVUYml2Mm9TVm1n?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [
+              "geopolitics_war_peace"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Gaza Ceasefire, ICJ Advisory Opinion, UN Special Rapporteur Report “Gaza Genocide: a collective crime”, and Humanitarian Assistance – Action by UN System Relevant to the Question of Palestine (October 2025 Monthly Bulletin) - Welcome to the United Nations",
+            "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTFBXSVN3QlgxZklGa09XSWg0ZVFVNDh3RXMzb29tNDB3dFhENXVfUnNRZ0I3SXBnVEppd3hEbVJLRUMyYU0yaUN0VVdsMlFIcjlqSEhia1dlNWpFcFNPUHVnSF9lZTMyYU91SktjVHA0LTE1MXNR?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [
+              "geopolitics_war_peace"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "U.S. trade deficit dropped nearly 24% in August as Trump's tariffs reduce imports - PBS",
+            "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPRmM0YThxWVNyUThGWWluTlJETkx3ZHh2ckkwSjljLXJaYlBOM0JjUjJUbS1Ba2h0ZEY1WUVYVF9LUnd1WU0zUjlEUURXcTNWX1pFY2o1VUJzLWVwZm9iWlpDTmw0ZWdkUGtSR3lwQ0gzSG1KRDNtWU8xd3d6N1p6OWJYOW9UMEdCRjRKenJEdXNUdUNkcXNlcVg1VDhMbE1XenVKQXI3dU1UbEtrcWpQUXpqZUozUdIBuwFBVV95cUxQOFZfeXJSZzA3Vld1cDJuaTZYY0gwVjNDbWVRVXdlR05xNmt2d3Z5amh1VVRkSm8tMkRRQUZ2S3UyTmFzVWZGczU5eVFIQWFjemZJcWFxeldfNUJmV1NwX05xSFdjQXlIeW5UUk56THRxZHF5MnRCdUs0a3JTUHR0a0NVMmVQTE9RNjVKUFRqbE9FeXJhQjUtZUZxM00yTGVxWVN6di0zc20ydkhhZG8xNWMyZV9HaHp3bjdV?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Trump administration removes certain agricultural tariffs as US Supreme Court prepares to rule on broad “reciprocal tariffs” - Dentons",
+            "url": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxNTV9EbE1HcC1DSGNxSV9YSWhaVkpVNVBTRGRyUU9ZV3IxVTJHaXZPd2JiNFV5WWo0NzlYN1pBM2syTl83SGxkNEx2YlBkbTZrZ3hEVDFoS2d4SWN0bEZYdk5WYnRMMTNrcmFBNnlmTmhPOVRrNEJmUi1KRVM2ZnBRZVU1dVlSNnFITmtjQm0zUFozRXlISWJOS19KaWlCQ2sza3hjMzRfV3JQRFJiRXdBd19CR2RQTGdPSFpWQ0tGQzEzb1ZDRDJrZGluMFI5V1NqTnV5QTg0OXlYdHY2OTl6ZlpkUjlKeVhIaU4xSGItZjJqZw?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "EIA forecasts Alaska crude oil production to grow 13% in 2026 - U.S. Energy Information Administration (EIA) (.gov)",
+            "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFBYUlRKbWxYSGUwR0lRU05pd19ZaXhIZF95bmo5OGUyZE5PcjVnWHhQQmJpV1k3S2lJNkw1U2ZDbXdib2RrTzdNZ2d3Mzg2UFQ5SXdpVmJSQUZkVzVwcDlVVnYtaw?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [
+              "energy_supply"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Making Missing Markets: Connecting Communities and Capital - Federal Reserve Bank of New York",
+            "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxQSUU1ZHNSdEdva0dWMDNHMnljX0J5bVMwZEV2a2lwYzdDUnZGTWJoYWhBcVVJZVlUclhZQm1NZE5fbmNIb2hIWTVvd3dGR3d6WHMwUVBxSFVjdE5RMnRDdGtYbE03WEhzQjdjMGF6ck5pU0ZzUXJuUjRQWElnc2ZobkRUNA?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [
+              "fed_us_rates"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Why Trump's plan to help GOP keep control of the House could backfire - PBS",
+            "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOSmtDT2s4Q0NoN3Z3UWFoQ3JtUnVqa29BTnk5NHVGVWVSOWVuNmVnXzRJeTBkOXA4WVlGbEN5bkpDc3JoTkdhZkVYclNDWXUtTUltMFFhaHJkN012X25sN2lUWE5TS01nYTNsWW90bzZyQ3JjLTdJWWJSQ2VudGNFVlBmSTRsZU40bFNwd1lfNTVVcnZXRFpHeTh1Mm1aajY4X0pDc0lhTWJaUQ?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Trump approves plan for peace between Russia and Ukraine, senior administration official says - NBC News",
+            "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPTkw3QWtQMl90WWZkYjd6QUJkQjl5RFItTjNLc2t1TG12ZkplLW0xY1J2VmpmMzZQWmx0NHd5SHlNZ2JHTjlOU2pld21xd1pKUVBCckJzSHpnWVQtY2lvanJQOVZSMFptT0pCQl9EeVBGRE5ZM25Va2RPeXNpcW1XdDRXck5MWW5Bb0xHazhFTkxlTFdUbGdGUXFjaXZ0YzRUdHpyWS1Sd3Y?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [
+              "geopolitics_war_peace",
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Israel's military carries out airstrikes in Lebanon after evacuation warnings - PBS",
+            "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNcExodWh1NFBXRTgyWGg1MzBHUWFkU2FHM2RVUXQwdjkzanV6Vm9vRzdsY3UzY1c3RUZuOWpRdjVTM0hRaktyLWlKRENyWGpiR1R0dmRoWFBtVmJMNE93cnRnOFpwWmRhQUEzeHk0UjJxZEdObzdVYlQ5X1NPVkJKV2xDWE5mLVEzWXEzWVp3a1JfeTRrWFoxQ1ZaSGE0emtuQUNZZTZrRnFlZmgteFVCMtIBtgFBVV95cUxOcWRzZ084eUFnc0Q2cWJCSUhVaElrNXA0My1SMW5NUVFTNDBUNzUwUE5UNEtjVWVkUHVkRW0xeV9uRkZWRDNKZ2dGTU95ZERHeGFxTlhHcUpMS2RhLTVvaW9ISlpoUUV5OEU2UE94Ym9OT1ZVQ1JMQWUwODZJMkMta1Q5RER1cHRsenhTczlnUzZoYURBbHU5Sm56b1RhYlpoZkN2ZURFM3l2NHpxVE1fcm1sbEJyQQ?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [
+              "geopolitics_war_peace"
+            ],
+            "intraday_event_time_verified": false
+          }
+        ],
+        "fx_daily_educational_headlines": [
+          {
+            "title": "COMMENTARY: Japanese yen's safe-haven illusion shatters - Reuters",
+            "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQU0gxdlpmUENGcFpzaVZ0Qm0yUFV0SHdSbFBnRFRHT0RxTW5XQzlDVDdwaHZ0Q2hQMXRVTHFiTG16VXVMcHNDQlBVeHFnaldiclh6ZEdjWDZfS3l3N1BEcTYxcDRKaEpiMEhDQXI0dkJvLTgxOVhEejg4bHd5RjNXdVllTlBnM1ZtVHgzX2NQUlY1TXlTX1hGbTFsUi1pUQ?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "How the Japanese Yen Turned into the New Fear Gauge - Nasdaq",
+            "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1LenJSemNSUXdzMXctb1F3bV9ETGtjSXFmWXNIc1JTdFFlT2NZbHRPRnlkV2dsc3pqQkFxemhpdGtlT0JldUNuUEU4ZVZtdHgwYkt2TU1tbGxGdE1YZUN2UzFwdjlWRmtkYVpFUkFvREFtRm5VLVQtSXBn?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Forex Major Pairs Trading (EUR/USD, USD/JPY, GBP/USD) for CRYPTO:LIGOUSD by GlobalWolfStreet - TradingView",
+            "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOdFB0RTFzdGIybmpILTB0U3dHWGcwRmUxZjJkNjBsd0Zna2s4ZnlQQWQ3OWhQUjRtMGZQMEVDMzlqLWRZYW55Q0Q3Rjdfck42aU9vcW9rZlUwOF9nVWsxYzVNeFNlaUJKQVczaHhyYWtrNTByNWMxelZydWNXMnNPWEd0Mjl5cXdlOVlvRU9hOW1mUWdiUndZZWR5emQxZDRoWUJJ?oc=5",
+            "source_pub_utc": "2025-11-19T08:00:00+00:00",
+            "category_hints": [],
+            "intraday_event_time_verified": false
+          }
+        ],
+        "daily_world_count": 21,
+        "daily_fx_recap_count": 3,
+        "chronology": "CALENDAR_DATE_ONLY_NOT_A_VERIFIED_EARLY_TRIGGER"
       }
     },
     {
       "kind": "large_move",
       "month": "2025-11",
-      "bar_start_jst": "2025-11-20T22:00:00+09:00",
-      "hour_jst": 22,
-      "range_pips": 66.4,
-      "hour_return_pips": -13.201,
+      "bar_start_jst": "2025-11-20T00:00:00+09:00",
+      "hour_jst": null,
+      "study_date_jst": "2025-11-20",
+      "range_pips": 141.701,
+      "hour_return_pips": null,
+      "daily_return_pips": 99.1,
+      "study_hours_observed": 24,
       "news": {
         "sources": [
           {
@@ -119,108 +349,316 @@
             "articles": 5
           }
         ],
-        "world_prestart": [],
-        "world_within_hour": [],
-        "recap_post_hour": [],
-        "world_after_hour": [],
-        "prestart_categories": [],
-        "hour_categories": [],
-        "recap_explanations": []
+        "daily_topics": [
+          "geopolitics_war_peace",
+          "us_politics_tariffs"
+        ],
+        "recap_explanations": [],
+        "world_daily_headlines": [
+          {
+            "title": "Trump's Ukraine-Russia peace plan, in the full 28 points - Axios",
+            "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE9mVFFQTWdveHF6VjNvaXFGNkNTZ05vako4M0VZMWpIS0ppSjR4WlRKOTN4dVlZUGpKVFI1NnNGdURzNlBtMDZwamluN2NkMmFZbk5LUm9fdEFOY0U4NzVUa0szQzZoRENxY1B4SlJFdk9BeFJHcEtCbExhZTFPZFE?oc=5",
+            "source_pub_utc": "2025-11-20T08:00:00+00:00",
+            "category_hints": [
+              "geopolitics_war_peace",
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Texas Faces a Far Broader Islamist Threat Than Just the Muslim Brotherhood - Middle East Forum",
+            "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPT3JwMV9rSGtnT2ZfblRYX25XUExia1FzaUdrRXdOQktKRkxEb1hMcjhlSTJsdlhMVGplYnBsNHp6R1BUb1EwVHJFV1UtSVJGYzZBUUg3cEZjNi1GZW8ySTZMV1FRaXhFd0hLbXZkSE43Tmd1Y1hNOUZGdEw3bVU0VGhIUXl5cWtuSFBhUWRDbTVkSVhsTHg3X0UzN0tDSVlweThVSg?oc=5",
+            "source_pub_utc": "2025-11-20T08:00:00+00:00",
+            "category_hints": [],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "BANK HAPOALIM B.M. (POLI.TA) Q3 FY2025 earnings call transcript - Yahoo Finance",
+            "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxPbHBvOEJsaUotTTZndTQ4dnR0WkxHeHliVU00QXUtOV9ZTTByQ0dtMEs3OENZWTIxRndiS2dDSmxvTHlZMWp4TUUtcFVVcWZoNjRpdHBIejhiRzM0M2NmSkFrMW96bTJLcGZ2eU9iYWpXcDlPbEU5V2R3LTJPRGt0ZlMwUVpWLVd2dHd1U1JjRk9aendw?oc=5",
+            "source_pub_utc": "2025-11-20T08:00:00+00:00",
+            "category_hints": [],
+            "intraday_event_time_verified": false
+          }
+        ],
+        "fx_daily_educational_headlines": [
+          {
+            "title": "Korean 500-Won Coins Mistaken for Japanese Yen - 조선일보",
+            "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNLXhvZWFIUkxEU1dySVJuZjM1MUhNOVRmNUFYMHI5b08zRWxWbmltN3JQdTRoRWxlX3FQRW9LUTVnTGdPYnkxbmxENncwS0pSWGFFYm1aaVktZTQzWVduMzA3OVU4XzRoaGJFUDdTa1huOVpkcTVHZTdEWDE4a2VxREc5Rng?oc=5",
+            "source_pub_utc": "2025-11-20T08:00:00+00:00",
+            "category_hints": [],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Digital wallets see heightened demand for yen as Singdollar hits fresh high against Japan currency - The Straits Times",
+            "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPcjN4ZUp2VXIxalJnbE5mNjRKR2c0RDdKNVhxN3hSNGxxUV9fc3lCendhemR3VjUwOWxZREZLcnBTOWNJckQ1WG1mOHVLajZ3TVZUN0Y1eGdXOGw5UXZmUjRkV3doT3hneERPUTJPSy1nNVpTRW9PeTZHOF9TcjNqRWtoTXFGWnMwYzNBOGF4Rjd3MUhnT09HaFBUS3I5Nm92RHFVcy1Vdzg?oc=5",
+            "source_pub_utc": "2025-11-20T08:00:00+00:00",
+            "category_hints": [],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "S$1 to 120.3 yen: S'pore dollar hits new all-time high against Japanese yen - Mothership",
+            "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE10VDVYUVdnVlJ6UDdOd0lBcVBqelR1dm1GbzN2ZDhCTVpFd281b3o3YkNxMWRHa3d0SUp3NkRVeVM3QTNZeTNOdzZhSUdDLU9qTDcyXzd6MDlCNWJlZWN6Q3FpUzVET3M?oc=5",
+            "source_pub_utc": "2025-11-20T08:00:00+00:00",
+            "category_hints": [],
+            "intraday_event_time_verified": false
+          }
+        ],
+        "daily_world_count": 3,
+        "daily_fx_recap_count": 3,
+        "chronology": "CALENDAR_DATE_ONLY_NOT_A_VERIFIED_EARLY_TRIGGER"
       }
     },
     {
       "kind": "quiet_control",
-      "month": "2025-12",
-      "bar_start_jst": "2025-12-10T10:00:00+09:00",
-      "hour_jst": 10,
-      "range_pips": 9.179,
-      "hour_return_pips": -2.647,
+      "month": "2025-11",
+      "bar_start_jst": "2025-11-26T00:00:00+09:00",
+      "hour_jst": null,
+      "study_date_jst": "2025-11-26",
+      "range_pips": 105.381,
+      "hour_return_pips": null,
+      "daily_return_pips": 57.121,
+      "study_hours_observed": 24,
       "news": {
         "sources": [
           {
             "type": "world",
             "status": "ok",
-            "articles": 3
+            "articles": 1
           },
           {
             "type": "fx_recap",
             "status": "ok",
-            "articles": 1
+            "articles": 0
           }
         ],
-        "world_prestart": [],
-        "world_within_hour": [],
-        "recap_post_hour": [],
-        "world_after_hour": [
-          {
-            "pub_utc": "2025-12-10T08:00:00+00:00",
-            "title": "Nearly 200 children conceived from sperm donor with increased cancer risk - CTV News",
-            "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxONHFNcnptSVlyNlMtZU1GNjFlbm5UVlM5N0piQ01RUmNkZHNxZUhSVnNRRlVDNkdxWFVEdDZjS3NzOHJLd2ZYS0hLanFaTkJzQldZellOREJmUzFodXZqWTdSVDBFX2p5S0RFeDdJQkRLNjdmLS1ZazQ5NVJQdXFuQ1YzSEFmemdXb3o0OWZka1JyZUpaOF95N0VkcGV4UzRmSkgxcHhkWWZFVURTaU1RMQ?oc=5",
-            "categories": []
-          }
-        ],
-        "prestart_categories": [],
-        "hour_categories": [],
-        "recap_explanations": []
+        "daily_topics": [],
+        "recap_explanations": [],
+        "world_daily_headlines": [],
+        "fx_daily_educational_headlines": [],
+        "daily_world_count": 0,
+        "daily_fx_recap_count": 0,
+        "chronology": "CALENDAR_DATE_ONLY_NOT_A_VERIFIED_EARLY_TRIGGER"
       }
     },
     {
       "kind": "large_move",
       "month": "2025-12",
-      "bar_start_jst": "2025-12-19T16:00:00+09:00",
-      "hour_jst": 16,
-      "range_pips": 72.137,
-      "hour_return_pips": 68.637,
+      "bar_start_jst": "2025-12-11T00:00:00+09:00",
+      "hour_jst": null,
+      "study_date_jst": "2025-12-11",
+      "range_pips": 171.859,
+      "hour_return_pips": null,
+      "daily_return_pips": -151.361,
+      "study_hours_observed": 24,
       "news": {
         "sources": [
           {
             "type": "world",
             "status": "ok",
-            "articles": 4
+            "articles": 81
           },
           {
             "type": "fx_recap",
             "status": "ok",
-            "articles": 10
+            "articles": 2
           }
         ],
-        "world_prestart": [],
-        "world_within_hour": [],
-        "recap_post_hour": [
-          {
-            "pub_utc": "2025-12-19T08:00:00+00:00",
-            "title": "Outlook 2026: The dollar, yen and shifting market dynamics - CMC Markets",
-            "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOeVJPRkNyVDZjY3BvdFJUN0dZTEFJSmxOLW42YjRGZkRrLXNzQ1hVQ1RCenJDTjdEeWhZUkJGbHJiazFWMmZYRFhzOTlxdjFXWWYyQ2lkcWljZzBDZzRhWjhCUWhuUWhET1ZMWUFTTWg5bXdlY3ZWWmp5X2dwVWF6OGZRalo5a2Q2RnktSl9kVlQzWW9SNEw1Z1JUSl82cHJKVFRxNU9kR1ozWkk?oc=5",
-            "categories": []
-          }
+        "daily_topics": [
+          "geopolitics_war_peace",
+          "us_inflation",
+          "us_politics_tariffs"
         ],
-        "world_after_hour": [
+        "recap_explanations": [],
+        "world_daily_headlines": [
           {
-            "pub_utc": "2025-12-19T08:00:00+00:00",
-            "title": "EIA updates its definitions and estimates of OPEC crude oil production capacity - U.S. Energy Information Administration (EIA) (.gov)",
-            "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE9UazZoUy11bjZGWmpGWHF4T3gzcU13RkhQOThWU2syVEhSSTVPYmZjN3VuUmNlT3hDNEtlUUJaZHZCN3czZjZxNk1MZUdmU2JnaGQ3Z2FwSHhHNlJsVFV0SGlpaw?oc=5",
-            "categories": [
-              "energy_supply"
-            ]
-          },
-          {
-            "pub_utc": "2025-12-19T08:00:00+00:00",
-            "title": "Trump announces lower drug price deals with 9 pharmaceutical companies - AP News",
-            "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQdTk1bTAyRzVnd0huRGJSck1iVHN1YXo1RkdWSlAteU5LdlBvR2ZIV3pIcjgwcWxUSjRuamsxVGN0bVoyeTlsMEtUazk3cVRDb2h0NjNOZXVJNXV4cTMtS001dUxLenZuVnphWjJ0U1ljX2tTdG9NbU1mS3M0dUZnYkdQa1RidXJZNktEd3FRckNERF84MVJCd3g4Y1I4RDZuRE9lQ0MwWGJYa1p0YmFoTEgwanBybG5SY3NBcnI2aVhyUQ?oc=5",
-            "categories": [
+            "title": "Trump’s AI executive order advances corruption, not innovation - California State Portal | CA.gov",
+            "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxObG5IZG1LblkxcVFmX2pVa2hQNk9EVGMzeGFNeWVpM0tfNU55TURDV0hvZE4tRlR6VEFxZjdBQUl4emN4dDNLMi1jd0lvY29oYzhLVkdnWWxVVDlRNlZuSzZscTN2NFBYU0xvWXFPd1h0VWkwd2lPQVZRRzJreGZsY1d1RVNxYmpMcjIyVm5abW04M0dkMXNPTkMxUQ?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [
               "us_politics_tariffs"
-            ]
+            ],
+            "intraday_event_time_verified": false
           },
           {
-            "pub_utc": "2025-12-19T08:00:00+00:00",
-            "title": "See photos and documents from the latest Epstein file release - PBS",
-            "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQX3pITGI1T1JsWGxYUGg5T1hGQ3FGR2gxdUNlV3pIV05Vdm1WT1h4RHh6QkNSWFM1U1VhazU3TmdzbW40RTBFSkIwd3kzM2pRVmhsWno3STJ2Wl9sZENXYm9RNHFLNmg2Y0hZLWNlai1fWm8xY0YyRVV2Z1NabmlTOF9DU3dUWjg1VThuMnB3OXFMRXppc3RwZ1F4U1NhY2Iy?oc=5",
-            "categories": []
+            "title": "Did Trump really fix NAFTA?: What USMCA failed to do and how to put workers first in North American trade - Economic Policy Institute",
+            "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxNeElyeFhsNDJTcXM1N0ViaDY4THBZUjFJdWhENU9QSWxpd3ZTTm5SbnVqaVFGZjktWTIzMlBQYVBSVkZVVVAtZlFMU1B0Wk94cmY3aXpyODRaWGZ6Tmo0M21EekdaUjhzTjRjUDBwUUR6UktDcmR2U2lZNlhWWjhkMWswUG41cXBtZjhoSEF2T1dXaUJLRFZXYlZCMzl2Z0h6V3AxekREMG5SU2Z1UEtSbk5QWFBPSXBpVjl6RnRjSGJ0U25xWndHclRsU3FYdXYzY3c?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Trump’s new order against AI regulation hits California especially hard - CalMatters",
+            "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQeTd6MmdSTEE5NENIZ2l2R0JKM19WTHlHZ2ExeEdlZWNvTnVvcjVEQWhuNS1yc0x4LUowaUdfRHRDeDhLdjdET3ZNa3lNQ0pBaEMwLTZ3NU9NRUFMbE5KSS11b2hETEdab2ZCSW9IVF9lYjlvVHVGWllhNEtQVGhqUzRSYjlIYUpWeDFNaDdQd1NiX1VaejZOeFhZckRVd3di?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "ACLU Statement on President Trump’s Unilateral Attack on State Regulation of Artificial Intelligence - American Civil Liberties Union",
+            "url": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxPd2xpci1NVXN2VUZMVjRZbmZfRTUwXzVjWWZSN3ppaDRSUUFBMU1XY012ckVUeERReUxDRjIyeDI1emdhYjN2V0ZuUXp2NEZMdC05NVIwbVMwN3JCZTQxTzFBZ1NLTkJORjdET3JSS2dYaEhkcHlrY0k4cUFtZjZiaTJRUHBFMW1nMUlrQ3RlOGxFeDNLU1ZBN3djTWFUSk9PTVQxclRoWmlZN25MZDZBQWNLZEhnNkRobUZLLVNEejRSd3M2ZmNFX0F2QjVJbWRV?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Trump has declared civilisational war on Europe. It won’t be easy – but here’s how to fight back - EPC, European Policy Centre",
+            "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxOOG11X1RuRmFJSG52dE5URUdXcDZwaGNvdXJud2dseFFsRW5jUW5yeEpfNlN3Z2RLaXBCaEhhVEI5dFFkdXdtTnpOR3ZrSVdZN3JFVmpyS2hqdW9XbnFmcnQtS2lIcDdIVXBkXzc3SmxmczVvRGo1NFNhZm81SDhLTnR5MUVwT0h4M09vOXNyS0gwLVhsRmh6elZLUm5sYS15MFp1Sm1fanVCT25XcVVmTml2SXFxbk0tNGtNM19fakg?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "FactChecking Trump’s Economic Speech - FactCheck.org",
+            "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1wa1pDRDk5SzlObWpKaEJLR19xSzNaSmFoUjJubThHNG44N1BjWWx1V2I5T21ERi1ESnRUZlR1RnZnWWlXaXp3czFud0FfbjRPYzBpR0NHRkpLWWlpckNGUnROZTlZNVNCQ2JuTXVZa0VhTnBaUHROMktn?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "President Trump Names Travis Voyles as ACHP Vice Chairman - Advisory Council on Historic Preservation (ACHP) (.gov)",
+            "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNcGZJcW90RkZRRmUxZzJIb3dZY0FEYnRnSkNnajBzeUs5ak4tcjZtb2h1ZHZ1SDhqeGdLR05GdS04b1lBZHhOSWNsZW1ST245Q1lmV2lzWjBtTzFld1czTHR2V3RXNjdxMnJka04wamo5ZGRSUmx5bWg0NGZsTmdNRi1EcDVNNW8?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "A Historically Bad Year for Public Lands Under President Trump - Center for American Progress",
+            "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQdzdITTNkd2RHWWR1dlQ0N3dXdWF2bjZFR2pMQzBrVzdDVWFYVXRRcFVoajVfNXlBdERsLWI3VGxGcnY4a3ljLVBSVllRcFhSNUswaFdBU3daQ1lPY2VBQURsZXgwc2R6dTBqVUJweWFaZWJEZGlaUjNXa1BzY0RZWk8zYjRKdVZicnh1cU5mSjI5WEhkWkZaWDhXVlVaS3NmTTZsVVRwcw?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "California state parks are for everyone, while Trump turns national parks into his vanity project - California State Portal | CA.gov",
+            "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxOQk5RNl93V0ZiTl8wZ0VxSlctSnJpWUVqRkJLM3pIY2xkZ045dWl4eDQ2WC1RZ2tNTEJibmM0OXZxSXdxdXRTQzZDOGdNdGNZb1B2R3U3X25TMHI4bVdBVmIybFJacmFvZmRRU0tUMVF2QTIyQ2Y2SVdiRWc2RFZsampUclhhblBpUUNxN3FFUFJHZF9FaDN1cVIwQ091ZUdndjZQbU1NRElrR3pYTEIzRmhoQzJqZDlNZUdKeXQySmZVRjdjckNmX3ZYQQ?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "The ‘Trump Corollary’ in the US security strategy brings a new focus on Latin America – but it is a disordered plan - Chatham House",
+            "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPdmhDSVhKLWx0QV8yVDF0VFdrM1RkZ0tmRU1hdGJYVlk1OU9CZ0FLOU1EaTMxTmRzbVVWRVR6aWYwSjNxYWlROTZtUlNFU3liclUxSG5JaVR4MUI1R3JkWVA0Vnpxcm1kSWt4R2Y1R3ZBYlU1WmVBa3J0dUIyWjJLZ2pNOW04VnpnRk9JVEhuSGJwbTBWelhocUNyU2hyZEkxVHhvMkE0Z2NkbTB3YUdQLXNMODVual9YV29ueGVtNTA?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Trump administration separates thousands of migrant families in the U.S. - PBS",
+            "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQOVdibHIybFJYRG5lYng0Q0FDN1JSaVdTOFJfTkpkeE9nMHhBczJGa0hKaGN5Ym5qdVd3Y2p6NG56QV92YzZSZERXOGY1M2J4cTk4U0dSZ3pEUXB4eERaSXNwYWx2eHpvS09mOG51MldBLWdXRlAtbXYyR3JvQV90bDV2NGNNZEI3d3dzMFQwd1F1MFdfcnc3a1VxTVIyN0Fmdy1SSFRqOWNJcVk?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Immigration judges urge Supreme Court to allow lower court ruling against Trump administration to remain in place - SCOTUSblog",
+            "url": "https://news.google.com/rss/articles/CBMi4wFBVV95cUxQMFR0NTJCTEtXOXRNR1BPMjZQZnpFQzJsMFlXWlB3QjhocjNRejF3MWh6UmNrRmY0S3VLUXRNRFJkT0VfVmpaWE9QWGIyMDZqekZURl9zc1d3WGdoRnBqQldXVE04VG1pS3B0czlqLVlOdlFiUmZ5Umtac182NXVkQW81U1FpeWRIcTd0SEQtSE8tSnJqbElPS0FrQk5QTUhCdUE4VFBhNlhaeFNHcnloSGlZLXQ5emhhZ0NlMzhFcjhFTTEwMUlQUDVEUnhSSS0xR096cDhRNlVKSFBXYXFxUFZIaw?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
           }
         ],
-        "prestart_categories": [],
-        "hour_categories": [],
-        "recap_explanations": []
+        "fx_daily_educational_headlines": [
+          {
+            "title": "JAL Launches Mile Reward Campaign for Exchanging Foreign Currency into Japanese Yen - TRAICY Global",
+            "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE5BM0JISW9TQzRfV0dBVUQ4TWZrdDMtUWJKNXhPVWZVQzRXNHRxSXRjLXg0d1BtWlJNdlJRWDZvNUQxbFhfWVFEY2JqOWEzSzgzQVY4bw?oc=5",
+            "source_pub_utc": "2025-12-11T08:00:00+00:00",
+            "category_hints": [],
+            "intraday_event_time_verified": false
+          }
+        ],
+        "daily_world_count": 45,
+        "daily_fx_recap_count": 1,
+        "chronology": "CALENDAR_DATE_ONLY_NOT_A_VERIFIED_EARLY_TRIGGER"
+      }
+    },
+    {
+      "kind": "quiet_control",
+      "month": "2025-12",
+      "bar_start_jst": "2025-12-18T00:00:00+09:00",
+      "hour_jst": null,
+      "study_date_jst": "2025-12-18",
+      "range_pips": 66.927,
+      "hour_return_pips": null,
+      "daily_return_pips": -2.806,
+      "study_hours_observed": 24,
+      "news": {
+        "sources": [
+          {
+            "type": "world",
+            "status": "ok",
+            "articles": 7
+          },
+          {
+            "type": "fx_recap",
+            "status": "ok",
+            "articles": 4
+          }
+        ],
+        "daily_topics": [
+          "geopolitics_war_peace",
+          "us_politics_tariffs"
+        ],
+        "recap_explanations": [],
+        "world_daily_headlines": [
+          {
+            "title": "How the tariffs could be refunded if the court sides against Trump - SCOTUSblog",
+            "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5vSEF1N0VqWnVnZW1aNm1JRVA0dzc5LVFlejBZalplbGVJVV9FcEVKdHZjOEN5OTd5cHgzNTlMaldlS0dGSG9uZ0FSajVHWWM3bmVWSjZBUDRXUUNub1N5dHJ5R2Q1S1RlVHRwaWtB?oc=5",
+            "source_pub_utc": "2025-12-18T08:00:00+00:00",
+            "category_hints": [
+              "us_politics_tariffs"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Treasury Increases Pressure on Iran’s Sanctions-Evading Shadow Fleet - U.S. Department of the Treasury (.gov)",
+            "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE5TbUhxX0xIYW9ueHVKSUFoVXNDTkF4dE5zRXd4cy1WTXg5MUYzbGgwTmZDYjBVa1lVb0Nia1ZjRWpYRlF4bHJVY1hqaElURnBEcDdlZDZod0toNWNPQ05nVFZn?oc=5",
+            "source_pub_utc": "2025-12-18T08:00:00+00:00",
+            "category_hints": [
+              "geopolitics_war_peace"
+            ],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Big Spending: Today’s Shocking Japan-US Price Differences - Nippon.com",
+            "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE9YOXhuVDF2N2NVSXphMWxZX1RzampsdWh0cFBtdUx6bDBxTV9fMF9xeFhjQXdpc1BrQ3JwUUF2WTRxaVVTSmR5bVNBT2xiSDZUWl92bA?oc=5",
+            "source_pub_utc": "2025-12-18T08:00:00+00:00",
+            "category_hints": [],
+            "intraday_event_time_verified": false
+          },
+          {
+            "title": "Keep your feet toasty and supported with these stylist- and podiatrist-approved slippers for women - CNN",
+            "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBXM1ZZNG56UXc5N3pna1VWd2ZQR19pdXd2YWIwNWtVMXU4dFY4OTBvZEg2dTZPd3dLOWJlZFR6Y1o3SEkxVTA1WFRkSjFMaG1kUDdzbHdKNDNtNVprZUx0c1NWV3JEcWxSZHJ0bGFVWHR4Nk1kckE?oc=5",
+            "source_pub_utc": "2025-12-18T08:00:00+00:00",
+            "category_hints": [],
+            "intraday_event_time_verified": false
+          }
+        ],
+        "fx_daily_educational_headlines": [],
+        "daily_world_count": 4,
+        "daily_fx_recap_count": 0,
+        "chronology": "CALENDAR_DATE_ONLY_NOT_A_VERIFIED_EARLY_TRIGGER"
       }
     }
   ],
@@ -231,8 +669,8 @@
     "reason": "INSUFFICIENT_HISTORICAL_NEWS_OR_HOLDOUT_COVERAGE",
     "category_stats": {
       "fed_us_rates": {
-        "shock_cases_with_prestart_news": 0,
-        "quiet_cases_with_prestart_news": 0,
+        "shock_cases_with_prestart_news": 1,
+        "quiet_cases_with_prestart_news": 1,
         "sample_shocks": 3,
         "sample_quiet": 3,
         "smoothed_likelihood_ratio": 1.0,
@@ -249,8 +687,8 @@
         "recap_weak_label_shock_cases": 0
       },
       "us_inflation": {
-        "shock_cases_with_prestart_news": 0,
-        "quiet_cases_with_prestart_news": 0,
+        "shock_cases_with_prestart_news": 1,
+        "quiet_cases_with_prestart_news": 1,
         "sample_shocks": 3,
         "sample_quiet": 3,
         "smoothed_likelihood_ratio": 1.0,
@@ -267,30 +705,30 @@
         "recap_weak_label_shock_cases": 0
       },
       "us_politics_tariffs": {
-        "shock_cases_with_prestart_news": 0,
-        "quiet_cases_with_prestart_news": 0,
+        "shock_cases_with_prestart_news": 3,
+        "quiet_cases_with_prestart_news": 2,
         "sample_shocks": 3,
         "sample_quiet": 3,
-        "smoothed_likelihood_ratio": 1.0,
-        "weight_prior_points": 0.0,
+        "smoothed_likelihood_ratio": 1.333,
+        "weight_prior_points": 0.86,
         "recap_weak_label_shock_cases": 0
       },
       "geopolitics_war_peace": {
-        "shock_cases_with_prestart_news": 0,
-        "quiet_cases_with_prestart_news": 0,
+        "shock_cases_with_prestart_news": 3,
+        "quiet_cases_with_prestart_news": 2,
         "sample_shocks": 3,
         "sample_quiet": 3,
-        "smoothed_likelihood_ratio": 1.0,
-        "weight_prior_points": 0.0,
+        "smoothed_likelihood_ratio": 1.333,
+        "weight_prior_points": 0.86,
         "recap_weak_label_shock_cases": 0
       },
       "energy_supply": {
-        "shock_cases_with_prestart_news": 0,
+        "shock_cases_with_prestart_news": 1,
         "quiet_cases_with_prestart_news": 0,
         "sample_shocks": 3,
         "sample_quiet": 3,
-        "smoothed_likelihood_ratio": 1.0,
-        "weight_prior_points": 0.0,
+        "smoothed_likelihood_ratio": 2.0,
+        "weight_prior_points": 2.08,
         "recap_weak_label_shock_cases": 0
       },
       "risk_financial_system": {

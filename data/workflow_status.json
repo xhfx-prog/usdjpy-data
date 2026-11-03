@@ -1,19 +1,19 @@
 {
   "latest": {
-    "runner_started_at_utc": "2026-11-03T04:56:48.100235874Z",
-    "estimated_previous_cron_slot_utc": "2026-11-03T04:11:00+00:00",
-    "runner_start_delay_from_estimated_slot_seconds": 2748.1,
+    "runner_started_at_utc": "2026-11-03T05:57:00.213263871Z",
+    "estimated_previous_cron_slot_utc": "2026-11-03T05:11:00+00:00",
+    "runner_start_delay_from_estimated_slot_seconds": 2760.2,
     "schedule_expression": "11 * * * *",
     "refresh_request_id": "2026-11-03-initial-chatgpt-trigger-test",
     "actual_scheduled_slot_known": false,
     "delay_is_lower_bound_only": true,
-    "recorded_at_utc": "2026-11-03T04:56:49.371584+00:00",
+    "recorded_at_utc": "2026-11-03T05:57:01.776429+00:00",
     "event": "schedule",
-    "run_id": "41581000716",
+    "run_id": "41586853195",
     "run_attempt": "1",
     "fetch_outcome": "success",
     "job_status_before_publish": "success",
-    "sha": "67e70995f3500623019156a0c505185668e8ff10"
+    "sha": "006bf8ec30b493454988e7d9be49e0da279c62a1"
   },
   "recent_runs": [
     {
@@ -249,6 +249,22 @@
       "fetch_outcome": "success",
       "job_status_before_publish": "success",
       "sha": "67e70995f3500623019156a0c505185668e8ff10"
+    },
+    {
+      "runner_started_at_utc": "2026-11-03T05:57:00.213263871Z",
+      "estimated_previous_cron_slot_utc": "2026-11-03T05:11:00+00:00",
+      "runner_start_delay_from_estimated_slot_seconds": 2760.2,
+      "schedule_expression": "11 * * * *",
+      "refresh_request_id": "2026-11-03-initial-chatgpt-trigger-test",
+      "actual_scheduled_slot_known": false,
+      "delay_is_lower_bound_only": true,
+      "recorded_at_utc": "2026-11-03T05:57:01.776429+00:00",
+      "event": "schedule",
+      "run_id": "41586853195",
+      "run_attempt": "1",
+      "fetch_outcome": "success",
+      "job_status_before_publish": "success",
+      "sha": "006bf8ec30b493454988e7d9be49e0da279c62a1"
     }
   ]
 }

@@ -1,0 +1,940 @@
+{
+  "schema_version": "1.0.0",
+  "scanner": "world_news_first_no_fx_cause_search",
+  "generated_at_utc": "2026-11-03T14:48:25+00:00",
+  "move_at_jst": "2026-11-03T22:30:00+09:00",
+  "searched_from_jst": "2026-11-03T21:30:00+09:00",
+  "searched_to_jst": "2026-11-03T22:45:00+09:00",
+  "hints": [
+    "Qatar",
+    "Iran",
+    "Israel",
+    "Trump",
+    "ceasefire"
+  ],
+  "news_sources": [
+    {
+      "source": "GDELT_DOC",
+      "topic": "geopolitics",
+      "status": "error",
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    {
+      "source": "GDELT_DOC",
+      "topic": "us_government",
+      "status": "error",
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    {
+      "source": "GDELT_DOC",
+      "topic": "energy",
+      "status": "error",
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    {
+      "source": "GDELT_DOC",
+      "topic": "monetary_economy",
+      "status": "error",
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    {
+      "source": "GDELT_DOC",
+      "topic": "global_risks",
+      "status": "error",
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    {
+      "source": "GDELT_DOC",
+      "topic": "context_hints",
+      "status": "error",
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    {
+      "source": "GOOGLE_RSS",
+      "topic": "geopolitics",
+      "status": "ok",
+      "returned": 100
+    },
+    {
+      "source": "GOOGLE_RSS",
+      "topic": "us_government",
+      "status": "ok",
+      "returned": 100
+    },
+    {
+      "source": "GOOGLE_RSS",
+      "topic": "energy",
+      "status": "ok",
+      "returned": 100
+    },
+    {
+      "source": "GOOGLE_RSS",
+      "topic": "monetary_economy",
+      "status": "ok",
+      "returned": 100
+    },
+    {
+      "source": "GOOGLE_RSS",
+      "topic": "global_risks",
+      "status": "ok",
+      "returned": 100
+    },
+    {
+      "source": "GOOGLE_RSS",
+      "topic": "context_hints",
+      "status": "ok",
+      "returned": 100
+    },
+    {
+      "source": "OFFICIAL_RSS",
+      "topic": "official_fed",
+      "status": "ok",
+      "returned": 20
+    },
+    {
+      "source": "OFFICIAL_RSS",
+      "topic": "official_fed",
+      "status": "ok",
+      "returned": 15
+    }
+  ],
+  "discovery_status": "NEWS_CANDIDATES_FOUND",
+  "chronology_note": "Index/publication timestamps do not prove underlying EVENT time; post-move publication is not evidence of an initial trigger.",
+  "interpretation_rule": "Separately verify event timestamps, competing events and oil/yield/equity reactions before assigning any cause.",
+  "candidates": [
+    {
+      "title": "Indian Refiner BPCL Buys U.S. WTI Crude Oil Cargo - Crude Oil Prices Today | OilPrice.com",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQUzJsV1pSWDhvOEFYcWFDOFJ1NTRuaVU4WmpGRUJKT05Qc0ZTQWJHN1N5Z2RkcGhBUmdTeDhvRUZ0NFBzemlHSk9ObkFCMFNzdzdSVC1nOVhEM0lBMGRpSnBRZXplWDQ1SDJWVWkxX0swR2trR0RVRGFLbk1YcE1oY2xQSGFpY2FRTFFRcTFsY2NXRnJ4cExqSkZneWdjYjJEelJ4N2Zn0gGrAUFVX3lxTE9hTGhiWXk2TWs4YjE2OG1WeFZGOEJEN3UyaU9RaHVSVUVmc0c2SGxuZ0pmeXZ3SldDUEF1YW5KYzhGbE9vNHVkMFhONjhOWjdVZkxZbFZELXpWY2hKSE5pQlEycU4zSGxVR1A5THVDejhZbWt2VnZDS2lpTmE5anVnb1puU0hSb3dmSHhLZ3pqbmhpZjRpUWpoeEtLaURfUF9qMEdsYXpvT2V0QQ?oc=5",
+      "publisher": "Crude Oil Prices Today | OilPrice.com",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "energy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:30:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 22.0,
+      "hypothesis_paths_not_verified": [
+        "crude_oil",
+        "inflation_expectations",
+        "rates_if_verified"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "US copper pipeline could reach 1.3 million tonnes a year as critical minerals push gathers pace, says JP Morgan - Yahoo Finance UK",
+      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQMUdFaElFbE1mZUZzek1oTnpwektiQXNsSVgtUmhqTkhRME96MnlDRXRvQWRXNWJEZ1ZJWGMxT3RXd0VSVW9XSWsxZ0VoOTdPR2IycEVKWHZqZlFLR1JFRUZOa0Y3WmUzRVBTMjFRcHBTZzJfR0hrS21Mb0Q1YjFubzFMQ3l3QQ?oc=5",
+      "publisher": "Yahoo Finance UK",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "energy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:30:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 22.0,
+      "hypothesis_paths_not_verified": [
+        "crude_oil",
+        "inflation_expectations",
+        "rates_if_verified"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "U.S. Small Business Employment Trends Hold Steady in October - GlobeNewswire",
+      "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxOR3NFMWNVZEVFb25wXzJCbE1xMDVYQm9ieVdWdTR1V0lVQ3F4NXNjZ01RTUlYSng2OTBXODNEaWw2MU9ESlNDWTN3d2UtZ1o3aDhUX1k4Y0sxWFV2RjE0dkNOaHBua0Z5eWg5UzkzY0sydEgwM2FFSVFaS1NuS21tY3JEd1FHQ3dSYzdIVzFiTkdCUUx5YjZiYmhsd1VRdlU1WnZ4MFVPYVpzUVo5cWtVUGRfMC1kcEhGdzdBRnM1alZ1YllfYzZ1M3hndw?oc=5",
+      "publisher": "GlobeNewswire",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "monetary_economy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:30:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 22.0,
+      "hypothesis_paths_not_verified": [
+        "us_jp_rate_differential",
+        "treasury_yields",
+        "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "VanEck Launches EM Focus Inflation Bond ETF (EMIL), Targeting Higher Real Yield Beyond U.S. TIPS - Business Wire",
+      "url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxNM19rQmd0clZlSXhqcGd1cEVyQ0ZLenlVUThiOEpTSFlYQUVWT0puMHNkb3NwaGhSSVJyR3hTU3RES3pWQ1IzMnl0T2dsdkhIZnhhYlhDZDhxTXlxVDZlWlBMVkh0M2tYNXM3WWF3TnFBaTMwX2xLUFhTR25LcWk1amdCamhSVEN1LWpVTFpxVGdQd0dTdW9EYTJiQmU3OUR1Ri0xZ3R5Z3VnUHhHd2tJZnRsRng1Nl9XazJJX0JvbW91dE04TWdQN3BiQW9xbzBOLVRMcV9JX3pEMFE0cUxxLWhmcXE?oc=5",
+      "publisher": "Business Wire",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "monetary_economy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:30:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 22.0,
+      "hypothesis_paths_not_verified": [
+        "us_jp_rate_differential",
+        "treasury_yields",
+        "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Palo Alto Networks to Announce Fiscal First Quarter 2027 Financial Results on Wednesday, November 18, 2026 - Moomoo",
+      "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxOdXM1dmZHR3REVGhTYnlKdW4wZTQ0T0d3ZzZrVUFXUVFJSDRqams2WExFbTB4akp5RzMxUFE2XzVXU0hodFNYbzhuaFhGdmJOSFZ5MGRablBLMWNhbTNuM2hBLThOREVMMDYxMDVjNmwydGVjQmRnRWhVdWJyY21yNnhIV09WYW94N3lWSjZwQ0VqMTZSRkhKX1Roc2wxZjVQbGtrMHRUalZFXy1WQXVB?oc=5",
+      "publisher": "Moomoo",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "global_risks",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:30:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 22.0,
+      "hypothesis_paths_not_verified": [
+        "risk_appetite",
+        "capital_flows",
+        "us_jp_yields"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Melania Trump to host Russia, Ukraine representatives at White House - The Mighty 790 KFGO",
+      "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNcVlFUlVkZ3hSTlVLNUUtS1hFMmVYTnN6N181WFBmNS1neGs3LUsyRXZiUWxLSndxOWJUcFBvN1F2Mlc4S2ZydnRqaXpPcFRrNzVkSzdWNTh1RVFFRE9DcmdkaTU0em1YNnBVZFNkZUtGZGVTcHlfeHkyZDdHcTEyMHVpZExSQmtXc2xzbGUtTlQzTGh0Q3pUaDBmTGs?oc=5",
+      "publisher": "The Mighty 790 KFGO",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "us_government",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:29:23+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.94,
+      "hypothesis_paths_not_verified": [
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Trump Says U.S. Will End Annual Aid to Israel by Year's End - Haaretz",
+      "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxPTUEtNFVUOTkyN3NvUnM0TEozTjRTU1gwbXVSaV91Zkhzemd0V05zbGJDUWJRdWlQTnM0T21Ya3ZsUmRMTzZuYmhFVDhYa180OUlPaWVqNUdfTThmTTRLZUliazd3OEtyTklYa2JPVzdKTjV5cmZFTGpTTkhCR1dWRURGNXBiSWhMc0ZmQmw3LUhuVEJDWHFHbGVIQ2VMcUpXWFRqdkp4b3VrRmg4M2ZTU3M2V3Vwc0toM0E1bVJLQnB4SUZxcGF2clNDTWZjdjhWVW1XYUtBdnRrZHNSQnI3RjQtdGhzSWxkWE4xTzhB?oc=5",
+      "publisher": "Haaretz",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:29:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.9,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Iran commander sets out five conditions for regional security - Al Jazeera",
+      "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPQXFkQnJ5U3l2WU9GN09nSWlKaUZ0ZVRzWlNpZXBOMm4xN1pvYUpnNG5NU2ZBeFV3dTRiM1Q5MDBBTnZpdndVdXcxM3E4LUVwRWJmUWg0SXlZQUpXamFUdUdNNXZwbmVTYnBrSVA3RVZsSmRybGtZYzJ5WWZLWTBaUkdON0RvaEhhRFJwUnoyYUNZVFhJZWJWM0d6V3hvMU9RM3NVWNIBqgFBVV95cUxQbk0wZW9zWTVydEhvTUJBVFBCcFNJMUZNWk5qQWw0UkV5RjVpbDlldXVQSjYtUFdHY25rTlNFU3VfNm9zaFFQLXExRjFialZ2eWRmWXB1QXhSN3FVYTYwRm1lRDhIckV1N19QbFRiZTlqRDRsNFRFdjVnYWFxUlk5LW5aWF96SW80RDF0WHFtX3VkeEZSUDFsVDh6Uk85MmJjMnNLU05xU2Q3QQ?oc=5",
+      "publisher": "Al Jazeera",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:28:57+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.89,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Uzbekistan's Inflation Expectations Fall to 8.7% in September - UzDaily.uz",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQMlNDWHg2eE11SU42NlVRVUhBYzNSRGNEYzlVS1dkYVdxUDFFRHUzUmlsOW9VczdYdWMtMTJGOFM3MWNpc3B3TjBFdFdfTklmaFNHWkZZWlF2OGt0UWRxRjZLT0U5SExZUm1TeVk2clhobGFXS1lYOG8yZFpLdFB1M3paVWVaZExNRmtqSVdB?oc=5",
+      "publisher": "UzDaily.uz",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "monetary_economy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:28:45+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.88,
+      "hypothesis_paths_not_verified": [
+        "us_jp_rate_differential",
+        "treasury_yields",
+        "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Agoa: Donald Trump to remove Rwanda and South Africa from US trade deal - BBC",
+      "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE12QWlHTTk4T010X1NOeVFiNmJLR011RDJ4ZTY2UTVMVENCemd5M2FIRWxHUmRnN2Z1M3BVTWVyQThUczQwSmxEMHhzZnpLNURSMXpvOFF4S09YTTQ?oc=5",
+      "publisher": "BBC",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "us_government",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:28:30+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.85,
+      "hypothesis_paths_not_verified": [
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Ninth Circuit wipes out ruling allowing Trump administration to threaten election officials - Democracy Docket",
+      "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxNMnZNZ2EyUXk3bTQ2UloyelpTRGxNWXJ4WklNeFhFZkdFNUR2M0UwdDhSWVNyY2plOC1wSU56VHFGSEN3Y01xWG1jYjhNQThqUUJQMGthSWNrSXY4dmNaRjd1RmVrYVAzbXRQcDAyX2w1MjJKT0NfdFE5bzhYeFFLdC1oTlVLb1k1WFFXOGlKYnVuZ1I3YWwyWDM3bmVyeF94UEMxc19qb0dCQkI4WUZ5NWRuRDFwRTVOQXdKOThrRTI1R21scDBMaktRMGREMWc3RHc?oc=5",
+      "publisher": "Democracy Docket",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "us_government",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:27:34+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.76,
+      "hypothesis_paths_not_verified": [
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Australia's central bank raises interest rates to 18-year high of 4.85% - CNA",
+      "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNMmpJODF6NHBEZ3YyWjljWjFPODJINHFoZHJPZWdhTm1wb1Z1V3F5MnNkeWdNYS1qc2REWmhuLTQxTWM0SEZEeXd5WTcwRVhDc0lIQTc2TmpLSE5sYTN2OFlvS3QyY29pY190TnVrcWFaMHBvMkFCdy12azNBeGg4UThtLWt1czA4aVRrVjdmQ0dTLVdvTnBCb21fTVREZ2N6VFJWZGEzQ0NSaDk2?oc=5",
+      "publisher": "CNA",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "monetary_economy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:27:11+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.72,
+      "hypothesis_paths_not_verified": [
+        "us_jp_rate_differential",
+        "treasury_yields",
+        "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Broadridge Financial Solutions (NYSE:BR) Delivers In-Line Revenue and Adjusted EPS Beat - ChartMill",
+      "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxOdG9xWGg5QmdJUTl1T1JIOGJVck5UOXppVGZnY3YzVGlvTFRkbVA0dWdyN1o0YzRqdEIwQjBCR3hSLUhZWWJCMUw5YTl2NFBIRURjc3ktQmNpRlphYXN1SFdqYjg3eW1CVkpVdWZPN3NndU9jRWxtMFZvYUhWcld6VGljZ3o1Z3daQm5qQTFCclM3QU1PTlFoMGNWYmlfaDNTelBjTTZkek9PblNyc2drUE02TkJxZTBncXNfV1FRcXI4akQzS0pNdEJBYnB5ZWM?oc=5",
+      "publisher": "ChartMill",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "global_risks",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:27:09+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.71,
+      "hypothesis_paths_not_verified": [
+        "risk_appetite",
+        "capital_flows",
+        "us_jp_yields"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Melania Trump to host Russia, Ukraine representatives at White House - Macon Telegraph",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE1YQlhCRE5vMndRMnVjU0hRYlpLWkxHLUtRODc4RDlHSVJqNDNsOHNQVjBtcEszXzFPRVZMRVA2X2NxRkpYUm5jRlg4d1dseHVhMC1UTDN4SDBmVEZoakNyaVU3UmdDREhTNGNPX19VMlo5eEJXaUE?oc=5",
+      "publisher": "Macon Telegraph",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:27:06+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.71,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Qatar sees 'hope' for US-Iran deal as proposals exchanged in real time - Euronews.com",
+      "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxNd0VrWmpOaGRjeDV3b29paXBrbHdGaUg1UkdFaGpScFlFX0Z4cDRoMi1ITTFfTWRqeDFBNlh6eHVjeFF0RW5BcC1WZlR4M292UW5JdmE3elZXcGdLdkp1bEZYMGpfZE9kQ2QzcFRLMlpnb2lCMHpQTXFuN2k1NTNydURyVHVBcjE0cVBrU3BWUDNaamQzSzBBYld2blE3XzZSYTFFaXc0LWczUGIxd3dlN3M1dU1qa0VIRWZMTjNwWm9MZ1p2?oc=5",
+      "publisher": "Euronews.com",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:26:40+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.67,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "EU to host talks on Ukraine with United States and others on Wednesday - Al-Monitor",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNM3VnWHgzYjNGOGEzdUl0QndobUFqcVRTc24xQ1JOV3Q2VDJrSU12SEEtalpZY2x6WUJIa3RmUFNoVG9GcldocHNCVnJxbEt5bXJfTU1RSkJQam00Qk9rZlNuSHI2aldKWXh0QlM1cmdWVDlPaTZZM0Q3VXhlc2Y1d2oyRkJSRDBOWjhDT0hrY1hGYWctZ19CcUtjU3paVS1vVnRv?oc=5",
+      "publisher": "Al-Monitor",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:24:48+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.48,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Supreme Court sends Trump a midterms message with California ballot order - MS NOW",
+      "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQU0l0cUtrbXBMcDNDaTd0ZmdkSUJ5SVh5SHdIMWtVYUxyaEp5NlB4Vkk0NWpYU2J5OFRyLXpPVmdaVVcySjBPeXNOVUt2bFdXV3dmaEZtWFpJYlZZanB6N0Vna0NuRmR6Z0tzYXpWNG1iTmlfQ1I5cjhLRENuR2ZMYWRLVEtHM2laVXJqQno1bkVFTEkxQjdfcGZvanROcFR2UHBNNEgxMDZpdVlBaUpSb3I0VlRjVXVMeFZIZWpwR0NUZkZKelVEQmNB?oc=5",
+      "publisher": "MS NOW",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "us_government",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:24:48+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.48,
+      "hypothesis_paths_not_verified": [
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Fed rate pause raises concerns over costs and global growth - Oman Observer",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQcFRBcC1NSnoxaFFkdFRQZkM5d25iSDVUS19mZjFSclRnLXBPQnhjbnZQcEZsRTJfcVRkdFVFN3RaU3VZNWRqemluMDQtZllrbzh5cjNDdTRxeVgxRkM2dXFueVVYeTJYY2tWeERTZXAtUGY1ZHg1dmgxLXl5MFR2UXhUVnZBN1lZTW9zc0ZaYkdKLVhFeUF6dWJpSGVzMDR0UWtydFZjdUtqd0Z0YzllUzhZdEc4NVFZUlJDWtIBWkFVX3lxTE92QkROSUxxMHJzOXZmNGVxZW02VFVqaUJHSm9QREVWOUNkZjl2MTlfbHNiSzRjRGhHZ3FHU1Q1MmI2UE9GTWpHZExKaWdudWpUc2pBNVZ2a1hTUQ?oc=5",
+      "publisher": "Oman Observer",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "monetary_economy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:24:15+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.43,
+      "hypothesis_paths_not_verified": [
+        "us_jp_rate_differential",
+        "treasury_yields",
+        "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Our Bond converts $15M debt into equity, secures up to $10M investment - TradingView",
+      "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxNM3NQdWQ1OGk3QWtyNTRDcl9iSGpqZ0RMZi1WQVBuWkxyUVZZOV9CNnpFdlBhbm43RUdqM09hei1UVTRvMHprMWt3bVZHcUZEZlFZM0s1ZDVialBlT2pOZEhTTXVYWmMyQnNfdHdJOUdPYlk2TDhjNWpyb0k1VHByRHdkNlZrMENNNjZXZ1hlZ3JHUGJOVm1kbENtaUJpdFZJVVVlVWZhU3Z2UmtZdTdlRkxUTjNDRXRqNzlPUEtoY2NsaGFvcFhCREpn?oc=5",
+      "publisher": "TradingView",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "global_risks",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:23:11+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.32,
+      "hypothesis_paths_not_verified": [
+        "risk_appetite",
+        "capital_flows",
+        "us_jp_yields"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Russia confirms new Ukraine peace talks as Melania Trump prepares to host ceasefire meeting - CNBC",
+      "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxPalFTQUJtQy1ORXE4SmxzX1hBNVVXWE1FNFhhZUFBMExLT1Z2emNib05OMXlHNlJ3aUk0aGtsU1ZYZ1pRb1oyMkNxZUFQY1AyRWZ5WGU1Y0JINVFZV1VqZUFLMjN0RXU2UXZWeUhseUdCODNyUGUtbHladVg0Q0dtNjUydFdXME1ocW9LLXRRekFad9IBlwFBVV95cUxNcnZ2QVdpVV8wZjNfT3N1M0t0cEt4Sy03dTJCbk1sMDVlTGktY1BOczdIN1E1WFhFdDVFY04wUHB1YnYtVjN4SExtRjZBU1VMRmxldml0VFRzdm4tUnZCQkhoSk9LWnlULWRnbUpxSS1iRVI3Q0NuTjNXeERZNnlZbU5wWktjR1V5SHk2aVdsMncteVNKOGFB?oc=5",
+      "publisher": "CNBC",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:22:25+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.24,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Iran-US deal still out of reach despite heightened diplomatic efforts - アラブニュース",
+      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPaUVHNGJQa0doamp1cDh4N1BkOG4zeEdsTFp2ek9CX2o4VmVIUllIV2w1QlZsZmNQcGNSc1BXaUFFY1RhR1NMem5PZ3RodjdhZUF6MVhUbmtqVE95eDFyalNxTEJaZkxoUS1xaHJkMUQwdEV2NkFsdTF4czJvcFZaUzRmeDJ1LVl1V1VxYVRFMkY1R181MmRtWWsyRDVTckpOZnpBaTJFd0ZadVV6R2d5MFVWZWZqYzQ?oc=5",
+      "publisher": "アラブニュース",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "context_hints",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:22:25+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.24,
+      "hypothesis_paths_not_verified": [],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Adnoc zones in on LNG with XRG’s North West Shelf stake buy - TradeWinds News",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNM01ONV9lSmY2SUlLZkFYRk9BeExaYTUzUFNrdm9CUnl4T0dsMjBiOUxjVEEtU05PNUphRXoxdDdRNDNHZ2p3a3dVd01keXRhancwX0F5YzR0c0oyS1hMMzJlTThZallLQWswLXBHRVVOR0FUV21QakQ3SnRTZEwyYTJsZDFLWWNjZkxuTlFUTDlyOUVfdjdPRHVGSU1VVDVYNmJ6QS1aQ0xhZw?oc=5",
+      "publisher": "TradeWinds News",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "energy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:22:16+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.23,
+      "hypothesis_paths_not_verified": [
+        "crude_oil",
+        "inflation_expectations",
+        "rates_if_verified"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Hungary has no new substantive objections to opening Ukraine’s final negotiation clusters – Kachka - Ukrinform",
+      "url": "https://news.google.com/rss/articles/CBMi6gFBVV95cUxOcldOa1ZpS1hxOEg4cW0zSVBzNWVXd2JBQWo4SnJJQm9xU2RoVV85WVg5SVI2eGc0MjdhaHdKY1J5cmVGcVNfVllJeVR4LXd6eWpXSWp0RmlkZGdqV1Myc3ZpQ1Izd0Q3ZVJlR0hxb1QzSFowZFdDRUItaXJLWVpNc3RrdktfVUc4ZzZ2REVaRDd2SDctVFZBeUN5eDRKY3pkN0pGZ0loRTRKQmVDbW8yd05XdlhCcTkzMGtHZlp0c1FnbHU5b0FUT0JTeGF6cDY5Si1tV21oNWZLTkR6TUNyUkhaR2FFT2cxYWfSAeoBQVVfeXFMTnJXTmtWaUtYcThIOHFtM0lQczVlV3diQUFqOEpySUJvcVNkaFVfOVlYOUlSNnhnNDI3YWh3SmNSeXJlRnFTX1ZZSXlUeC13enlqV0lqdEZpZGRnaldTMnN2aUNSM3dEN2VSZUdIcW9UM0haMGRXQ0VCLWlyS1laTXN0a3ZLX1VHOGc2dkRFWkQ3dkg3LVRWQXlDeXg0SmN6ZDdKRmdJaEU0SkJlQ21vMndOV3ZYQnE5MzBrR2ZadHNRZ2x1OW9BVE9CU3hhenA2OUotbVdtaDVmS05Eek1DclJIWkdhRU9nMWFn?oc=5",
+      "publisher": "Ukrinform",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:22:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.2,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Is the silver bull market over? In this Money Metals clip, Mike Maharrey asks Steve Penny of SilverChartist.com why he remains bullish on silver despite short-term market headwinds. Penny points to record global debt, inflation, and the risk of currency devaluat - LinkedIn",
+      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQYm02R0xsQzh6S1Vib3c4cHAtQVA1TEZnV0VGSmJFQnJMWGptai1MUGhlLXRETHIxdDkyUXo0aVNnTTlqbVZRTGxoN0R6d25LMFpOWkdGQ2h2VExqbHMxNkdLTklFOVo5YmdxQzBQQU9HRjhLdUVKQV9rNWlNZGNyS3pWTG9TcjhyZVUyeWQwZGVzVE0wTUw3a040ZERhT21XRllRODBTN3E4QS1jTkZSMGRDZXM4TWpEc3BF?oc=5",
+      "publisher": "LinkedIn",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "monetary_economy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:22:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.2,
+      "hypothesis_paths_not_verified": [
+        "us_jp_rate_differential",
+        "treasury_yields",
+        "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Tesla China Brushes Off Weak October, Still Up 21% In 2026 - Investor's Business Daily",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOZzBudVFQQVVCR0g4Si1RTm04ZkJ6bFdSNWtwaU8wYWRzWkUxbEJIV2N5ZFA3bU1ZVTVrTk0xZTVKanItT0NaYkVCckJBeGFGRllDZmdEVDN4azkza2FNaXR4cV83X2tyLWFua0ZmamczTjZfLXJzQTkyQkcyZ3oyclU0bw?oc=5",
+      "publisher": "Investor's Business Daily",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "global_risks",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:22:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.2,
+      "hypothesis_paths_not_verified": [
+        "risk_appetite",
+        "capital_flows",
+        "us_jp_yields"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "2026 Shanghai Award Special Session Held in East China's Fuzhou - Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQdW9OVUZSZE1GbEI4VHk2QTNEc3Y5SzhOa3p6M1hVRXprejVuUE5VdjBLUXdRUlJ0TmxVZEFUZkZuWGZZWHpPbWdKdmZCRzFwZHRtaXZDMlhfQTdYUXppZkNzcEVXa3MweVNuNXBrRmxhMWhqX3ZiaG5LQmxEUzFNWnB1Y05JcENfOFg2Vk1oQ1FBU0o3b3BxeWRfZ2lvT2RyWmc?oc=5",
+      "publisher": "Yahoo Finance",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "global_risks",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:22:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.2,
+      "hypothesis_paths_not_verified": [
+        "risk_appetite",
+        "capital_flows",
+        "us_jp_yields"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Reading the signs of war in the Gulf - Semafor",
+      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPTTlWX2I5VlNEaUQ3WHotY2pnMEEyaGJCY3FKU0R0VE9UQmhaSUVwaElBaFhObElrbG9qRlI4ODhrOGxwTlgzMFlpNFczbFBGOXJ4eDEyS3hWRk9aU1VvdWtTNHpQYk9TN3BXLU5INGNMQWJIVjdvblluZ20zM0F1YmEzS21NQQ?oc=5",
+      "publisher": "Semafor",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:21:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.1,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "US carries out 'defensive' strikes on Qeshm Island after Iran downs drone, officials tell 'Post' - The Jerusalem Post",
+      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1zREl5Nkt3VXYwcXU1ZGhSZnZLZEN1dGhqWW83eFo2X05HTlFZYXhraUxoaEdwekw1M29MTWlsT1JxdS1SN2FDR1d4Yy1EdHctTFprX294ekcxVTdwMTIyYWE3QTNkdk5lRkE?oc=5",
+      "publisher": "The Jerusalem Post",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:20:33+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.05,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Russia trying to foment 'instability' in Poland, PM Tusk says - Reuters",
+      "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQOEJlRjhuOGRzMGV2M1dKQkpWWV9ISHR0M1dtMHdUNXQ3QkZiOFlyUWJLa2hmYkN4aW14Snd1ejlzNnVoX21DLWpieGdJdlpmaHpCQ09qRGhYLWFFcEo0OGt1TXktRTF0WTk0QmJrWGxaM0J0bzFnU3FVZ09ZVjZMT2Ffa2U4RXhqb3pGNE8zUmtQZ25uTEtOWFlB?oc=5",
+      "publisher": "Reuters",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:19:44+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 20.97,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Trump DOJ election lawsuits and monitors loom over 2026 midterms - CNBC",
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNZTB1LUxxWkJFZE5VTDNGbnZaWHNNUkc2WFBhN05WZF8xU1MyVG56ZUkwd2JxMUk2a0JZMl9VNENVd2w3STJXOTNZbmxESElTSGxHaUJwdVhsclVsQnNkT2ljbzVqWklnMHdpTG1aWXZEZlkxbUFVT05EMGpLME1OZGliZENTelNqS1F0LV9hVELSAZYBQVVfeXFMTjJyLXNUV0VVWlF3MVJqRi1TTFdOQUhFa1Z6dDVERU5pdU55THJDRmt1ak1Yb1RxanFjc29GNG5Jbkd3U013b0tiRElNTXJTeFprdkZYVk95aThlc0d0Qmoxams0WG5PZ19QLTJnYVlhT3VPM3lWbkJWTlRoNC1MR1ByX1M4TUlLZXNOd3dVSlBzQVpZTG9B?oc=5",
+      "publisher": "CNBC",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "us_government",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:18:39+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 20.87,
+      "hypothesis_paths_not_verified": [
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Bulgarian inflation rises to five-month high - Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOaVRsVGRZaGlqRFNsTkZXdzl5cnNybXVXLXg3dDNqVW0zWGhUb2N6U1AxZFVhenhUM3k3U2p4UlB5ajVfNkgzRzdFdHVVbnFDTmlOZHp2VUZMQ1RwVjFPd1gxQ3NYdUg0Y0g5RXhFNW5nNVdqalFBOGFOMy1pM3NwdHdKdWQxM0F5anlPcklvdnlod0VNYUZ6QXhR?oc=5",
+      "publisher": "Yahoo Finance",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "monetary_economy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:18:34+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 20.86,
+      "hypothesis_paths_not_verified": [
+        "us_jp_rate_differential",
+        "treasury_yields",
+        "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Primark owner cautious over inflation and consumer confidence - Irvine Times",
+      "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxNbk1JbmE1VnFLLXU3dXRxdW1MS1JFal9FU3RtS1B0djlmb0Vza3NnQWg5NWZlYkVOTDNqOVRGc054V1pqQTlwS1RWYXFXS3plUGJScF9ac1ZBbnBSVXp2UVphVjVrTGppa2FQaHhqalBYOF9SMWxqeXhzWkJuWWhNSmZrZU85SmZTS1VZNkw4a2tqejQtclROSTYtQjA0Y1BXM2Q2c1VpYw?oc=5",
+      "publisher": "Irvine Times",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "monetary_economy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:18:27+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 20.84,
+      "hypothesis_paths_not_verified": [
+        "us_jp_rate_differential",
+        "treasury_yields",
+        "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Trump's Justice Dept identifies where US election monitors will be in the 50 states - Reuters",
+      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxPbGRoZ2w1TlIydE5odC15MjNOMlpTV3hMcFRwaDBPbmFVUzRBUkp4RXVpUnl3MHZuZmhVVFhXVDRkSFl4ZmUzVWsxczFwRHMzNU43WUhPbWlZTWUyTE1lQ3VzWko2SDBzLUMxc213T3ppaHlfcjl4MVdCNFY2TkZYWnJ2U1VWek9SckwzaG1zTXQwdDZTUmk3blZsQVFqMVdPN3Y0N05rOWU0MFJRc2xER25jcDBUeHp6Unhsd3JDLTJGekRjcTN3?oc=5",
+      "publisher": "Reuters",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "us_government",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:18:24+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 20.84,
+      "hypothesis_paths_not_verified": [
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Trump, ranting and raving on Fox & Friends, lies that \"the inflation is solved\" and says, \"everything is going good\" - X",
+      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1KN094aFYwOHJNSFRySWVpUzNZbGo1NFd3SHc5OXFNR01YOENBRmZ0bG0zcVFyempjRkdmdWJnTXh0OHpDelBEYng2RWR5bFRqbU9QbzhhcG5pRkRfbHNVM1JLYjBFVWM?oc=5",
+      "publisher": "X",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "monetary_economy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:18:14+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 20.82,
+      "hypothesis_paths_not_verified": [
+        "us_jp_rate_differential",
+        "treasury_yields",
+        "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Russian Airstrike Kills 31 at Ukraine Aid Center - WSJ",
+      "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPWVVZQmZyLVgxZVNxOFJ4dllYMEZqNS1WLUtUTHlTZGJiTnVQNm9YZGxCbXBDUTdFODdUREhBcm1Da2kxY1ZYNmhwenlmNXdVbDd1cFA4SnVJVDNFTmFVZGtkRm9uaGJLdVo2UEZfdmRWTlhBLUM1bUxwSnBHUnpMczdJNkx0NHFKLV9J?oc=5",
+      "publisher": "WSJ",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:17:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 20.7,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Oil prices climb after U.S. strikes Iran's Qeshm Island in Strait of Hormuz - Quartz",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBHSVdXVG93d3B0ZDNkOXltbUZFRWpnZ1dubi05YmFJQVN4WTN0dmRrTFdjb0EwWks1S3VwTFVSbVRSVzktMUJQVElJMWxSZXZrS0Fjdlc0UVkyU1lYLUpDYVA0MmVvVlhkRTdhaG5aTXdNNUUzZUE?oc=5",
+      "publisher": "Quartz",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "energy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:16:49+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 20.68,
+      "hypothesis_paths_not_verified": [
+        "crude_oil",
+        "inflation_expectations",
+        "rates_if_verified"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "ADNOC Greenlights Abu Dhabi Upstream Gas Project - Rigzone",
+      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxOUkpYQXN5YXRKb2lNWUdSUzF4eWl5d3lLdWlrd2dNUEpiLURwSGNEcHBHM3VvLVo3NFEyZDY4bHhPZWlwbXBLREtYMWhJWGZnOHRPbWIwYUloQmUwZzBhZHlBRmRMNXR0LWhrd25aNUpENktKYkl0RzlNXzVBLVg1cHN2QmxNejRNZXI2eTVHNEdTYU5nS2FRSHl1Rm9YNXJibmdKRW56dng?oc=5",
+      "publisher": "Rigzone",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "energy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:16:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 20.6,
+      "hypothesis_paths_not_verified": [
+        "crude_oil",
+        "inflation_expectations",
+        "rates_if_verified"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Marathon beats quarterly estimates, to sell two refineries to CVR Energy - Reuters",
+      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQYk1jSlk5alhjdDdoMVY1U240WngyaDYwVGhJWUtKX2tmdDBaTXJ5MXlCaGZ5VVJjRTNRZE9nWHo2UkdjbXlDT0h6RE0tNTJFZlYxT2RRN1M5TTJTS2hUV25nMnRUbzNBeGhlalI0bjFIejktLUkwZ3QtLThGU1g1R3pnYkhjVHk0Q2VHb2tjNHFZT0xNWC1zRWhrOG9zWnFCaVJYQm1KZkhKTFhYMlVuMTFuVmtLR3VM?oc=5",
+      "publisher": "Reuters",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "energy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:15:49+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 20.58,
+      "hypothesis_paths_not_verified": [
+        "crude_oil",
+        "inflation_expectations",
+        "rates_if_verified"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Oil prices rebound after U.S. attacks Iran - Transport Topics",
+      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9ROS1aQnZucFVLMXNTMDhBTWVoYVVNMjNERGJiTjZGTmdvV0o3UlAxa25ON2RLY1BsQjNDTURDbnN2MTBMQkptT3l6YUxpcDlYQzBWeGEwQk1aUm5MZmFKVEhoUElWT2s2a2c?oc=5",
+      "publisher": "Transport Topics",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:15:28+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 20.55,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Trump’s troubles with Iran could open the door to China - The Guardian",
+      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNb0lWRVpoU2dBYjh2QzBRSWd2NS1vd3FleTM4VWFwMkh3SmtsWDVCR0tuQUNpNElWLTZqeHdCcjJDc29qREd3Z2dBMllxSjlFVGd3QnhETVRWeXFodGgyYkYxc2Y2a0x5MHBIMzZRdlJ1cW1BeGtzX3VFUFdHbXdyWGk3ZmVTR05qdjloeHhQY1ZGSmRNYWJkU2FDVzZ3Zw?oc=5",
+      "publisher": "The Guardian",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:15:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:48:25+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 20.5,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    }
+  ],
+  "totals": {
+    "raw_results": 635,
+    "in_window_unique": 177,
+    "timestamp_before_move": 137,
+    "timestamp_after_move": 40
+  },
+  "market_crosschecks": {
+    "oil": "NOT_FETCHED",
+    "us_2y_yield": "NOT_FETCHED",
+    "us_10y_yield": "NOT_FETCHED",
+    "dxy": "NOT_FETCHED",
+    "sp500_futures": "NOT_FETCHED"
+  },
+  "confirmed_catalyst": null,
+  "request_id": "world-news-catalyst-20261103-2230-v1",
+  "price_context": {
+    "status": "OBSERVED",
+    "move_at_jst": "2026-11-03T22:30:00+09:00",
+    "price_type": "OHLC_BID_ASK_MID_UNSPECIFIED",
+    "pre_move_close": 158.21199,
+    "first_30min_low": 157.96416,
+    "first_30min_high": 158.1993,
+    "up_pips": -1.269,
+    "down_pips": 24.783
+  }
+}

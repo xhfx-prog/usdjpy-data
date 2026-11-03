@@ -1,5 +1,5 @@
 {
-  "request_id": "validate-multitimeframe-20261104-2026-11-03T23:03:15.343Z",
+  "request_id": "validate-timeframe-fix-20261104-2026-11-03T23:04:20.153Z",
   "requested_by": "chatgpt",
-  "reason": "Regression validation for independent hierarchical timeframe market structure"
+  "reason": "Regression rerun after separating higher-timeframe trend from local rejection"
 }

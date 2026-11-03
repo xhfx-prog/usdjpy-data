@@ -358,6 +358,50 @@ def session_info(asof, minute):
             "weekday_jst":asof.strftime("%A"),"session_effect_probabilities":"UNVALIDATED"}
 
 
+
+def session_opening_behavior(minute, asof):
+    """Observe initial moves and their reversal; never infer participant motives."""
+    specs=(("TOKYO_0900",JST,9,0),("TOKYO_FIX_0955",JST,9,55),
+           ("LONDON_0800",LONDON,8,0),("NEW_YORK_0830",NY,8,30),
+           ("NEW_YORK_CASH_0930",NY,9,30))
+    result=[]
+    for label,zone,hh,mm in specs:
+        local=asof.astimezone(zone)
+        event=local.replace(hour=hh,minute=mm,second=0,microsecond=0)
+        start=event.astimezone(JST)
+        elapsed=(asof-start).total_seconds()/60
+        if elapsed<15 or elapsed>90 or event.weekday()>=5:
+            continue
+        before=[b for b in minute if start-timedelta(minutes=20)<=stamp(b["t"])<start]
+        first=[b for b in minute if start<=stamp(b["t"])<start+timedelta(minutes=15)]
+        if len(before)<12 or len(first)<12:
+            continue
+        reference=before[-1]["c"]
+        hi=max(b["h"] for b in first)
+        lo=min(b["l"] for b in first)
+        up=hi-reference
+        down=reference-lo
+        if max(up,down)<0.08:
+            interpretation="NO_LARGE_INITIAL_IMPULSE"
+            move="none"
+        else:
+            move="down" if down>up else "up"
+            if move=="down":
+                interpretation=("INITIAL_DOWN_REJECTED" if minute[-1]["c"]>=reference-0.025
+                                else "INITIAL_DOWN_NOT_FULLY_REVERSED")
+            else:
+                interpretation=("INITIAL_UP_REJECTED" if minute[-1]["c"]<=reference+0.025
+                                else "INITIAL_UP_NOT_FULLY_REVERSED")
+        result.append({"window":label,"window_start_jst":iso(start),
+                       "minutes_since_window":int(elapsed),
+                       "pre_window_close":n(reference),"first_15min_high":n(hi),
+                       "first_15min_low":n(lo),"first_direction":move,
+                       "latest_close":n(minute[-1]["c"]),
+                       "interpretation":interpretation,
+                       "causality":"NOT_ESTABLISHED_FROM_OHLC"})
+    return result
+
+
 def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
     asof=asof.astimezone(JST)
     if not minute:
@@ -440,6 +484,7 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
                             "phase":phase,
                             "directional_bias":bias},
         "session_calendar":session,
+        "session_opening_reversals":session_opening_behavior(minute,asof),
         "fundamentals":{"event_calendar":"UNAVAILABLE_UNLESS_VERIFIED_EVENT_FEED_CONNECTED",
                         "usd_rates":"NOT_CONNECTED",
                         "dxy":"NOT_CONNECTED",

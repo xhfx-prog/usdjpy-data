@@ -1,5 +1,5 @@
 {
-  "request_id": "validate-timeframe-fix-20261104-2026-11-03T23:04:20.153Z",
+  "request_id": "morning-20261104-0858-1793750266088",
   "requested_by": "chatgpt",
-  "reason": "Regression rerun after separating higher-timeframe trend from local rejection"
+  "reason": "Daily 09:00 JST on-demand OHLC refresh and verified analysis"
 }

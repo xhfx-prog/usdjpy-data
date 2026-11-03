@@ -41,6 +41,15 @@ jobs:
           TWELVE_API_KEY: ${{ secrets.TWELVE_API_KEY }}
         run: python fetch_usdjpy.py
 
+      - name: Run analyzer regression tests
+        if: steps.fetch.outcome == 'success'
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+
+      - name: Generate deterministic USDJPY analysis
+        id: analyze
+        if: steps.fetch.outcome == 'success'
+        run: python analyze_usdjpy.py
+
       - name: Record run diagnostics
         if: always()
         env:

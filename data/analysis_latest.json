@@ -1,33 +1,42 @@
 {
   "schema_version": "1.0.0",
-  "generated_at_utc": "2026-11-03T16:58:47+00:00",
-  "analysis_asof_jst": "2026-11-04T01:58:47+09:00",
+  "generated_at_utc": "2026-11-03T17:53:17+00:00",
+  "analysis_asof_jst": "2026-11-04T02:53:17+09:00",
   "instrument": "USD/JPY",
   "data_quality": {
     "usable_for_current_trading": true,
-    "last_confirmed_1min_start_jst": "2026-11-04 01:57:00",
-    "last_close": 158.49888,
+    "last_confirmed_1min_start_jst": "2026-11-04 02:51:00",
+    "last_close": 158.47878,
     "price_type": "OHLC_UNSPECIFIED_BID_ASK_MID",
-    "age_minutes": 1.78882,
+    "age_minutes": 2.28458,
     "stale_threshold_minutes": 10,
-    "source_fetched_at_utc": "2026-11-03T16:58:46.344969+00:00",
+    "source_fetched_at_utc": "2026-11-03T17:53:16.082855+00:00",
     "quality_flags": []
   },
   "timeframes": {
-    "complete_5min": 515,
-    "complete_15min": 171,
-    "complete_1h": 1104,
+    "complete_5min": 526,
+    "complete_15min": 175,
+    "complete_1h": 1105,
     "complete_4h": 267,
     "day_candles": 142,
-    "hourly_atr14": 0.14273,
-    "last_complete_5min": "2026-11-04 01:50:00",
-    "last_complete_1h": "2026-11-04 00:00:00"
+    "hourly_atr14": 0.14574,
+    "last_complete_5min": "2026-11-04 02:45:00",
+    "last_complete_1h": "2026-11-04 01:00:00"
   },
   "market_structure": {
-    "hourly_higher_high_higher_low_pairs_last5": 3,
+    "hourly_higher_high_higher_low_pairs_last5": 2,
     "hourly_lower_high_lower_low_pairs_last5": 0,
-    "prior_hours_rising": true,
-    "upper_stall": null,
+    "prior_hours_rising": false,
+    "upper_stall": {
+      "start": "2026-11-04 01:52:00",
+      "end": "2026-11-04 02:31:00",
+      "ceiling": 158.53513,
+      "near_ceiling_bars": 38,
+      "independent_attempts": 3,
+      "duration_minutes": 39,
+      "subsequent_drop_pips": 5.937,
+      "breakout_confirmed_after": false
+    },
     "sharp_decline_recovery": null,
     "support_resistance": {
       "support": [
@@ -40,7 +49,7 @@
             "5min"
           ],
           "last_reaction": "2026-11-03 21:50:00",
-          "distance_pips": 31.301
+          "distance_pips": 29.291
         },
         {
           "low": 158.10785,
@@ -52,7 +61,7 @@
             "4h"
           ],
           "last_reaction": "2026-10-21 06:00:00",
-          "distance_pips": 38.0315
+          "distance_pips": 36.0215
         },
         {
           "low": 158.03631,
@@ -65,21 +74,23 @@
             "4h"
           ],
           "last_reaction": "2026-10-22 06:00:00",
-          "distance_pips": 44.353
+          "distance_pips": 42.343
         }
       ],
       "resistance": [
         {
           "low": 158.50333,
-          "high": 158.51874,
-          "center": 158.50333,
-          "independent_reactions": 3,
+          "high": 158.53513,
+          "center": 158.51874,
+          "independent_reactions": 4,
           "timeframes": [
+            "15min",
             "1day",
-            "4h"
+            "4h",
+            "5min"
           ],
-          "last_reaction": "2026-10-14 08:00:00",
-          "distance_pips": 0.445
+          "last_reaction": "2026-11-04 02:05:00",
+          "distance_pips": 3.996
         },
         {
           "low": 158.60213,
@@ -93,7 +104,7 @@
             "5min"
           ],
           "last_reaction": "2026-11-04 00:20:00",
-          "distance_pips": 10.406
+          "distance_pips": 12.416
         },
         {
           "low": 158.96242,
@@ -105,7 +116,7 @@
             "4h"
           ],
           "last_reaction": "2026-10-14 20:00:00",
-          "distance_pips": 46.354
+          "distance_pips": 48.364
         }
       ]
     },
@@ -116,22 +127,22 @@
     "observed_sessions": {
       "tokyo": {
         "active": false,
-        "local_time": "2026-11-04T01:58:47+09:00",
+        "local_time": "2026-11-04T02:53:17+09:00",
         "bars": 0,
         "session_high": null,
         "session_low": null
       },
       "london": {
-        "active": true,
-        "local_time": "2026-11-03T16:58:47+00:00",
-        "bars": 538,
-        "session_high": 158.60375,
-        "session_low": 157.8437
+        "active": false,
+        "local_time": "2026-11-03T17:53:17+00:00",
+        "bars": 0,
+        "session_high": null,
+        "session_low": null
       },
       "new_york": {
         "active": true,
-        "local_time": "2026-11-03T11:58:47-05:00",
-        "bars": 238,
+        "local_time": "2026-11-03T12:53:17-05:00",
+        "bars": 292,
         "session_high": 158.60375,
         "session_low": 157.96416
       }
@@ -153,18 +164,18 @@
     "new_short": "NOT_PROPOSED_NO_VERIFIED_MACRO_CONFIRMATION",
     "long": "NO_AUTOMATIC_ENTRY",
     "first_verified_resistance": {
-      "low": 158.60213,
-      "high": 158.60375,
-      "center": 158.60294,
-      "independent_reactions": 3,
+      "low": 158.50333,
+      "high": 158.53513,
+      "center": 158.51874,
+      "independent_reactions": 4,
       "timeframes": [
         "15min",
         "1day",
         "4h",
         "5min"
       ],
-      "last_reaction": "2026-11-04 00:20:00",
-      "distance_pips": 10.406
+      "last_reaction": "2026-11-04 02:05:00",
+      "distance_pips": 3.996
     },
     "first_verified_support": {
       "low": 158.17136,
@@ -175,7 +186,7 @@
         "5min"
       ],
       "last_reaction": "2026-11-03 21:50:00",
-      "distance_pips": 31.301
+      "distance_pips": 29.291
     },
     "prediction_24h": "NOT_CALIBRATED",
     "prediction_72h": "NOT_CALIBRATED",

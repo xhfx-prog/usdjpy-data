@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "scanner": "world_news_first_no_fx_cause_search",
-  "generated_at_utc": "2026-11-03T14:51:03+00:00",
+  "generated_at_utc": "2026-11-03T14:53:29+00:00",
   "move_at_jst": "2026-11-03T22:30:00+09:00",
   "searched_from_jst": "2026-11-03T21:30:00+09:00",
   "searched_to_jst": "2026-11-03T22:45:00+09:00",
@@ -16,32 +16,32 @@
     {
       "source": "GDELT_DOC",
       "topic": "geopolitics",
-      "status": "ok",
-      "returned": 0
+      "status": "error",
+      "error": "HTTP Error 429: Too Many Requests"
     },
     {
       "source": "GDELT_DOC",
       "topic": "us_government",
-      "status": "ok",
-      "returned": 0
+      "status": "error",
+      "error": "HTTP Error 429: Too Many Requests"
     },
     {
       "source": "GDELT_DOC",
       "topic": "energy",
-      "status": "ok",
-      "returned": 0
+      "status": "error",
+      "error": "HTTP Error 429: Too Many Requests"
     },
     {
       "source": "GDELT_DOC",
       "topic": "monetary_economy",
-      "status": "ok",
-      "returned": 0
+      "status": "error",
+      "error": "HTTP Error 429: Too Many Requests"
     },
     {
       "source": "GDELT_DOC",
       "topic": "global_risks",
-      "status": "ok",
-      "returned": 0
+      "status": "error",
+      "error": "HTTP Error 429: Too Many Requests"
     },
     {
       "source": "GDELT_DOC",
@@ -71,7 +71,7 @@
       "source": "GOOGLE_RSS",
       "topic": "monetary_economy",
       "status": "ok",
-      "returned": 100
+      "returned": 95
     },
     {
       "source": "GOOGLE_RSS",
@@ -112,7 +112,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:22:25+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 41.24,
       "hypothesis_paths_not_verified": [
@@ -133,7 +133,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:29:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 38.9,
       "hypothesis_paths_not_verified": [
@@ -154,7 +154,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:51:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 36.1,
       "hypothesis_paths_not_verified": [
@@ -175,7 +175,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:54:32+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 34.45,
       "hypothesis_paths_not_verified": [
@@ -195,7 +195,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:20:33+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 34.05,
       "hypothesis_paths_not_verified": [
@@ -216,7 +216,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:16:49+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 33.68,
       "hypothesis_paths_not_verified": [
@@ -236,7 +236,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:26:40+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 33.67,
       "hypothesis_paths_not_verified": [
@@ -257,30 +257,9 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:15:28+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 33.55,
-      "hypothesis_paths_not_verified": [
-        "oil_supply_risk",
-        "risk_appetite",
-        "safe_haven_yen",
-        "us_rates_possible"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "Oil Prices Rise as Middle East, Ukraine-Russia Conflict Fuel Supply Worries - WSJ",
-      "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPUnhpZVZHQUliUnJIQUJWb3JmbVl6VV9GZ3NJN0M3X0EzZU9pa2N4SEcybGNlakZkcmxyeVNqV0E5LWRxTU1VZUM4Uk9TdGZTS0RJLU1CZ1JVVFBlM0pTcWFPd2U0b1RFTkVyV2oxSzNwZzYzMjBwVmRtbUFvWUowS1RPSEQ3eE1Qa2ZQQVJ5SExsbzVXQTQtNlZYRC1Bbnh2YmpnZ2VGaHZLQlJDRWJRZEZOU2VCZ1hPcENQcTUtYw?oc=5",
-      "publisher": "WSJ",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "geopolitics",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T12:59:49+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 32.98,
       "hypothesis_paths_not_verified": [
         "oil_supply_risk",
         "risk_appetite",
@@ -299,7 +278,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:28:30+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 32.85,
       "hypothesis_paths_not_verified": [
@@ -319,7 +298,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:06:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 31.6,
       "hypothesis_paths_not_verified": [
@@ -339,9 +318,30 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:34:38+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 31,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Russia trying to foment 'instability' in Poland, PM Tusk says - Reuters",
+      "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQOEJlRjhuOGRzMGV2M1dKQkpWWV9ISHR0M1dtMHdUNXQ3QkZiOFlyUWJLa2hmYkN4aW14Snd1ejlzNnVoX21DLWpieGdJdlpmaHpCQ09qRGhYLWFFcEo0OGt1TXktRTF0WTk0QmJrWGxaM0J0bzFnU3FVZ09ZVjZMT2Ffa2U4RXhqb3pGNE8zUmtQZ25uTEtOWFlB?oc=5",
+      "publisher": "Reuters",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:19:44+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 30.97,
       "hypothesis_paths_not_verified": [
         "oil_supply_risk",
         "risk_appetite",
@@ -360,7 +360,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:17:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 30.7,
       "hypothesis_paths_not_verified": [
@@ -381,7 +381,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:05:16+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 30.53,
       "hypothesis_paths_not_verified": [
@@ -401,7 +401,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:45:06+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 30.51,
       "hypothesis_paths_not_verified": [
@@ -421,7 +421,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:24:48+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 30.48,
       "hypothesis_paths_not_verified": [
@@ -429,6 +429,47 @@
         "risk_appetite",
         "safe_haven_yen",
         "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Qatar remains hopeful the US and Iran can reach a deal - Al Jazeera",
+      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQYUFmcHJ4NEVYald5ck91cC1CUFJyZ1I5WjdQUm9XbzBhNFIyYmpZZUFNQVdMWUVCVmdkYmM5V2h5YmhtX2hrcUlDN2t0c3RwSUgyMkpvUmI4VHlaQUhfRG5Ldjd3UURsYWJOMURpQlZLSE1pdlp5a2RKUF9DYTRMbUpDdlFYcVlZalhhUjhpUHhDaWxrSm5OOFpMekZ1RW1yVjh6cDJLdzLSAa4BQVVfeXFMTVJtSXF4MlpUcUdWNHo5Rzg4ckVnZmxBQWc1TXlLVThSaVpYa3FENGZXajM0QXhFbnA5THhiR0tTNDBiYkRwRDZJaDhUcDJ2UlFnVUJDT09Ibjc4VlhfckVoOXFKM0g5VWJnWE1DUi1SenRXWjJBNzFRX1ZFRlpBRjRyVjVScGRWdm02MHlpamcxczB4X3Jwb0dLangtWV9BcFJ5cFhoZHNnb0hIRlR3?oc=5",
+      "publisher": "Al Jazeera",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "context_hints",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:11:35+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 30.16,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "How a Democrat Win Could Frustrate Trump’s Energy Agenda - Bloomberg",
+      "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxNYmFhNTVfbFFNRWdQX0ZycUc1bzNlaTlLaG9XTTNyWVZRUURjTERHU1dvYUREcVFZTVVTcnZWOE11eHFFbjkzQy1oeVBwdUFZVkNvNnZVTFk4X3R2bVYxZllneTU0VmFlR2RxcWRvblBLSzU3eEd4eWlyeTAwdUNJWmprNlB2UGFZaWRPS2daQ1puNkptMkJINE14Q2lHZnoxbFNCVUFJM2xvaURJZjJMV0VfZTBBYVVWQnM4bndxaDQ1SlhMQmt3MzJGNA?oc=5",
+      "publisher": "Bloomberg",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "us_government",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:00:07+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 30.01,
+      "hypothesis_paths_not_verified": [
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
       ],
       "trigger_confirmed": false
     },
@@ -442,7 +483,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:15:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 29.5,
       "hypothesis_paths_not_verified": [
@@ -463,7 +504,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:11:28+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 29.15,
       "hypothesis_paths_not_verified": [
@@ -475,18 +516,18 @@
       "trigger_confirmed": false
     },
     {
-      "title": "Trump's Justice Dept identifies where US election monitors will be in the 50 states - Reuters",
-      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxPbGRoZ2w1TlIydE5odC15MjNOMlpTV3hMcFRwaDBPbmFVUzRBUkp4RXVpUnl3MHZuZmhVVFhXVDRkSFl4ZmUzVWsxczFwRHMzNU43WUhPbWlZTWUyTE1lQ3VzWko2SDBzLUMxc213T3ppaHlfcjl4MVdCNFY2TkZYWnJ2U1VWek9SckwzaG1zTXQwdDZTUmk3blZsQVFqMVdPN3Y0N05rOWU0MFJRc2xER25jcDBUeHp6Unhsd3JDLTJGekRjcTN3?oc=5",
-      "publisher": "Reuters",
+      "title": "Melania Trump to host Russia, Ukraine representatives at White House - Macon Telegraph",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE1YQlhCRE5vMndRMnVjU0hRYlpLWkxHLUtRODc4RDlHSVJqNDNsOHNQVjBtcEszXzFPRVZMRVA2X2NxRkpYUm5jRlg4d1dseHVhMC1UTDN4SDBmVEZoakNyaVU3UmdDREhTNGNPX19VMlo5eEJXaUE?oc=5",
+      "publisher": "Macon Telegraph",
       "domain": "news.google.com",
       "source": "GOOGLE_RSS",
       "channel": "us_government",
       "language": "en",
-      "source_timestamp_utc": "2026-11-03T13:18:24+00:00",
+      "source_timestamp_utc": "2026-11-03T13:27:06+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 28.84,
+      "priority_score_not_causal_confidence": 28.71,
       "hypothesis_paths_not_verified": [
         "trade_growth_inflation",
         "us_rates_possible",
@@ -504,13 +545,34 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:15:49+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 28.58,
       "hypothesis_paths_not_verified": [
         "crude_oil",
         "inflation_expectations",
         "rates_if_verified"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Melania Trump to Host Russia, Ukraine Representatives at White House - U.S. News & World Report",
+      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQSUhVUklJTmFrVHJ6c2ZoTFlOd0FfM2l5dk03YV9xLXhjSEJoODdVeXJkdEtZU0ZpR1o1VmJDbENIcjBZLXlGN2xSenY5dC0tZVNpSjBueUpsMV9uRzFJLTJyZFZnRm1YVTI1YjU5ZFFxaWhBYjBDQVg2aml4QjNLT1N0cjFlZEgwbGZvSm9nYW1XcXNDcUJlNXFGU3hja1ZoTDVSaGNrcG5ic0VJRlRucUhfUXd3RDB4VHh3RTdn?oc=5",
+      "publisher": "U.S. News & World Report",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "geopolitics",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:02:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 28.2,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
       ],
       "trigger_confirmed": false
     },
@@ -524,9 +586,29 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:11:28+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 28.15,
+      "hypothesis_paths_not_verified": [
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Greenland lawmakers set to ratify Trump security deal - 1470 & 100.3 WMBD",
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxONkpyekgzbVhIVF9pMEZhZTdEMjFJbjdIb1FWVDBycUJ2eGtKdEhVYkFBOXdpNDQ0Y1kzSk0yLVltOERDdFZGY21KNUl1aVI1dFpDeG5FNGwzX3dBcUw4NkhoRlh6T2xDNGVLNGFiSVZIYTVyaFdOOUhWLVpGOVJUcDM0RHE5OTlMcjM4cDEtVlA?oc=5",
+      "publisher": "1470 & 100.3 WMBD",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "us_government",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:29:31+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 27.95,
       "hypothesis_paths_not_verified": [
         "trade_growth_inflation",
         "us_rates_possible",
@@ -544,7 +626,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:58:06+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 27.81,
       "hypothesis_paths_not_verified": [
@@ -565,7 +647,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:27:11+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 27.72,
       "hypothesis_paths_not_verified": [
@@ -585,7 +667,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:47:04+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 27.71,
       "hypothesis_paths_not_verified": [
@@ -593,6 +675,26 @@
         "risk_appetite",
         "safe_haven_yen",
         "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Watch Trump’s Midterm Election Test Begins - Bloomberg",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxOdmJrQkN6MjV1TzFnUGRaSHNjTXhfN0x6NmE3dFV5bDlkMTlXZXVJQUVhNnJpT3FNeWFyZW9QXzZkUXVoS25jaDFER3JvcVlPbDhmZnhSaF9RZnl5N21HYnFtZ1hic2JBdVM4MVVMeGl4aGgwY0xHLXpCZi03MzZScw?oc=5",
+      "publisher": "Bloomberg",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "context_hints",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:06:57+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 27.7,
+      "hypothesis_paths_not_verified": [
+        "risk_appetite",
+        "capital_flows",
+        "us_jp_yields"
       ],
       "trigger_confirmed": false
     },
@@ -606,7 +708,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:45:51+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 27.59,
       "hypothesis_paths_not_verified": [
@@ -626,7 +728,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:55:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 27.5,
       "hypothesis_paths_not_verified": [
@@ -638,22 +740,43 @@
       "trigger_confirmed": false
     },
     {
-      "title": "Indian Refiner BPCL Buys U.S. WTI Crude Oil Cargo - Crude Oil Prices Today | OilPrice.com",
-      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQUzJsV1pSWDhvOEFYcWFDOFJ1NTRuaVU4WmpGRUJKT05Qc0ZTQWJHN1N5Z2RkcGhBUmdTeDhvRUZ0NFBzemlHSk9ObkFCMFNzdzdSVC1nOVhEM0lBMGRpSnBRZXplWDQ1SDJWVWkxX0swR2trR0RVRGFLbk1YcE1oY2xQSGFpY2FRTFFRcTFsY2NXRnJ4cExqSkZneWdjYjJEelJ4N2Zn0gGrAUFVX3lxTE9hTGhiWXk2TWs4YjE2OG1WeFZGOEJEN3UyaU9RaHVSVUVmc0c2SGxuZ0pmeXZ3SldDUEF1YW5KYzhGbE9vNHVkMFhONjhOWjdVZkxZbFZELXpWY2hKSE5pQlEycU4zSGxVR1A5THVDejhZbWt2VnZDS2lpTmE5anVnb1puU0hSb3dmSHhLZ3pqbmhpZjRpUWpoeEtLaURfUF9qMEdsYXpvT2V0QQ?oc=5",
-      "publisher": "Crude Oil Prices Today | OilPrice.com",
+      "title": "Opinion | Trump’s Failed Lawsuit Lesson - WSJ",
+      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE83ODVhek5aZktqTGZ3R3dwLVhrY2x4SGVQLVhuUzhsSG0zSjFac2l6c3p5b3ExcU11U0pQZ21pT0o3Y2piblJGbTRCRDlDYVNyOVVPNXI1amdSdXN0NTNGZzJFWUx4LUZtR0ZFempCX2NvMkk?oc=5",
+      "publisher": "WSJ",
       "domain": "news.google.com",
       "source": "GOOGLE_RSS",
-      "channel": "energy",
+      "channel": "us_government",
       "language": "en",
-      "source_timestamp_utc": "2026-11-03T13:30:00+00:00",
+      "source_timestamp_utc": "2026-11-03T13:02:55+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 27.0,
+      "priority_score_not_causal_confidence": 27.29,
       "hypothesis_paths_not_verified": [
-        "crude_oil",
-        "inflation_expectations",
-        "rates_if_verified"
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Iran-US deal still out of reach despite heightened diplomatic efforts - アラブニュース",
+      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPaUVHNGJQa0doamp1cDh4N1BkOG4zeEdsTFp2ek9CX2o4VmVIUllIV2w1QlZsZmNQcGNSc1BXaUFFY1RhR1NMem5PZ3RodjdhZUF6MVhUbmtqVE95eDFyalNxTEJaZkxoUS1xaHJkMUQwdEV2NkFsdTF4czJvcFZaUzRmeDJ1LVl1V1VxYVRFMkY1R181MmRtWWsyRDVTckpOZnpBaTJFd0ZadVV6R2d5MFVWZWZqYzQ?oc=5",
+      "publisher": "アラブニュース",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "context_hints",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:22:25+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 27.24,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
       ],
       "trigger_confirmed": false
     },
@@ -667,9 +790,30 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:28:57+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 26.89,
+      "hypothesis_paths_not_verified": [
+        "oil_supply_risk",
+        "risk_appetite",
+        "safe_haven_yen",
+        "us_rates_possible"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "There Must Bring a Reckoning Over Trump’s Iran War - RealClearWorld",
+      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPZDVLRnZHOUdxVnNsbzFhWnFZdndfOXlVUVVmOEM3RndURXNPQ003UTJNY3NUUDFIdjhVb1JvNEc0MkhrOHAzc1RacWQzejVGaExEMUlaTDlVTzBLdmVNSHB2SXl4eXpuNzkwRUFudWJQMkNNOHYxbl9oQWZWWHFUZ3BWNXpIZ3pKaWszeWFKbUtWdWk5S0F3djJ2alg4MHZFOVo1bXVYNU5zdG5oVjFxZ3RfTQ?oc=5",
+      "publisher": "RealClearWorld",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "context_hints",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:08:11+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 26.82,
       "hypothesis_paths_not_verified": [
         "oil_supply_risk",
         "risk_appetite",
@@ -688,7 +832,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:54:16+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 26.43,
       "hypothesis_paths_not_verified": [
@@ -708,7 +852,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:10:43+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 26.07,
       "hypothesis_paths_not_verified": [
@@ -728,13 +872,33 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:35:34+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 26,
       "hypothesis_paths_not_verified": [
         "crude_oil",
         "inflation_expectations",
         "rates_if_verified"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Can US midterm election really change Trump's Iran policy? - DW.com",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxNQmgwSUJGV0xTUlgxLTJJcmpxMXpCdk1JeGI5Z2JLVGwtdjlDMEtzdW5YaFVqMHpIQ0ZzM3NSQWhCR2tURTVISU9GSGQ5blMzUlo4aldxWkM0WHFLYmQwWWpheVdSc09PcUJTNWJCLXFaRko0Yzh5OVRSN2VyRmJoOXNzZ3BvV0N5Rm9hZThkXzl6OEnSAZMBQVVfeXFMUHo0czc0Z2lpNGd1TnAxWE1EUmo1ZVJadVRKN2ZHNmJuQlhRb0oxY3R4TUYzNjhxTkJRaHBId080c25Zb3FUdldsUDlFTVEyTW5DeG1JQnI3UUpIWUtTekxxNDhhNDJBVWIyb0VUR1ctTFJ3UVNLMldwanNVbXdrNVRfTnAySVZfMmVMSUFGMlJhSnhV?oc=5",
+      "publisher": "DW.com",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "us_government",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T12:59:07+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 25.91,
+      "hypothesis_paths_not_verified": [
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
       ],
       "trigger_confirmed": false
     },
@@ -748,7 +912,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:44:36+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 25.46,
       "hypothesis_paths_not_verified": [
@@ -768,9 +932,49 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:04:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 25.4,
+      "hypothesis_paths_not_verified": [
+        "us_jp_rate_differential",
+        "treasury_yields",
+        "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "PBOC pledges support for stocks as China’s market slide defies rescue efforts - South China Morning Post",
+      "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxPcGZ6QUtnMXVxQ19BUjQ3cUltYkpIcVUzUGdOZjh6Y3dKc1BROVFuZFd3S3U0Ri1Kb05Td3RQV0VkMHJ2ZHYzVGh1UWFYMHdlU1BHdnVPaWcwLV9vclpuWGQ4RDlpNzkya0NubVdrNmR1cDdPYVNRZUswWF9TQV9kc2t4SFdxZDVYeEJYMHgyTHQweVJjVzNnSVNjSzFwc3ZscGNiMlk2RTBJcEhId3B6dEcyQ3ZYeWNGYW5nNk1ZRlJjOVBCR2ZtZkNR?oc=5",
+      "publisher": "South China Morning Post",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "global_risks",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T12:50:16+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 25.03,
+      "hypothesis_paths_not_verified": [
+        "risk_appetite",
+        "capital_flows",
+        "us_jp_yields"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Brazil economists raise inflation, rate forecasts after Lula reelection - Idaho Statesman",
+      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPNWtXMlNNZ1R5X2o4dnpSa0kwZXZGNlZSaUl0dnltRDhCY3RqcXE3YlNQOWVhb0F3WFJ6MHRmMkpNeDN0QktTMmRaNzRFX3BxZG93WGhJT21oQjZyNFpYbWJOWFV5X1FSYnc3SGFSQWJIVGZjdnMxMXZFWndRbzJ4dkZES0NuQQ?oc=5",
+      "publisher": "Idaho Statesman",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "monetary_economy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T12:37:06+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 25,
       "hypothesis_paths_not_verified": [
         "us_jp_rate_differential",
         "treasury_yields",
@@ -788,7 +992,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:30:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 25,
       "hypothesis_paths_not_verified": [
@@ -808,13 +1012,33 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:28:45+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 24.88,
       "hypothesis_paths_not_verified": [
         "us_jp_rate_differential",
         "treasury_yields",
         "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Iran unveils huge billboard with threat against Trump’s life - アラブニュース",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQV211TDJrbkNGdXFZUHRlcUZ0U3NaVVhmWW0wMFg5LTZoMEVHLWVfcEtxX051T3NrWE1MaDFwUjMyUXQ3R1FrWjBOakIwWkFKX2w1Y3dIbHYxRTNWU0RQSTZJbWRfNFlCSFV0M0ZtV1VRdHAyNTY0Yk42MWdvTWJORlJ5R1N1c2FlNFJUSlNBcmFIeVN1U2JsLWgwRzYxYUc5RHkyMUI0MVZWdw?oc=5",
+      "publisher": "アラブニュース",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "us_government",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T12:48:27+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 24.84,
+      "hypothesis_paths_not_verified": [
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
       ],
       "trigger_confirmed": false
     },
@@ -828,33 +1052,13 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:27:34+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 24.76,
       "hypothesis_paths_not_verified": [
         "trade_growth_inflation",
         "us_rates_possible",
         "risk_appetite"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "ECB holds rates at 2.5% as Lagarde announces early exit with inflation near double the target - Yahoo Finance Singapore",
-      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTFBSanpZMVRtdDZTUkh0OHN6c2x4aFI2dXh2cEZ0WnctRTRXUF9ldWhDd3dCaEFSWVhOc3dfOFlzWXpWR0d5elVQMzdGdHVTS1FtWHE0cU1ZZXBaT1YzOHlBQzRhRklTc2cwMGVKcVN3MEdHNldXR1Vv?oc=5",
-      "publisher": "Yahoo Finance Singapore",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "monetary_economy",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T13:25:13+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 24.52,
-      "hypothesis_paths_not_verified": [
-        "us_jp_rate_differential",
-        "treasury_yields",
-        "policy_expectations"
       ],
       "trigger_confirmed": false
     },
@@ -868,7 +1072,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:24:48+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 24.48,
       "hypothesis_paths_not_verified": [
@@ -888,7 +1092,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:22:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 24.2,
       "hypothesis_paths_not_verified": [
@@ -908,7 +1112,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:22:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 24.2,
       "hypothesis_paths_not_verified": [
@@ -928,7 +1132,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:22:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 24.2,
       "hypothesis_paths_not_verified": [
@@ -948,7 +1152,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:00:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 24.0,
       "hypothesis_paths_not_verified": [
@@ -969,7 +1173,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:18:39+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 23.87,
       "hypothesis_paths_not_verified": [
@@ -989,29 +1193,9 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:18:34+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 23.86,
-      "hypothesis_paths_not_verified": [
-        "us_jp_rate_differential",
-        "treasury_yields",
-        "policy_expectations"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "Primark owner cautious over inflation and consumer confidence - Irvine Times",
-      "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxNbk1JbmE1VnFLLXU3dXRxdW1MS1JFal9FU3RtS1B0djlmb0Vza3NnQWg5NWZlYkVOTDNqOVRGc054V1pqQTlwS1RWYXFXS3plUGJScF9ac1ZBbnBSVXp2UVphVjVrTGppa2FQaHhqalBYOF9SMWxqeXhzWkJuWWhNSmZrZU85SmZTS1VZNkw4a2tqejQtclROSTYtQjA0Y1BXM2Q2c1VpYw?oc=5",
-      "publisher": "Irvine Times",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "monetary_economy",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T13:18:27+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 23.84,
       "hypothesis_paths_not_verified": [
         "us_jp_rate_differential",
         "treasury_yields",
@@ -1029,7 +1213,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:18:14+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 23.82,
       "hypothesis_paths_not_verified": [
@@ -1040,22 +1224,42 @@
       "trigger_confirmed": false
     },
     {
-      "title": "Kejriwal Announces 'Margay Mukti Yatra' Against Inflation in Goa from Nov 26 - Deccan Chronicle",
-      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxOcmpOSWhlQ19PYXNJZ1FIVm9XQ0IxQmNkT0tHR0MwMERQbUFjQXplTTZzZFp3OVQ3SVJXZm1PVlhTWXZESDBFWV9DZm9UQ3oxMXZhR09kRU1lMmRrd1NsbWxOWG5lcXMxNXotMUJzcXpVV3NWbGkwZmo5M1dCYUw2Q1ppa0sxVFJLeWROYmhZbmFLbHhjM2RBalNYY0lNMDlKVXowN0pIbm5ITlBSLU1ibXFBdnlXeDJ6Zmpyb1FWb2tiQ03SAcMBQVVfeXFMTnJqTkloZUNfT2FzSWdRSFZvV0NCMUJjZE9LR0dDMDBEUG1BY0F6ZU02c2RadzlUN0lSV2ZtT1ZYU1l2REgwRVlfQ2ZvVEN6MTF2YUdPZEVNZTJka3dTbG1sTlhuZXFzMTV6LTFCc3F6VVdzVmxpMGZqOTNXQmFMNkNaaWtLMVRSS3lkTmJoWW5hS2x4YzNkQWpTWGNJTTA5SlV6MDdKSG5uSE5QUi1NYm1xQXZ5V3gyemZqcm9RVm9rYkNN?oc=5",
-      "publisher": "Deccan Chronicle",
+      "title": "India's Medical Inflation Likely To Moderate To 10.1 Pc In 2027: Report - Menafn",
+      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxOVlVqQURTekcwMTVLVlpBa3pIRVpjUHhlWW5Ua0lrQWxxZTBzajl5Y3F4SnFiVEpmS0s5UlpPTVZtYUNLdUdJNk9QZHVLZFBWLWt0cGNLN2pkNnJLazdUTy01dGI4ODhYNkQtVmhjdGhZTklvWHhaTHRvSFhqc0lIU1Yzb1FaWXdxQjNQTEJPaHpwY0FDMHhZSkFnaHNoa2M?oc=5",
+      "publisher": "Menafn",
       "domain": "news.google.com",
       "source": "GOOGLE_RSS",
       "channel": "monetary_economy",
       "language": "en",
-      "source_timestamp_utc": "2026-11-03T13:12:47+00:00",
+      "source_timestamp_utc": "2026-11-03T13:15:33+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 23.28,
+      "priority_score_not_causal_confidence": 23.55,
       "hypothesis_paths_not_verified": [
         "us_jp_rate_differential",
         "treasury_yields",
         "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "China’s Baidu launches AI model simulating road environment for robotaxis - WTVB",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxNNlkxYmZsdkRrNldoVUw2eGpGLVhlNWdXQV9GTlFJQW1MakV6TzU0dmFReU1VS0JZTDhpT2gwYzVQTlJ5OUVfamh6WGpuMHBEVEc5M0xhdlo3UzZ4UWlMTUhrREg4MlpiUFZJNVM0NFBxZjVPQ3lKWmlBVVVzOXRqMDlNN2oydHlpV3pPQzkxTTRsLW51YVFxTFJjV3pCYjFUMzZhRnR3?oc=5",
+      "publisher": "WTVB",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "global_risks",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:14:44+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 23.47,
+      "hypothesis_paths_not_verified": [
+        "risk_appetite",
+        "capital_flows",
+        "us_jp_yields"
       ],
       "trigger_confirmed": false
     },
@@ -1069,7 +1273,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:52:44+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 23.27,
       "hypothesis_paths_not_verified": [
@@ -1089,7 +1293,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:51:34+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 23.16,
       "hypothesis_paths_not_verified": [
@@ -1109,13 +1313,33 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:50:52+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 23.09,
       "hypothesis_paths_not_verified": [
         "crude_oil",
         "inflation_expectations",
         "rates_if_verified"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Philippine economy seen rebounding in fourth quarter, inflation risks temper outlook - Traders Union",
+      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNbUxaYldBVlhkOThYQ19aY1RUSWhfd2JiWVdMbXNPb3hQSndqT2xOUXhVamZRVHhqcWFmem4tbExuckViaFBlT2VCUGpBUXlWVDl1TWJnMU0wd3Vtc0tZVmk0TWxyRGt6MXFzX3JnWUtkbVZLanVFeTgxbENSSHQ2VnRPQmF0ZVd5amJ6SmRSYlpTTDY4X1FfQUVvNS02dw?oc=5",
+      "publisher": "Traders Union",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "monetary_economy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:10:32+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 23.05,
+      "hypothesis_paths_not_verified": [
+        "us_jp_rate_differential",
+        "treasury_yields",
+        "policy_expectations"
       ],
       "trigger_confirmed": false
     },
@@ -1129,27 +1353,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:34:02+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 23,
-      "hypothesis_paths_not_verified": [
-        "us_jp_rate_differential",
-        "treasury_yields",
-        "policy_expectations"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "PNB, Canara Bank revise FD rates: Check revised interest rates for senior citizens, general public - CNBC TV18 - LinkedIn",
-      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPakx3ZVRXLWJZOGtQRjlkSEh3OXRLSl9ING9POEJvaHhFR2V4STJWR2k4UjVnZTgtcFU4MmdZSWZ4empQUFZsT2ExakoyOEhuUE1Gbzl4d05xZy1fcXIzeDZLNVFJWTA3aHpKOUdIMzhWZGJramVaVXJMYW1OWmNTb0ZoaWpETmVpek96R0tGN2ZqWnRNak41ZlR5ZkE1TV9HLTBxWmJpXzlqcjFyejRibW84Q3Izd2x1TVdpUg?oc=5",
-      "publisher": "LinkedIn",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "monetary_economy",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T12:30:48+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 23,
       "hypothesis_paths_not_verified": [
@@ -1169,13 +1373,33 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:08:01+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 22.8,
       "hypothesis_paths_not_verified": [
         "us_jp_rate_differential",
         "treasury_yields",
         "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Trump faces midterm verdict with control of Congress at stake - The Detroit News",
+      "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQNnN1M1EtbDB6a3l0c3BkVDh4aXptWHVVbTRzSmNDbEZZeDdIcFhNWEwxZlN2THFTZldHLWxneU9SOFVERFl0bEdFbFBMdnhsR051QmNIdDFjQ2MzNnV2V2Q3MjBFZFZlb0NKMmhZUDdYZ2V4STh3VGlRVlhtbXpjMjk5ZGp4STF5c2V2Z1JHZUVKTHZwQnktOWpxT09la041cGduRWtCcE1EOEx6Y1YycTc4TE0wbXZkaFhWNnpyUDJOdlVQUWJkenl3?oc=5",
+      "publisher": "The Detroit News",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "us_government",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:08:00+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 22.8,
+      "hypothesis_paths_not_verified": [
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
       ],
       "trigger_confirmed": false
     },
@@ -1189,9 +1413,29 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:06:40+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 22.67,
+      "hypothesis_paths_not_verified": [
+        "risk_appetite",
+        "capital_flows",
+        "us_jp_yields"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Mbappé’s Mao Gaffe Costs Him in China - New Lines Magazine",
+      "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE5ZSkhFeUZ2VlRfbnRDVU44emxMNzY3U1g3dHEzSjlNOWJ5SUFEU1dUXy1fUzNWNElzYzc5bDl1RVJ5VHlTVVVsdFV4TF9PVkZyd3BNRFhBeWxXTHh2N3htQVFhQ09wYVp1anBXcEs1WFNqUWNMeFlYTVNmbw?oc=5",
+      "publisher": "New Lines Magazine",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "global_risks",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:05:04+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 22.51,
       "hypothesis_paths_not_verified": [
         "risk_appetite",
         "capital_flows",
@@ -1209,7 +1453,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:05:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 22.5,
       "hypothesis_paths_not_verified": [
@@ -1229,7 +1473,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:02:29+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 22.25,
       "hypothesis_paths_not_verified": [
@@ -1249,7 +1493,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:42:24+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 22.24,
       "hypothesis_paths_not_verified": [
@@ -1261,78 +1505,42 @@
       "trigger_confirmed": false
     },
     {
+      "title": "China, Philippines stress need for dialogue amid political tensions - Anadolu Ajansı",
+      "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPbklacm04Um5aMy1SX19KUDNGZG5keUdKV3pjNFprVGFZbGhxenJpS1Q3NFFIVkx1M3A5Nm05RFhRSmtqcG8xaTBDcW5XQnNBNzdyTEhLSmYzMENNV0RqM1E2M05DTUxEZDRrTnpyS2xmaGIybk9MSGZJRjltbmJaYk5HWExQaE5jV0ZEaWxUQ0FDY211bGVWMDY0WmlIZjFmY0JtZEtXRGFFeUFv?oc=5",
+      "publisher": "Anadolu Ajansı",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "global_risks",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T13:02:03+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 22.2,
+      "hypothesis_paths_not_verified": [
+        "risk_appetite",
+        "capital_flows",
+        "us_jp_yields"
+      ],
+      "trigger_confirmed": false
+    },
+    {
       "title": "Opinion | Trump’s embrace of dictators shows defiance. It’s bound to get worse. - The Washington Post",
       "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQRnY3cmJWMzU0LUtueHhRZVNHWnBhczNNX3NCVzRDcHpCX2xNcnNlOE04QXdZT3NvcG5tMnUxM1preDRCMzlHNjZUVWJOcnpvQld6TFVTUHdYMjF1eHd4aHN3dnBxdXpUS3pHX1IzeTRKTmh0c29xNTBYYURsOW94eEdXN1BUZ2EtT1kxckN4ZE1ZSUFKN0VYeUFlM2NUcXo2U1pBNg?oc=5",
       "publisher": "The Washington Post",
       "domain": "news.google.com",
       "source": "GOOGLE_RSS",
-      "channel": "us_government",
+      "channel": "context_hints",
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:02:02+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 22.2,
       "hypothesis_paths_not_verified": [
-        "trade_growth_inflation",
-        "us_rates_possible",
-        "risk_appetite"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "Éric Blais: Donald Trump will blame Canada if he loses bigly in Tuesday’s midterm elections - Toronto Star",
-      "url": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxOZXU3VjU1NFpZb25SX0NHcHpUcng0SnhQczlURkJ5ZWNJOW56d2NYVzFLSzJrMUhTd1VRbnRQNTBOWFlQdDBVc0hLOGNZSEhhbXdmNWQ3eHRkUldYOWVYTWpMbWdERWZKWTQ5Wnc5dmJWNDFxa0psVHd5SWlTVHU5MGZPb19aRmZkbm1MNndCMnN1dnBZekNMdXZoNG9pVkM0N01mSkY4clZqd1pWLWozeGx0Vjg3RWZTU0ZGeTNJeDhydmsya2FPTXY3ZzEwZUNxMU1FODVGVFRZNW13ZnBsbXNXVlI4R0h1R2ZPMzlMSURvNl9feE52VVR3cw?oc=5",
-      "publisher": "Toronto Star",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "context_hints",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T13:01:24+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 22.14,
-      "hypothesis_paths_not_verified": [],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "NPR Economics Correspondent Scott Horsley on Inflation, Housing Costs and the Job Market - WITF",
-      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOZVRpTHpWWElESmpvXzc4eEFaelBxSTduMHpFamEzSE16YVhSeUsxaHgxUXkwZmc5SzgzaW9pYnBKazMxZExXZmhKMTFveHczMHR5aTJSTzFTR1B2UlZZN25zY0ZCSEdMTGFjaS1pMFZ6RGlRam1EV29Tam1TNDFyWlpHMmV3Q0JPX1pqNG9iVG5vNy00eHB2WTZ3SUlmRlQ3WEEwZU95cmlKSUdIb3dZZ25OTHAxdWJIVjJGeA?oc=5",
-      "publisher": "WITF",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "monetary_economy",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T13:01:19+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 22.13,
-      "hypothesis_paths_not_verified": [
-        "us_jp_rate_differential",
-        "treasury_yields",
-        "policy_expectations"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "US copper pipeline could reach 1.3 million tonnes a year as critical minerals push gathers pace, says JP Morgan - Yahoo Finance UK",
-      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQMUdFaElFbE1mZUZzek1oTnpwektiQXNsSVgtUmhqTkhRME96MnlDRXRvQWRXNWJEZ1ZJWGMxT3RXd0VSVW9XSWsxZ0VoOTdPR2IycEVKWHZqZlFLR1JFRUZOa0Y3WmUzRVBTMjFRcHBTZzJfR0hrS21Mb0Q1YjFubzFMQ3l3QQ?oc=5",
-      "publisher": "Yahoo Finance UK",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "energy",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T13:30:00+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 22.0,
-      "hypothesis_paths_not_verified": [
-        "crude_oil",
-        "inflation_expectations",
-        "rates_if_verified"
+        "risk_appetite",
+        "capital_flows",
+        "us_jp_yields"
       ],
       "trigger_confirmed": false
     },
@@ -1346,7 +1554,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:00:00+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 22.0,
       "hypothesis_paths_not_verified": [
@@ -1366,7 +1574,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:37:44+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 22,
       "hypothesis_paths_not_verified": [
@@ -1387,7 +1595,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:59:21+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 21.93,
       "hypothesis_paths_not_verified": [
@@ -1398,22 +1606,62 @@
       "trigger_confirmed": false
     },
     {
-      "title": "Pipeline and Utility Q3 Review: What Public Service Enterprise Group (NYSE:PEG), Williams (NYSE:WMB), Entergy (NYSE:ETR) and More Reported? - kalkine.ca",
-      "url": "https://news.google.com/rss/articles/CBMi9gFBVV95cUxOQlkzZVNHdEF0blUxZUZtTDhxQ0JQWHNXeE1JemlobXpWYkVjcENjWV8tMWcyQTFsNnk5OW5yUGVFc1BQVmFzbzBWZmdoZ1dwV3pGWnppMG9NdmV0X2hJcE15X3RfbGg1ZUVGOVNiQmgtMks1RWNISzA2eHBPNVN0bWUycjZIc0hHWjY3c1dpaWJlMTRFeU12Nk1xY19NVV9kQ2pJaGZkRXExZTZIYUlha1V3c0tCaHIydTAxRXJqRGEyU0ZGcFZCVTJ6NUFqZ3A0V0R0SExDSU13bG5vYTBZek1teUxmOExkczNsTENsX3V5eENReWc?oc=5",
-      "publisher": "kalkine.ca",
+      "title": "After Election Day, Trump stares down the specter of Democratic probes and the race to succeed him - Scranton Times-Tribune",
+      "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE1uVHRkMjUxcWRycDRMWTlMd2h0TW8xb1RTRHRYRng0WlVTWkwyOVZMZXZDMFk5Wk1paEpMdi1VeE0tN0pRWmlfWVB4Uk9IWkNXTUkxVHhuWG04ZTJ6d3ZTT3VHdnJhRXpTN1lOU3BJNkVPcVdvb3J2WjFpOA?oc=5",
+      "publisher": "Scranton Times-Tribune",
       "domain": "news.google.com",
       "source": "GOOGLE_RSS",
-      "channel": "energy",
+      "channel": "us_government",
       "language": "en",
-      "source_timestamp_utc": "2026-11-03T13:27:00+00:00",
+      "source_timestamp_utc": "2026-11-03T12:56:50+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 21.7,
+      "priority_score_not_causal_confidence": 21.68,
       "hypothesis_paths_not_verified": [
-        "crude_oil",
-        "inflation_expectations",
-        "rates_if_verified"
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Primark owner cautious over inflation and consumer confidence - Ardrossan Herald",
+      "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOSzRsOHhfSE40TE9uZWl2SVhNVjhLSzVDTGd4SHNKM3gyNUpzdlVkWl9OZDVhaDNyY3ZTX3dxWjNSbzJXZTNuU2hubDZ0NWdNTVBBQ1NLQ2xNSG9VVi1MY1RsRWZwMzE2VW5jdVl4NGgyQ2dEZVJhS1NpSnozMFFEUUVab1lTN1l5X1F6bFdfejRnNTJaNVBxS0dRUWo3Tk15R01NYVBqcjF1QXUw?oc=5",
+      "publisher": "Ardrossan Herald",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "monetary_economy",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T12:54:58+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.5,
+      "hypothesis_paths_not_verified": [
+        "us_jp_rate_differential",
+        "treasury_yields",
+        "policy_expectations"
+      ],
+      "trigger_confirmed": false
+    },
+    {
+      "title": "Jimmy Kimmel Points Out the ‘Craziest Thing’ About Trump - IMDb",
+      "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1BWnFGek5rSDR4Z2ZXdXFJb2swQTJlTF81SVY1T1hYQnliampGWDZLM1N2UXJaM0szczd2d3U3U1V5SmZHYVRDMGdpOHk4a0hnV0ZlTjE0dFBSM0I0WVR6bEUxdUxPQQ?oc=5",
+      "publisher": "IMDb",
+      "domain": "news.google.com",
+      "source": "GOOGLE_RSS",
+      "channel": "us_government",
+      "language": "en",
+      "source_timestamp_utc": "2026-11-03T12:53:20+00:00",
+      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
+      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
+      "priority_score_not_causal_confidence": 21.33,
+      "hypothesis_paths_not_verified": [
+        "trade_growth_inflation",
+        "us_rates_possible",
+        "risk_appetite"
       ],
       "trigger_confirmed": false
     },
@@ -1427,7 +1675,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T13:22:16+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 21.23,
       "hypothesis_paths_not_verified": [
@@ -1447,7 +1695,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:51:36+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 21.16,
       "hypothesis_paths_not_verified": [
@@ -1467,7 +1715,7 @@
       "language": "en",
       "source_timestamp_utc": "2026-11-03T12:51:18+00:00",
       "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
+      "retrieved_at_utc": "2026-11-03T14:53:29+00:00",
       "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
       "priority_score_not_causal_confidence": 21.13,
       "hypothesis_paths_not_verified": [
@@ -1476,253 +1724,13 @@
         "us_jp_yields"
       ],
       "trigger_confirmed": false
-    },
-    {
-      "title": "CVR Energy (CVI) Nears $4 Billion Refinery Acquisition from Mara - GuruFocus",
-      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPR0FxRlI3QWs5eFRJMUtnVUhvZkRESkZrbHpHSGd5NjlQSUxVSTBUY1NkNU5iNWdSMnRaaTJlTDdIalFBVU40Ymwzdkh4Sm1Sd0dTckQ4cXBXbEU4aWRvX1FJWUlZNFRVdUdabjIzdXNkbEFhcHlEM2l6SXhDdFAwT2haR1BkaFBaQ3VYMGg2TEdKbWRPNnU4ZHpVNkh3ZzJFUFk4ek1rQmFkOEhjR2dFbFVZYlY?oc=5",
-      "publisher": "GuruFocus",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "energy",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T12:50:30+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 21.05,
-      "hypothesis_paths_not_verified": [
-        "crude_oil",
-        "inflation_expectations",
-        "rates_if_verified"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "For many Russians, higher utility bills are latest inflation shock By Reuters - Investing.com South Africa",
-      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPYVdFTXpMU29SbEU4VGFHazlBS1RHbmhuT2hSdEhQY2hwMFc3azJHQmdhVlg2elIxWHJkVFNFUUpZdTlmZGpNS2lGV0N3a2wwblNlODIzVlFlOHFhcVI1TzlGUGV1aUNxRmFHZjI4a0FpdERsQU8xTXhxWk02Tm5XMms3ZjlUNk1FMHp0OG01YzRIQnFqaXBTZGdpa3ZFSGFCbVc0MjRQQTJHRGNtTDAtU2JhaWNjTGc?oc=5",
-      "publisher": "Investing.com South Africa",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "monetary_economy",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T12:46:17+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 20.63,
-      "hypothesis_paths_not_verified": [
-        "us_jp_rate_differential",
-        "treasury_yields",
-        "policy_expectations"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "Turkish inflation edges higher as downtrend stalls - ing think",
-      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9CakhsaGhFTWUxVm1TdmM3UWJJRGVfWGk3UTA5blhLMWZ3RkZ6d25hMFVxSVVKMEV6YTZKVWdvUndtTS1QWDF3ZWluN0pqNnhZMDhmY1dwQ1R2NnMwRmpHNjhINll0WDl0VUhoLURhRlU?oc=5",
-      "publisher": "ing think",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "monetary_economy",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T12:45:49+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 20.58,
-      "hypothesis_paths_not_verified": [
-        "us_jp_rate_differential",
-        "treasury_yields",
-        "policy_expectations"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "Capital city market price changes better national inflation rate change - The Black Chronicle",
-      "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQWHU2WkVUVU1CS2dodUdjazZvNW9nZzlETFo0VWJqZ0JuUkdKR0hDOWNCRGoyR2lzV2gxeUVHZ1p6QVA0UjVINzB6WkVBbmJ5VUc0aV9JVUE0R0ZXc3hfV0gxVTNZVTNHOUlwcHA5LXRjcXh0Z1RqN0lRRUtCOTkzbHpaWGdMaXppMUVDRUNkNWlYLWdnTnB1QWtUTzlJSUphTE1xalY0WUJTRk9ZYjJfNEdUVE5TeS1SV2sxUjEzQUZzdw?oc=5",
-      "publisher": "The Black Chronicle",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "monetary_economy",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T12:45:35+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 20.56,
-      "hypothesis_paths_not_verified": [
-        "us_jp_rate_differential",
-        "treasury_yields",
-        "policy_expectations"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "Far from the campaign trail, Trump promotes his Reflecting Pool makeover before Election Day - Alabama Daily News",
-      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNaWo1ZzY5eEtOVDV6dENJRnhidk5rMWdUUjVCNEE2WC1jNlRneHdSQ3JpcGZBNmEtUzE4MkN6V1YzQmpnSkd0cTI3OVBHVmM1c19MVW43XzZ1SWtuNkQtMUpWRm5MbGo2QXBwODlkdGJ3Y19pbzJXSWVFcGF1SlVtbkx3QzVwbk1Fb09CLUVYRkFnQ0xHaGNaNjRvbFZyNDItc05GdXZlOVMtdksyNWRkdDQwNFNXb1E?oc=5",
-      "publisher": "Alabama Daily News",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "us_government",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T12:45:13+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 20.52,
-      "hypothesis_paths_not_verified": [
-        "trade_growth_inflation",
-        "us_rates_possible",
-        "risk_appetite"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "Trump applauds Haley Stevens' endorsement of Mike Rogers - NBC News",
-      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQdlFFeVBvZmdVMF9ySTFkd0VnMURSdkFhNWR3QWRoZmIxaDNWNzRKakUzd3BGOWU4dHNheFhpMkRVMEgtWllBU1ZpSEd5LTllSGs1QjN0dDJqdTVyUVp1QXZGQkNuOXpKbl9oMnh3Nkh2NEg5bWpfQUZicGZQRGJWXzFvOGtuVmhYVVdQUmIzTVp6WTBzSmRaMFh3UVdlaEtCTTNkdUJ1eUc?oc=5",
-      "publisher": "NBC News",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "us_government",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T12:41:55+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 20.19,
-      "hypothesis_paths_not_verified": [
-        "trade_growth_inflation",
-        "us_rates_possible",
-        "risk_appetite"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "U.S. Small Business Employment Trends Hold Steady in October - GlobeNewswire",
-      "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxOR3NFMWNVZEVFb25wXzJCbE1xMDVYQm9ieVdWdTR1V0lVQ3F4NXNjZ01RTUlYSng2OTBXODNEaWw2MU9ESlNDWTN3d2UtZ1o3aDhUX1k4Y0sxWFV2RjE0dkNOaHBua0Z5eWg5UzkzY0sydEgwM2FFSVFaS1NuS21tY3JEd1FHQ3dSYzdIVzFiTkdCUUx5YjZiYmhsd1VRdlU1WnZ4MFVPYVpzUVo5cWtVUGRfMC1kcEhGdzdBRnM1alZ1YllfYzZ1M3hndw?oc=5",
-      "publisher": "GlobeNewswire",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "monetary_economy",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T13:30:00+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 20.0,
-      "hypothesis_paths_not_verified": [
-        "us_jp_rate_differential",
-        "treasury_yields",
-        "policy_expectations"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "OpenWorld to Announce Third Quarter 2026 Financial Results and Host Conference Call on November 12, 2026 - Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxNWGZjLWgxa0FJM1lDb1pGSkxmTURWMFIyNFpZSmNLWXRnTzJvenRMNGxVSlZjeVI0X1hMeGc5Y2RESlV6X240Q1RvZ3M3TlViZjA4WVZOd2NnTjM2ZHBKcHd6bGEzTmItd3ZwcHQzRlFYWmdRdEloS3RnSjdNZlBFYTBtUTd5XzhJVjBFbTlCSVBhMWFrOGxhb1o4OW5fMV9rZzlaZg?oc=5",
-      "publisher": "Yahoo Finance",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "global_risks",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T13:30:00+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 20.0,
-      "hypothesis_paths_not_verified": [
-        "risk_appetite",
-        "capital_flows",
-        "us_jp_yields"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "Palo Alto Networks to Announce Fiscal First Quarter 2027 Financial Results on Wednesday, November 18, 2026 - TradingView",
-      "url": "https://news.google.com/rss/articles/CBMi-AFBVV95cUxOLS1ONHhnN0lzcDlsTTB0UjZSOHo2QXhQSWFSalFVTGNURGNjRFZmRlktZlFMUGhhaEVHazRfdGJDOUNzejdDa2VOZ0M5RzhBMEEwZElpVTNLMVNTR0U1UlZ5akhhMUJkTUNDQWNKSFJ5TFUweDc0UldWclAzX2FWdVhvZTdkWEVLMGltSjhqR05rWUs3OS1xQ0VYOHlfRUJVV2hjalJuUVpHR0V1NVQ2UTBpNTB0RGUwdUlpR25kVzdGS0RPcVhIcjdWSjJvN3NNeUxFZ1E5Ri1vbUlQeDUza2czQlJkczYwX2VoVVlVT0lzRWFLVlBOMg?oc=5",
-      "publisher": "TradingView",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "global_risks",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T13:30:00+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 20.0,
-      "hypothesis_paths_not_verified": [
-        "risk_appetite",
-        "capital_flows",
-        "us_jp_yields"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "Financial Services Roundup: Market Talk - WSJ",
-      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNTERKa1BKcmNCMzdCMkRfOXF4cmJoVERscEVPdGZNVW5mZHRsal9SUEphSUt3N2hBZjB6N1AzME1SVUc5ZHlFYW5zYjBPZ0tOY1RLVzI3RGY0ajYzbXZCT1ZnUlpyVjhXdUNucC04YXRsU19RSTRVcFhaOFlITEJ6b3Nn?oc=5",
-      "publisher": "WSJ",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "global_risks",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T12:38:03+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 20,
-      "hypothesis_paths_not_verified": [
-        "risk_appetite",
-        "capital_flows",
-        "us_jp_yields"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "Bulgaria's Inflation Hits Five-Month High of 6.1% in October, Outpacing Eurozone Average, Prices Surge - Novinite.com",
-      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxONnk5Z2hNM2FaS2xMcDc5ZnVLM3Vmd1RFR2tPSkdocWpQNUh1dHpNTG84VWNndTk4SVBPY3kzYXpPM0otT0Jkamc1bzhzeGhodldVbXVwb0I0anJIcmI2ZlpWc0VySGwtU3BQVE1xZXphLVk2eDdOT2JMcll1Y3BiLXNDRzBPVkFFN1ZyWGh5bWw5c2JIVmZncy1pdktpb1NEUHNic044cTFCcGVKUkcxazRDemM5dDd4UjFyeDFSeGZHWGJaWlBHSHBNT3JZOWFRd25NVHluc2dUSEFJRkdDT3Jn?oc=5",
-      "publisher": "Novinite.com",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "monetary_economy",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T12:37:50+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 20,
-      "hypothesis_paths_not_verified": [
-        "us_jp_rate_differential",
-        "treasury_yields",
-        "policy_expectations"
-      ],
-      "trigger_confirmed": false
-    },
-    {
-      "title": "Brazil economists raise inflation, rate forecasts after Lula reelection - Bellingham Herald",
-      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQOFNnTTJRZU4xQUw0WGQtSS11a2FCR3BqQmgwcnRlSEkxTVFTa3kzMm9RNGFaS3c5S1RqV0RObXRFVW94VGFDYWdNaTdPc1Q2UTBVSXVGd25NbnJrUXNRTHlWWHVPX1FIbzE5UWhKVFNDZUd3WlU5ZDRzRGJqOWdpS3NhXzZUZU5T?oc=5",
-      "publisher": "Bellingham Herald",
-      "domain": "news.google.com",
-      "source": "GOOGLE_RSS",
-      "channel": "monetary_economy",
-      "language": "en",
-      "source_timestamp_utc": "2026-11-03T12:37:06+00:00",
-      "source_timestamp_kind": "RSS_PUBDATE_NOT_EVENT_TIME",
-      "retrieved_at_utc": "2026-11-03T14:51:03+00:00",
-      "chronology": "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED",
-      "priority_score_not_causal_confidence": 20,
-      "hypothesis_paths_not_verified": [
-        "us_jp_rate_differential",
-        "treasury_yields",
-        "policy_expectations"
-      ],
-      "trigger_confirmed": false
     }
   ],
   "totals": {
-    "raw_results": 635,
-    "in_window_unique": 160,
-    "timestamp_before_move": 122,
-    "timestamp_after_move": 38
+    "raw_results": 630,
+    "in_window_unique": 170,
+    "timestamp_before_move": 129,
+    "timestamp_after_move": 36
   },
   "market_crosschecks": {
     "oil": "NOT_FETCHED",
@@ -1732,7 +1740,7 @@
     "sp500_futures": "NOT_FETCHED"
   },
   "confirmed_catalyst": null,
-  "request_id": "world-news-catalyst-20261103-2230-ranking-v2",
+  "request_id": "world-news-catalyst-20261103-2230-final-v3",
   "price_context": {
     "status": "OBSERVED",
     "move_at_jst": "2026-11-03T22:30:00+09:00",

@@ -1,6 +1,6 @@
 {
-  "request_id": "chatgpt-on-demand-2026-11-03T13:32:05.950Z",
+  "request_id": "chatgpt-on-demand-2026-11-03T13:44:35.288Z",
   "requested_by": "chatgpt",
-  "reason": "User requested recheck: validate bullish bias as of 2026-11-03 22:32 JST",
-  "note": "Fetch fresh 1m+1h+1day data and compare 20:00-22:30 JST."
+  "reason": "USDJPY 22:45 JST: analyze 158.00 rebound, 158.10-158.15 consolidation, rebound-failure criteria, market structure",
+  "note": "Request latest 1-minute OHLC from on-demand GitHub workflow."
 }

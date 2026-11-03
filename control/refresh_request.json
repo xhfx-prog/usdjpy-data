@@ -1,5 +1,5 @@
 {
-  "request_id": "manual-morning-20261104-2026-11-03T21:57:59.046Z",
+  "request_id": "validate-multitimeframe-20261104-2026-11-03T23:03:15.343Z",
   "requested_by": "chatgpt",
-  "reason": "User-triggered morning USDJPY analysis: refresh OHLC and rerun analysis engine"
+  "reason": "Regression validation for independent hierarchical timeframe market structure"
 }

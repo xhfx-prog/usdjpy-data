@@ -1,19 +1,19 @@
 {
   "latest": {
-    "runner_started_at_utc": "2026-11-03T14:24:53.079206054Z",
+    "runner_started_at_utc": "2026-11-03T14:32:39.886786933Z",
     "estimated_previous_cron_slot_utc": null,
     "runner_start_delay_from_estimated_slot_seconds": null,
     "schedule_expression": null,
-    "refresh_request_id": "analysis-engine-session-regression-2026-11-03T14:24:36.267Z",
+    "refresh_request_id": "usdjpy-news-verify-2026-11-03T14:32:24.290Z",
     "actual_scheduled_slot_known": false,
     "delay_is_lower_bound_only": true,
-    "recorded_at_utc": "2026-11-03T14:24:55.167129+00:00",
+    "recorded_at_utc": "2026-11-03T14:32:42.628586+00:00",
     "event": "push",
-    "run_id": "41653431877",
+    "run_id": "41654707437",
     "run_attempt": "1",
     "fetch_outcome": "success",
     "job_status_before_publish": "success",
-    "sha": "1595add609dc2f69b762435b2476ff60f1a821ec"
+    "sha": "2ff05cbbc41a8712e3e2b636b3ce4387fbe30243"
   },
   "recent_runs": [
     {
@@ -569,6 +569,22 @@
       "fetch_outcome": "success",
       "job_status_before_publish": "success",
       "sha": "1595add609dc2f69b762435b2476ff60f1a821ec"
+    },
+    {
+      "runner_started_at_utc": "2026-11-03T14:32:39.886786933Z",
+      "estimated_previous_cron_slot_utc": null,
+      "runner_start_delay_from_estimated_slot_seconds": null,
+      "schedule_expression": null,
+      "refresh_request_id": "usdjpy-news-verify-2026-11-03T14:32:24.290Z",
+      "actual_scheduled_slot_known": false,
+      "delay_is_lower_bound_only": true,
+      "recorded_at_utc": "2026-11-03T14:32:42.628586+00:00",
+      "event": "push",
+      "run_id": "41654707437",
+      "run_attempt": "1",
+      "fetch_outcome": "success",
+      "job_status_before_publish": "success",
+      "sha": "2ff05cbbc41a8712e3e2b636b3ce4387fbe30243"
     }
   ]
 }

@@ -1,19 +1,19 @@
 {
   "latest": {
-    "runner_started_at_utc": "2026-11-03T11:51:43.744979983Z",
-    "estimated_previous_cron_slot_utc": "2026-11-03T11:11:00+00:00",
-    "runner_start_delay_from_estimated_slot_seconds": 2443.7,
-    "schedule_expression": "11 * * * *",
-    "refresh_request_id": "2026-11-03-initial-chatgpt-trigger-test",
+    "runner_started_at_utc": "2026-11-03T12:31:17.394677535Z",
+    "estimated_previous_cron_slot_utc": null,
+    "runner_start_delay_from_estimated_slot_seconds": null,
+    "schedule_expression": null,
+    "refresh_request_id": "chatgpt-on-demand-2026-11-03T12:30:54.594Z",
     "actual_scheduled_slot_known": false,
     "delay_is_lower_bound_only": true,
-    "recorded_at_utc": "2026-11-03T11:51:45.133449+00:00",
-    "event": "schedule",
-    "run_id": "41630915778",
+    "recorded_at_utc": "2026-11-03T12:31:18.915988+00:00",
+    "event": "push",
+    "run_id": "41636399205",
     "run_attempt": "1",
     "fetch_outcome": "success",
     "job_status_before_publish": "success",
-    "sha": "d70aa0cd71f6924a4543f8f8e9934f2a0385df80"
+    "sha": "8831281e8d681a6fe86d379ff6d03333c708a217"
   },
   "recent_runs": [
     {
@@ -345,6 +345,22 @@
       "fetch_outcome": "success",
       "job_status_before_publish": "success",
       "sha": "d70aa0cd71f6924a4543f8f8e9934f2a0385df80"
+    },
+    {
+      "runner_started_at_utc": "2026-11-03T12:31:17.394677535Z",
+      "estimated_previous_cron_slot_utc": null,
+      "runner_start_delay_from_estimated_slot_seconds": null,
+      "schedule_expression": null,
+      "refresh_request_id": "chatgpt-on-demand-2026-11-03T12:30:54.594Z",
+      "actual_scheduled_slot_known": false,
+      "delay_is_lower_bound_only": true,
+      "recorded_at_utc": "2026-11-03T12:31:18.915988+00:00",
+      "event": "push",
+      "run_id": "41636399205",
+      "run_attempt": "1",
+      "fetch_outcome": "success",
+      "job_status_before_publish": "success",
+      "sha": "8831281e8d681a6fe86d379ff6d03333c708a217"
     }
   ]
 }

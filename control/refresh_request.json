@@ -1,6 +1,6 @@
 {
-  "request_id": "2026-11-03-initial-chatgpt-trigger-test",
+  "request_id": "chatgpt-on-demand-2026-11-03T12:30:54.594Z",
   "requested_by": "chatgpt",
-  "reason": "validate on-demand push event",
-  "note": "Update this file with a new request_id for each on-demand refresh."
+  "reason": "USDJPY updated OHLC needed for 2026-11-03 21:30 JST through 2026-11-04 12:00 JST analysis",
+  "note": "Request latest data from configured GitHub Actions pipeline."
 }

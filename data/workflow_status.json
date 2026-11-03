@@ -1,19 +1,19 @@
 {
   "latest": {
-    "runner_started_at_utc": "2026-11-03T12:31:17.394677535Z",
+    "runner_started_at_utc": "2026-11-03T12:53:01.778806206Z",
     "estimated_previous_cron_slot_utc": null,
     "runner_start_delay_from_estimated_slot_seconds": null,
     "schedule_expression": null,
-    "refresh_request_id": "chatgpt-on-demand-2026-11-03T12:30:54.594Z",
+    "refresh_request_id": "architecture-test-2026-11-03-1",
     "actual_scheduled_slot_known": false,
     "delay_is_lower_bound_only": true,
-    "recorded_at_utc": "2026-11-03T12:31:18.915988+00:00",
+    "recorded_at_utc": "2026-11-03T12:53:03.415525+00:00",
     "event": "push",
-    "run_id": "41636399205",
+    "run_id": "41639447774",
     "run_attempt": "1",
     "fetch_outcome": "success",
     "job_status_before_publish": "success",
-    "sha": "8831281e8d681a6fe86d379ff6d03333c708a217"
+    "sha": "7d4cc4720777b6eed7a2e74f447d34f0152f709d"
   },
   "recent_runs": [
     {
@@ -361,6 +361,22 @@
       "fetch_outcome": "success",
       "job_status_before_publish": "success",
       "sha": "8831281e8d681a6fe86d379ff6d03333c708a217"
+    },
+    {
+      "runner_started_at_utc": "2026-11-03T12:53:01.778806206Z",
+      "estimated_previous_cron_slot_utc": null,
+      "runner_start_delay_from_estimated_slot_seconds": null,
+      "schedule_expression": null,
+      "refresh_request_id": "architecture-test-2026-11-03-1",
+      "actual_scheduled_slot_known": false,
+      "delay_is_lower_bound_only": true,
+      "recorded_at_utc": "2026-11-03T12:53:03.415525+00:00",
+      "event": "push",
+      "run_id": "41639447774",
+      "run_attempt": "1",
+      "fetch_outcome": "success",
+      "job_status_before_publish": "success",
+      "sha": "7d4cc4720777b6eed7a2e74f447d34f0152f709d"
     }
   ]
 }

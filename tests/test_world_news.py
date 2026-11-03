@@ -58,6 +58,15 @@ class WorldNewsTests(unittest.TestCase):
                                     self.move.astimezone(timezone.utc),self.now)
         self.assertEqual(label,"POST_MOVE_CANNOT_BE_TRIGGER_FROM_THIS_TIMESTAMP")
 
+    def test_exact_move_minute_is_ambiguous_not_early(self):
+        article=s.make_article("Headline at 22:30",
+            "https://example.org/at-move","source",
+            self.move.astimezone(timezone.utc),"RSS_PUBDATE_NOT_EVENT_TIME",
+            "geopolitics","GOOGLE_RSS",self.now,"en")
+        self.assertEqual(s.classify_chronology(
+            article,self.move.astimezone(timezone.utc),self.move.astimezone(timezone.utc),
+            self.now),"SAME_MINUTE_ORDER_UNKNOWN")
+
     def test_unknown_time_not_pretend_pre_event(self):
         a=s.make_article("unknown","https://example.com/x","x",None,"UNKNOWN",
                          "geopolitics","GDELT_DOC",self.now,"en")

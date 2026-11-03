@@ -1,0 +1,81 @@
+name: Retrospective USDJPY News Priority Training
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/news_training_request.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: usdjpy-news-training
+  cancel-in-progress: false
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Regression tests (training and causal chronology)
+        run: |
+          python -m unittest discover -s tests -p 'test_news_training.py' -v
+          python -m unittest discover -s tests -p 'test_world_news.py' -v
+
+      - name: Historical commentary and world-news event study
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          req=json.loads(Path("control/news_training_request.json").read_text())
+          cmd=["python","-u","train_news_priorities.py",
+               "--per-month",str(req.get("per_month",2)),
+               "--max-cases",str(req.get("max_cases",52)),
+               "--sleep-seconds",str(req.get("sleep_seconds",3)),
+               "--holdout-from",req.get("holdout_from","2026-08")]
+          print("Study config:",req,flush=True)
+          subprocess.run(cmd,check=True)
+          PY
+
+      - name: Persist study, model and status
+        if: always()
+        run: |
+          python - <<'PY'
+          import json,os
+          from datetime import datetime,timezone
+          from pathlib import Path
+          from hashlib import sha256
+          request=json.loads(Path("control/news_training_request.json").read_text())
+          path=Path("data/news_training_run_status.json")
+          model=Path("data/news_priority_model.json")
+          status={
+              "request_id":request.get("request_id"),
+              "recorded_at_utc":datetime.now(timezone.utc).isoformat(),
+              "github_run_id":os.getenv("GITHUB_RUN_ID"),
+              "job_status":os.getenv("JOB_STATUS"),
+              "model_written":model.exists(),
+          }
+          if model.exists():
+              j=json.loads(model.read_text())
+              status["model_usable"]=j.get("allow_live_prior")
+              status["model_reason"]=j.get("reason")
+              status["holdout"]=j.get("holdout")
+          path.write_text(json.dumps(status,indent=2,ensure_ascii=False)+"\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/news_training_run_status.json
+          if test -f data/news_priority_model.json; then git add data/news_priority_model.json; fi
+          if test -f data/news_priority_training_latest.json; then git add data/news_priority_training_latest.json; fi
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish 12-month USDJPY news priority study"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi

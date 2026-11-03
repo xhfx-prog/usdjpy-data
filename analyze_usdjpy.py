@@ -246,7 +246,9 @@ def upper_plateau(minutes, asof, lookback=480):
         visits = 0
         away = True
         for b in w:
-            if b["h"] < ceiling - 0.027:
+            # A completed close away from the top establishes a separate attempt.
+            # OHLC lows alone cannot establish the intrabar order of events.
+            if b["c"] < ceiling - 0.027:
                 away = True
             elif b["h"] >= ceiling - 0.020 and away:
                 visits += 1
@@ -256,6 +258,11 @@ def upper_plateau(minutes, asof, lookback=480):
         after = series[end:]
         drop = max(0, ceiling-min((b["c"] for b in after), default=ceiling))
         invalidated = any(b["c"] > ceiling + 0.018 for b in after)
+        # Once price trades/settles materially above this ceiling it is not
+        # a currently active failed resistance. An older 158.20 plateau must
+        # not outrank the more recent 158.30 rejection.
+        if invalidated:
+            continue
         candidates.append({"start":touch[0]["t"], "end":touch[-1]["t"],
                            "ceiling":n(ceiling), "near_ceiling_bars":len(touch),
                            "independent_attempts":visits, "duration_minutes":int(span),

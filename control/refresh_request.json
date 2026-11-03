@@ -1,6 +1,6 @@
 {
-  "request_id": "architecture-hourly-backfill-test-2026-11-03-2",
+  "request_id": "architecture-hourly-tail-range-test-2026-11-03-3",
   "requested_by": "chatgpt",
-  "reason": "Run first yearly 1hour historical backfill, check coverage",
+  "reason": "Check missing older hourly range without repeating future calls",
   "note": "Request latest data from configured GitHub Actions pipeline."
 }

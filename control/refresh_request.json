@@ -1,6 +1,5 @@
 {
-  "request_id": "analysis-engine-integration-2026-11-03T14:16:43.623Z",
+  "request_id": "analysis-engine-regression-retry-2026-11-03T14:18:58.825Z",
   "requested_by": "chatgpt",
-  "reason": "Run first end-to-end USDJPY analysis engine integration with fixed Nov 3 regression tests",
-  "note": "Verify tests and analysis_latest.json, then update status."
+  "reason": "Retest repaired stall detection and generate analysis_latest.json"
 }

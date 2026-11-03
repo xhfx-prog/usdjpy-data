@@ -116,6 +116,109 @@ def pick_samples(bars,per_month=2,period_end=None):
                                 "hour_return_pips":round((x["close"]-x["open"])*100,3)})
     return sorted(samples,key=lambda x:x["bar_start_jst"])
 
+
+def daily_bars(hourly):
+    """Aggregate provider 1h observations to JST calendar-day study bars.
+
+    This is a retrospective *daily* association study, NOT a minute-level
+    news-catalyst study. Exclude partial days with fewer than 16 observations.
+    """
+    days=collections.defaultdict(list)
+    for b in hourly:
+        days[b["t"].date()].append(b)
+    out=[]
+    for day,bs in sorted(days.items()):
+        bs.sort(key=lambda x:x["t"])
+        if len(bs)<16:
+            continue
+        start=datetime.combine(day,datetime.min.time(),tzinfo=JST)
+        out.append({"t":start,"high":max(x["high"] for x in bs),
+                    "low":min(x["low"] for x in bs),"open":bs[0]["open"],
+                    "close":bs[-1]["close"],"hour_count":len(bs),
+                    "range_pips":round((max(x["high"] for x in bs)-
+                                         min(x["low"] for x in bs))*100,3)})
+    return out
+
+
+def daily_samples(hourly,per_month=2):
+    days=daily_bars(hourly)
+    groups=collections.defaultdict(list)
+    for day in days:
+        groups[day["t"].strftime("%Y-%m")].append(day)
+    out=[]
+    for month,bs in sorted(groups.items()):
+        if len(bs)<12:
+            continue
+        extremes=sorted(bs,key=lambda x:(-x["range_pips"],x["t"]))[:per_month]
+        used={x["t"].date() for x in extremes}
+        controls=[]
+        for shock in extremes:
+            remaining=[x for x in bs if x["t"].date() not in used]
+            if not remaining:
+                continue
+            same=[x for x in remaining if x["t"].weekday()==shock["t"].weekday()]
+            choice=min(same or remaining,key=lambda x:(x["range_pips"],x["t"]))
+            controls.append(choice)
+            used.add(choice["t"].date())
+        for kind,subset in (("large_move",extremes),("quiet_control",controls)):
+            for x in subset:
+                out.append({"kind":kind,"month":month,
+                            "bar_start_jst":x["t"].isoformat(),
+                            "hour_jst":None,"study_date_jst":x["t"].date().isoformat(),
+                            "range_pips":x["range_pips"],
+                            "hour_return_pips":None,
+                            "daily_return_pips":round((x["close"]-x["open"])*100,3),
+                            "study_hours_observed":x["hour_count"]})
+    return sorted(out,key=lambda x:x["bar_start_jst"])
+
+
+def analyze_daily_articles(case,now,fetcher=fetch,sleep_seconds=3):
+    """Retrospective same-day story topics; no publication-to-minute inference."""
+    day=datetime.fromisoformat(case["bar_start_jst"])
+    queries=(
+        ("world",'(Iran OR Israel OR Qatar OR Trump OR tariff OR "Federal Reserve" OR "Bank of Japan" OR OPEC OR crude OR Treasury OR inflation OR payrolls OR ceasefire)'),
+        ("fx_recap",'("dollar yen" OR "japanese yen" OR "USD/JPY")'),
+    )
+    allworld=[]
+    allrecap=[]
+    diagnostics=[]
+    for kind,query in queries:
+        url=google_url(query,day,day+timedelta(hours=15))
+        try:
+            rows=parse_rss(fetcher(url))
+            diagnostics.append({"type":kind,"status":"ok","articles":len(rows)})
+        except Exception as exc:
+            rows=[]
+            diagnostics.append({"type":kind,"status":"error",
+                                "error":str(exc)[:140]})
+        seen=set()
+        for row in rows:
+            published=datetime.fromisoformat(row["pub_utc"]).astimezone(JST)
+            if published.date()!=day.date():
+                continue
+            ident=re.sub("[^a-z0-9]","",row["title"].lower())[:120]
+            if ident in seen:
+                continue
+            seen.add(ident)
+            entry={"title":row["title"],"url":row["url"],"source_pub_utc":row["pub_utc"],
+                   "category_hints":cats(row["title"]),"intraday_event_time_verified":False}
+            if kind=="world":
+                allworld.append(entry)
+            elif RECAP.search(row["title"]):
+                allrecap.append(entry)
+        if sleep_seconds:
+            time.sleep(sleep_seconds)
+    topic_set=sorted({c for row in allworld for c in row["category_hints"]})
+    recap_set=sorted({c for row in allrecap for c in row["category_hints"]})
+    return {"sources":diagnostics,
+            "daily_topics":topic_set,"recap_explanations":recap_set,
+            "world_daily_headlines":allworld[:12],
+            "fx_daily_educational_headlines":allrecap[:12],
+            "daily_world_count":len(allworld),
+            "daily_fx_recap_count":len(allrecap),
+            "chronology":"CALENDAR_DATE_ONLY_NOT_A_VERIFIED_EARLY_TRIGGER"}
+
+
 def google_url(query,start,end):
     # Google after/before are day-level filters, not proof of intraday availability.
     q=query+" after:"+start.astimezone(JST).date().isoformat()
@@ -200,19 +303,21 @@ def analyze_articles(case,now,fetcher=fetch,sleep_seconds=3):
         report[key]=report[key][:8]
     return report
 
-def enrich(samples,now,fetcher=fetch,sleep_seconds=3,max_cases=None):
+def enrich(samples,now,fetcher=fetch,sleep_seconds=3,max_cases=None,granularity="daily"):
     output=[]
     failures=0
     for i,case in enumerate(samples):
         if max_cases is not None and i>=max_cases:
             break
-        article=analyze_articles(case,now,fetcher,sleep_seconds)
+        article=(analyze_daily_articles(case,now,fetcher,sleep_seconds)
+                 if granularity=="daily" else analyze_articles(case,now,fetcher,sleep_seconds))
         obj={**case,"news":article}
         output.append(obj)
         failures+=sum(s["status"]=="error" for s in article["sources"])
         print("case",i+1,len(samples),case["month"],case["kind"],
-              "range",case["range_pips"],"pre",len(article["world_prestart"]),
-              "recaps",len(article["recap_post_hour"]),"errors",failures,flush=True)
+              "range",case["range_pips"],
+              "topics",article.get("daily_topics",article.get("prestart_categories",[])),
+              "errors",failures,flush=True)
         if failures>=12:
             break
     return output,failures
@@ -226,8 +331,8 @@ def fit(samples,holdout_from="2026-08"):
         yes=[r for r in rows if r["kind"]=="large_move"]
         no=[r for r in rows if r["kind"]=="quiet_control"]
         # prestart only: ex-post recap never enters an actionable live prior
-        big=sum(cat in r["news"]["prestart_categories"] for r in yes)
-        calm=sum(cat in r["news"]["prestart_categories"] for r in no)
+        big=sum(cat in r["news"].get("daily_topics",r["news"].get("prestart_categories",[])) for r in yes)
+        calm=sum(cat in r["news"].get("daily_topics",r["news"].get("prestart_categories",[])) for r in no)
         return big,calm,len(yes),len(no)
     for cat in CATEGORIES:
         big,calm,nb,nc=counts(train,cat)
@@ -252,7 +357,7 @@ def fit(samples,holdout_from="2026-08"):
         outcome["reason"]="INSUFFICIENT_HISTORICAL_NEWS_OR_HOLDOUT_COVERAGE"
         return outcome
     def predictor(row):
-        cats_present=row["news"]["prestart_categories"]
+        cats_present=row["news"].get("daily_topics",row["news"].get("prestart_categories",[]))
         score=sum(outcome["category_stats"][c]["weight_prior_points"]
                   for c in cats_present)
         return max(-12,min(12,score))
@@ -278,6 +383,7 @@ def main():
     p.add_argument("--out",default="data/news_priority_training_latest.json")
     p.add_argument("--model-out",default="data/news_priority_model.json")
     p.add_argument("--per-month",type=int,default=2)
+    p.add_argument("--granularity",choices=["daily","hourly"],default="daily")
     p.add_argument("--max-cases",type=int,default=52)
     p.add_argument("--sleep-seconds",type=float,default=3)
     p.add_argument("--holdout-from",default="2026-08")
@@ -287,26 +393,33 @@ def main():
     now=now.astimezone(JST)
     bars=load_hourly(args.data_dir,
          cutoff=now-timedelta(days=365),now=now)
-    samples=pick_samples(bars,per_month=args.per_month,period_end=now-timedelta(hours=2))
-    cases,errors=enrich(samples,now,sleep_seconds=args.sleep_seconds,max_cases=args.max_cases)
+    samples=(daily_samples(bars,per_month=args.per_month) if args.granularity=="daily"
+             else pick_samples(bars,per_month=args.per_month,period_end=now-timedelta(hours=2)))
+    cases,errors=enrich(samples,now,sleep_seconds=args.sleep_seconds,
+                        max_cases=args.max_cases,granularity=args.granularity)
     learned=fit(cases,holdout_from=args.holdout_from)
     obj={"schema_version":VERSION,"generated_at_utc":utc_iso(datetime.now(UTC)),
          "requested_lookback_days":365,"market_bars_available":len(bars),
          "actual_oldest_jst":bars[0]["t"].isoformat() if bars else None,
          "actual_newest_jst":bars[-1]["t"].isoformat() if bars else None,
-         "sampling":"largest hourly range vs quiet matched-hour controls, per calendar month",
+         "sampling":("largest daily range vs quiet matched-weekday controls, per month"
+                     if args.granularity=="daily" else
+                     "largest hourly range vs quiet matched-hour controls, per month"),
+         "granularity":args.granularity,
          "hourly_bar_not_exact_move_onset":True,
-         "article_coverage":"Google News RSS historical titles only; not full article bodies",
-         "news_time_rule":"publication cannot prove actual event timestamp",
-         "recap_usage":"ex-post educational weak labels only; no pre-event model features",
+         "article_coverage":"Google News RSS historical headlines only; not full article bodies",
+         "news_time_rule":"Historical daily association only; RSS publication time cannot certify earliest dissemination",
+         "recap_usage":"Ex-post educational weak labels only; NEVER train with recaps as prior observable news",
          "network_errors":errors,"cases":cases,"fit":learned}
     out=Path(args.out)
     out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     model={"schema_version":VERSION,"source":str(out),"generated_at_utc":obj["generated_at_utc"],
            "training_period_end_jst":now.date().isoformat(),
-           "allow_live_prior":learned["usable"],
+           "allow_live_prior":False,
+           "shadow_model_ready":learned["usable"],
            "holdout":learned["holdout_metrics"],"reason":learned["reason"],
+           "adoption_gate":"Daily retrospective associations must pass prospective intraday validation before affecting live ranking",
            "category_prior_points":{k:v["weight_prior_points"] for k,v in learned["category_stats"].items()},
            "note":"Association-only. Never assert that commentary proves causation."}
     modelpath=Path(args.model_out)

@@ -2,8 +2,13 @@ name: Update USDJPY Data
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'control/refresh_request.json'
   schedule:
-    - cron: '7,22,37,52 * * * *'
+    - cron: '11 * * * *'
 
 permissions:
   contents: write
@@ -53,7 +58,7 @@ jobs:
           started = start_path.read_text().strip() if start_path.exists() else None
           started_at = datetime.fromisoformat(started.replace('Z','+00:00')) if started else None
           # The theoretical slot is an estimate, NOT the actual scheduled event timestamp.
-          schedule_minutes = (7, 22, 37, 52)
+          schedule_minutes = (11,)
           slot = (started_at or now).replace(second=0, microsecond=0)
           while slot.minute not in schedule_minutes:
               slot -= timedelta(minutes=1)
@@ -62,6 +67,7 @@ jobs:
               'estimated_previous_cron_slot_utc': slot.isoformat() if os.getenv('GITHUB_EVENT_NAME') == 'schedule' else None,
               'runner_start_delay_from_estimated_slot_seconds': round((started_at-slot).total_seconds(),1) if started_at and os.getenv('GITHUB_EVENT_NAME') == 'schedule' else None,
               'schedule_expression': os.getenv('SCHEDULE_EXPRESSION') or None,
+              'refresh_request_id': (json.loads(Path('control/refresh_request.json').read_text(encoding='utf-8')).get('request_id') if Path('control/refresh_request.json').exists() else None),
               'actual_scheduled_slot_known': False,
               'delay_is_lower_bound_only': True,
               'recorded_at_utc': now.isoformat(),

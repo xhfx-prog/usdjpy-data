@@ -1,0 +1,14 @@
+{
+  "request_id": "world-news-catalyst-20261103-2230-v1",
+  "move_at_jst": "2026-11-03T22:30:00+09:00",
+  "pre_minutes": 60,
+  "post_minutes": 15,
+  "hints": [
+    "Qatar",
+    "Iran",
+    "Israel",
+    "Trump",
+    "ceasefire"
+  ],
+  "description": "First end-to-end scan: discover global news before 22:30 JST USDJPY drop; do not use FX market recap articles as initial cause."
+}

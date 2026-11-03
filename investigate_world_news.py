@@ -142,12 +142,31 @@ def ranking(article,move):
     host=article.get("domain","")
     trusted=("reuters.com","apnews.com","bloomberg.com","ft.com","wsj.com",
              "bbc.com","aljazeera.com","federalreserve.gov","state.gov","whitehouse.gov")
+    publisher=article.get("publisher","").lower()
+    title=article["title"].lower()
     score=15 if prior else 0
-    if any(host.endswith(x) for x in trusted):
+    if any(host.endswith(x) or x.split(".")[0] in publisher for x in trusted):
         score+=5
     if article["source"]=="OFFICIAL_RSS":
         score+=8
-    score+=-10 if RECAP_PAT.search(article["title"]) else 2
+    # Economic and geopolitical STATE CHANGES, not routine company publicity.
+    # These weights rank leads to inspect; they do NOT claim event causation.
+    high_impact=r"\b(?:approv(?:e|ed|al)|accept(?:s|ed)?|agree(?:s|d)?|signs?|ceasefire|peace deal|truce|halt(?:s|ed)?|ends?|cut(?:s)?|suspend(?:s|ed)?|attack(?:s|ed)?|strike(?:s|s)?|invad(?:e|es|ed)|deploy(?:s|ed)?|sanction(?:s|ed)?|tariff(?:s)?|ban(?:s|ned)?|resum(?:e|es|ed)|reject(?:s|ed)?)\b"
+    important=r"\b(?:iran|israel|qatar|russia|ukraine|taiwan|china|u\\.s\\.|united states|trump|federal reserve|boj|bank of japan|opec|crude oil|hormuz|treasury|bond yields|inflation|payrolls|cpi|interest rates)\b"
+    if re.search(high_impact,title):
+        score+=8
+    if re.search(important,title):
+        score+=5
+    if len(re.findall(r"\b(?:iran|israel|qatar|russia|ukraine|united states|u\\.s\\.|trump|china|taiwan|opec)\b",title))>=2:
+        score+=4
+    if re.search(r"\b(?:peace|negotiat|deal|oil supply|military|diplomat|energy|interest rates|central bank)\b",title):
+        score+=3
+    if re.search(r"\b(?:earnings|first quarter results|launches.*etf|stock upgrade|company revenue|webinar|announces fiscal|individual share)\b",title):
+        score-=12
+    if RECAP_PAT.search(article["title"]):
+        score-=12
+    if article["channel"] in ("geopolitics","energy"):
+        score+=2
     if article["source_timestamp_utc"]:
         delta=abs((move-datetime.fromisoformat(article["source_timestamp_utc"])).total_seconds())/60
         score+=max(0,5-min(delta/10,5))
@@ -231,7 +250,7 @@ def collect(move,pre_minutes=45,post_minutes=10,hints=None,
         "discovery_status":"NEWS_CANDIDATES_FOUND" if candidates else "NO_VERIFIED_NEWS_CANDIDATES",
         "chronology_note":"Index/publication timestamps do not prove underlying EVENT time; post-move publication is not evidence of an initial trigger.",
         "interpretation_rule":"Separately verify event timestamps, competing events and oil/yield/equity reactions before assigning any cause.",
-        "candidates":candidates[:40],
+        "candidates":candidates[:80],
         "totals":{"raw_results":len(articles),"in_window_unique":len(candidates),
            "timestamp_before_move":sum(c["chronology"].startswith("SOURCE_TIMESTAMP_BEFORE") for c in candidates),
            "timestamp_after_move":sum(c["chronology"].startswith("POST_MOVE") for c in candidates)},

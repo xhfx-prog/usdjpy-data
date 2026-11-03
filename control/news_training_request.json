@@ -1,8 +1,8 @@
 {
-  "request_id": "news-training-daily-pilot-retry-2026-11-04T00JST",
-  "purpose": "Daily granularity pilot on historical Google RSS and 1yr hourly observations",
-  "per_month": 2,
-  "max_cases": 6,
-  "sleep_seconds": 0.5,
+  "request_id": "news-training-12month-full-2026-11-03T15:17:05.975Z",
+  "purpose": "One-year retrospective USDJPY daily high-volatility vs same-month quiet controls, archived headline explanations, 2026-08 onward holdout validation",
+  "per_month": 3,
+  "max_cases": 72,
+  "sleep_seconds": 3.5,
   "holdout_from": "2026-08"
 }

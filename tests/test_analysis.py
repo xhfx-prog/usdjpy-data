@@ -60,6 +60,14 @@ class StructureTests(unittest.TestCase):
         self.assertIsNone(report["decision"]["first_verified_support"])
         self.assertEqual(report["market_structure"]["directional_bias"], "NO_CURRENT_DIRECTION")
 
+    def test_ny_0830_initial_drop_rejected_by_2303(self):
+        report, _ = self.calculate("2026-11-03T23:04:00+09:00")
+        signals = report["session_opening_reversals"]
+        ny = next(x for x in signals if x["window"] == "NEW_YORK_0830")
+        self.assertEqual(ny["first_direction"], "down")
+        self.assertEqual(ny["interpretation"], "INITIAL_DOWN_REJECTED")
+        self.assertEqual(ny["causality"], "NOT_ESTABLISHED_FROM_OHLC")
+
     def test_5minute_aggregation_discards_partial_bars(self):
         obj=self.fixture
         asof=datetime.fromisoformat("2026-11-03T23:03:20+09:00")

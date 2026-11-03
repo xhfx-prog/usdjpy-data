@@ -1,19 +1,19 @@
 {
   "latest": {
-    "runner_started_at_utc": "2026-11-03T23:03:22.660299288Z",
+    "runner_started_at_utc": "2026-11-03T23:04:27.954542529Z",
     "estimated_previous_cron_slot_utc": null,
     "runner_start_delay_from_estimated_slot_seconds": null,
     "schedule_expression": null,
-    "refresh_request_id": "validate-multitimeframe-20261104-2026-11-03T23:03:15.343Z",
+    "refresh_request_id": "validate-timeframe-fix-20261104-2026-11-03T23:04:20.153Z",
     "actual_scheduled_slot_known": false,
     "delay_is_lower_bound_only": true,
-    "recorded_at_utc": "2026-11-03T23:03:24.650921+00:00",
+    "recorded_at_utc": "2026-11-03T23:04:31.726043+00:00",
     "event": "push",
-    "run_id": "41736005210",
+    "run_id": "41736160600",
     "run_attempt": "1",
     "fetch_outcome": "success",
-    "job_status_before_publish": "failure",
-    "sha": "2226f4fca47174b7ccc51e56a9df265032f0cc41"
+    "job_status_before_publish": "success",
+    "sha": "1b75382d97e47ac70a7491835a8c8a8deac5a7cf"
   },
   "recent_runs": [
     {
@@ -745,6 +745,22 @@
       "fetch_outcome": "success",
       "job_status_before_publish": "failure",
       "sha": "2226f4fca47174b7ccc51e56a9df265032f0cc41"
+    },
+    {
+      "runner_started_at_utc": "2026-11-03T23:04:27.954542529Z",
+      "estimated_previous_cron_slot_utc": null,
+      "runner_start_delay_from_estimated_slot_seconds": null,
+      "schedule_expression": null,
+      "refresh_request_id": "validate-timeframe-fix-20261104-2026-11-03T23:04:20.153Z",
+      "actual_scheduled_slot_known": false,
+      "delay_is_lower_bound_only": true,
+      "recorded_at_utc": "2026-11-03T23:04:31.726043+00:00",
+      "event": "push",
+      "run_id": "41736160600",
+      "run_attempt": "1",
+      "fetch_outcome": "success",
+      "job_status_before_publish": "success",
+      "sha": "1b75382d97e47ac70a7491835a8c8a8deac5a7cf"
     }
   ]
 }

@@ -132,7 +132,9 @@ def classify_chronology(article,start,move,end):
     dt=datetime.fromisoformat(value)
     if dt<start or dt>end:
         return "OUT_OF_WINDOW"
-    if dt<=move:
+    if dt==move:
+        return "SAME_MINUTE_ORDER_UNKNOWN"
+    if dt<move:
         return "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED"
     return "POST_MOVE_CANNOT_BE_TRIGGER_FROM_THIS_TIMESTAMP"
 
@@ -234,7 +236,14 @@ def collect(move,pre_minutes=45,post_minutes=10,hints=None,
         if article["chronology"]=="OUT_OF_WINDOW":
             continue
         article["priority_score_not_causal_confidence"]=ranking(article,move)
-        article["hypothesis_paths_not_verified"]=CHANNEL_EFFECTS.get(article["channel"],[])
+        channel=article["channel"]
+        if channel=="context_hints":
+            title=article["title"].lower()
+            channel=("geopolitics" if re.search(r"iran|israel|qatar|ukraine|russia|peace|war|sanction",title)
+                     else "monetary_economy" if re.search(r"federal reserve|boj|inflation|rate",title)
+                     else "energy" if re.search(r"crude|opec|oil|pipeline",title)
+                     else "global_risks")
+        article["hypothesis_paths_not_verified"]=CHANNEL_EFFECTS.get(channel,[])
         article["trigger_confirmed"]=False
         candidates.append(article)
     candidates.sort(key=lambda x:(
@@ -306,7 +315,17 @@ def main(argv=None):
     obj["price_context"]=read_move_price(args.ohlc,move)
     output=Path(args.out)
     output.parent.mkdir(exist_ok=True,parents=True)
-    output.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    payload=json.dumps(obj,ensure_ascii=False,indent=2)+"\n"
+    output.write_text(payload,encoding="utf-8")
+    # Preserve each on-demand investigation instead of overwriting the record.
+    # Separate publication-time metadata from later market-based conclusions.
+    import hashlib
+    archive=Path("data/news_investigations")/move.strftime("%Y-%m-%d")
+    archive.mkdir(exist_ok=True,parents=True)
+    suffix=hashlib.sha256(args.request_id.encode()).hexdigest()[:10]
+    archived=archive/(move.strftime("%H%M")+"_"+suffix+".json")
+    archived.write_text(payload,encoding="utf-8")
+    print("news investigation archived:",archived)
     print("world news scan:",obj["discovery_status"],
           "candidates:",obj["totals"]["in_window_unique"],
           "feeds_ok:",sum(s["status"]=="ok" for s in obj["news_sources"]),

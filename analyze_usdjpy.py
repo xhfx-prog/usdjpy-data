@@ -114,7 +114,8 @@ def load_market(data_dir=DATA, asof=None):
                 hourrows += ar["data"]["values"]
     minute = normalized(minrows, asof, "1min")
     hourly = normalized(hourrows, asof, "1h")
-    daily = normalized(objs["1day"]["data"]["values"], asof, "1day")
+    daily = [b for b in normalized(objs["1day"]["data"]["values"], asof, "1day")
+             if datetime.fromisoformat(b["t"]).weekday() < 5]  # exclude weekend pseudo-bars
     return minute, hourly, daily, objs, ix, hix
 
 
@@ -180,15 +181,22 @@ def levels(m5, m15, hour, fourh, daily, latest):
     for side, name in (("l", "support"), ("h", "resistance")):
         selected = sorted((x for x in points if x["side"] == side), key=lambda x:x["price"])
         clusters = []
+        # Fixed maximum span prevents transitive chaining into unusable
+        # 15-20 pip "zones" which obscure nearby distinct supports/resistances.
+        max_span = 0.065
         for p in selected:
-            matches = [c for c in clusters if abs(p["price"] - c["center"]) <= max(p["width"],c["width"])]
+            matches = [c for c in clusters
+                       if abs(p["price"] - c["center"]) <= 0.0325
+                       and max(c["hi"],p["price"])-min(c["lo"],p["price"]) <= max_span]
             if matches:
                 c = min(matches, key=lambda x: abs(x["center"]-p["price"]))
                 c["points"].append(p)
                 c["center"] = statistics.median(q["price"] for q in c["points"])
-                c["width"] = max(c["width"],p["width"])
+                c["lo"] = min(c["lo"],p["price"])
+                c["hi"] = max(c["hi"],p["price"])
             else:
-                clusters.append({"points":[p], "center":p["price"], "width":p["width"]})
+                clusters.append({"points":[p], "center":p["price"],
+                                 "lo":p["price"],"hi":p["price"]})
         for c in clusters:
             z = sorted(c["points"], key=lambda x:x["t"])
             # A single event visible on multiple timeframes is not multiple reactions.

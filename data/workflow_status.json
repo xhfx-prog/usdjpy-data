@@ -1,19 +1,19 @@
 {
   "latest": {
-    "runner_started_at_utc": "2026-11-03T22:46:57.252118404Z",
-    "estimated_previous_cron_slot_utc": "2026-11-03T22:11:00+00:00",
-    "runner_start_delay_from_estimated_slot_seconds": 2157.3,
-    "schedule_expression": "11 * * * *",
-    "refresh_request_id": "manual-morning-20261104-2026-11-03T21:57:59.046Z",
+    "runner_started_at_utc": "2026-11-03T23:03:22.660299288Z",
+    "estimated_previous_cron_slot_utc": null,
+    "runner_start_delay_from_estimated_slot_seconds": null,
+    "schedule_expression": null,
+    "refresh_request_id": "validate-multitimeframe-20261104-2026-11-03T23:03:15.343Z",
     "actual_scheduled_slot_known": false,
     "delay_is_lower_bound_only": true,
-    "recorded_at_utc": "2026-11-03T22:47:00.746214+00:00",
-    "event": "schedule",
-    "run_id": "41733745088",
+    "recorded_at_utc": "2026-11-03T23:03:24.650921+00:00",
+    "event": "push",
+    "run_id": "41736005210",
     "run_attempt": "1",
     "fetch_outcome": "success",
-    "job_status_before_publish": "success",
-    "sha": "42b8c74bb64dea02c5a8818a6a8a29212767b18a"
+    "job_status_before_publish": "failure",
+    "sha": "2226f4fca47174b7ccc51e56a9df265032f0cc41"
   },
   "recent_runs": [
     {
@@ -729,6 +729,22 @@
       "fetch_outcome": "success",
       "job_status_before_publish": "success",
       "sha": "42b8c74bb64dea02c5a8818a6a8a29212767b18a"
+    },
+    {
+      "runner_started_at_utc": "2026-11-03T23:03:22.660299288Z",
+      "estimated_previous_cron_slot_utc": null,
+      "runner_start_delay_from_estimated_slot_seconds": null,
+      "schedule_expression": null,
+      "refresh_request_id": "validate-multitimeframe-20261104-2026-11-03T23:03:15.343Z",
+      "actual_scheduled_slot_known": false,
+      "delay_is_lower_bound_only": true,
+      "recorded_at_utc": "2026-11-03T23:03:24.650921+00:00",
+      "event": "push",
+      "run_id": "41736005210",
+      "run_attempt": "1",
+      "fetch_outcome": "success",
+      "job_status_before_publish": "failure",
+      "sha": "2226f4fca47174b7ccc51e56a9df265032f0cc41"
     }
   ]
 }

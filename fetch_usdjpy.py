@@ -183,7 +183,7 @@ print("1min refreshed:", combined[0]["datetime"])
 # 1-hour candles: rolling 370-day archive, partitioned by calendar month.
 # Bootstrap requests up to 5000 + 2200 older bars once, as supported by provider.
 hourly_last = read(DATA / "usdjpy_1h.json")
-if due(hourly_last.get("fetched_at"), 1):
+if not state.get("hourly_bootstrap_completed") or due(hourly_last.get("fetched_at"), 1):
     try:
         if not state.get("hourly_bootstrap_completed"):
             batch = fetch("1h", 5000)

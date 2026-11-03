@@ -45,6 +45,14 @@ class StructureTests(unittest.TestCase):
         self.assertNotEqual(report["market_structure"]["directional_bias"], "UP_CANDIDATE")
         self.assertIn("UNVALIDATED", report["session_calendar"]["session_effect_probabilities"])
 
+    def test_sr_zones_never_chain_into_broad_unusable_bands(self):
+        report, _ = self.calculate("2026-11-03T23:04:00+09:00")
+        both = report["market_structure"]["support_resistance"]
+        for direction in ("support", "resistance"):
+            for item in both[direction]:
+                self.assertLessEqual(item["high"]-item["low"], 0.0651,
+                                     "S/R band incorrectly merged unrelated price structures")
+
     def test_older_than_ten_minutes_blocks_current_decision(self):
         report, _ = self.calculate("2026-11-03T23:20:00+09:00")
         self.assertFalse(report["data_quality"]["usable_for_current_trading"])

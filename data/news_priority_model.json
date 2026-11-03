@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "source": "data/news_priority_training_latest.json",
+  "generated_at_utc": "2026-11-03T15:12:22+00:00",
+  "training_period_end_jst": "2026-11-04",
+  "allow_live_prior": false,
+  "holdout": {},
+  "reason": "INSUFFICIENT_HISTORICAL_NEWS_OR_HOLDOUT_COVERAGE",
+  "category_prior_points": {
+    "fed_us_rates": 0.0,
+    "boj_japan_rates": 0.0,
+    "us_inflation": 0.0,
+    "us_employment": 0.0,
+    "us_politics_tariffs": 0.0,
+    "geopolitics_war_peace": 0.0,
+    "energy_supply": 0.0,
+    "risk_financial_system": 0.0,
+    "china_economy": 0.0,
+    "intervention": 0.0
+  },
+  "note": "Association-only. Never assert that commentary proves causation."
+}

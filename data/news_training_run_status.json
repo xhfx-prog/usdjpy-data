@@ -1,0 +1,10 @@
+{
+  "request_id": "news-training-pilot-2026-11-04T00-15JST",
+  "recorded_at_utc": "2026-11-03T15:12:22.414975+00:00",
+  "github_run_id": "41661377989",
+  "job_status": null,
+  "model_written": true,
+  "model_usable": false,
+  "model_reason": "INSUFFICIENT_HISTORICAL_NEWS_OR_HOLDOUT_COVERAGE",
+  "holdout": {}
+}

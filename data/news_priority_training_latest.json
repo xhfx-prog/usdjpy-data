@@ -1,0 +1,328 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at_utc": "2026-11-03T15:12:22+00:00",
+  "requested_lookback_days": 365,
+  "market_bars_available": 6206,
+  "actual_oldest_jst": "2025-11-04T01:00:00+09:00",
+  "actual_newest_jst": "2026-11-03T22:00:00+09:00",
+  "sampling": "largest hourly range vs quiet matched-hour controls, per calendar month",
+  "hourly_bar_not_exact_move_onset": true,
+  "article_coverage": "Google News RSS historical titles only; not full article bodies",
+  "news_time_rule": "publication cannot prove actual event timestamp",
+  "recap_usage": "ex-post educational weak labels only; no pre-event model features",
+  "network_errors": 0,
+  "cases": [
+    {
+      "kind": "quiet_control",
+      "month": "2025-11",
+      "bar_start_jst": "2025-11-11T21:00:00+09:00",
+      "hour_jst": 21,
+      "range_pips": 10.401,
+      "hour_return_pips": -5.7,
+      "news": {
+        "sources": [
+          {
+            "type": "world",
+            "status": "ok",
+            "articles": 7
+          },
+          {
+            "type": "fx_recap",
+            "status": "ok",
+            "articles": 2
+          }
+        ],
+        "world_prestart": [],
+        "world_within_hour": [],
+        "recap_post_hour": [],
+        "world_after_hour": [],
+        "prestart_categories": [],
+        "hour_categories": [],
+        "recap_explanations": []
+      }
+    },
+    {
+      "kind": "large_move",
+      "month": "2025-11",
+      "bar_start_jst": "2025-11-14T21:00:00+09:00",
+      "hour_jst": 21,
+      "range_pips": 86.0,
+      "hour_return_pips": -83.8,
+      "news": {
+        "sources": [
+          {
+            "type": "world",
+            "status": "ok",
+            "articles": 40
+          },
+          {
+            "type": "fx_recap",
+            "status": "ok",
+            "articles": 4
+          }
+        ],
+        "world_prestart": [],
+        "world_within_hour": [],
+        "recap_post_hour": [],
+        "world_after_hour": [],
+        "prestart_categories": [],
+        "hour_categories": [],
+        "recap_explanations": []
+      }
+    },
+    {
+      "kind": "quiet_control",
+      "month": "2025-11",
+      "bar_start_jst": "2025-11-17T22:00:00+09:00",
+      "hour_jst": 22,
+      "range_pips": 8.4,
+      "hour_return_pips": 4.5,
+      "news": {
+        "sources": [
+          {
+            "type": "world",
+            "status": "ok",
+            "articles": 6
+          },
+          {
+            "type": "fx_recap",
+            "status": "ok",
+            "articles": 7
+          }
+        ],
+        "world_prestart": [],
+        "world_within_hour": [],
+        "recap_post_hour": [],
+        "world_after_hour": [],
+        "prestart_categories": [],
+        "hour_categories": [],
+        "recap_explanations": []
+      }
+    },
+    {
+      "kind": "large_move",
+      "month": "2025-11",
+      "bar_start_jst": "2025-11-20T22:00:00+09:00",
+      "hour_jst": 22,
+      "range_pips": 66.4,
+      "hour_return_pips": -13.201,
+      "news": {
+        "sources": [
+          {
+            "type": "world",
+            "status": "ok",
+            "articles": 4
+          },
+          {
+            "type": "fx_recap",
+            "status": "ok",
+            "articles": 5
+          }
+        ],
+        "world_prestart": [],
+        "world_within_hour": [],
+        "recap_post_hour": [],
+        "world_after_hour": [],
+        "prestart_categories": [],
+        "hour_categories": [],
+        "recap_explanations": []
+      }
+    },
+    {
+      "kind": "quiet_control",
+      "month": "2025-12",
+      "bar_start_jst": "2025-12-10T10:00:00+09:00",
+      "hour_jst": 10,
+      "range_pips": 9.179,
+      "hour_return_pips": -2.647,
+      "news": {
+        "sources": [
+          {
+            "type": "world",
+            "status": "ok",
+            "articles": 3
+          },
+          {
+            "type": "fx_recap",
+            "status": "ok",
+            "articles": 1
+          }
+        ],
+        "world_prestart": [],
+        "world_within_hour": [],
+        "recap_post_hour": [],
+        "world_after_hour": [
+          {
+            "pub_utc": "2025-12-10T08:00:00+00:00",
+            "title": "Nearly 200 children conceived from sperm donor with increased cancer risk - CTV News",
+            "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxONHFNcnptSVlyNlMtZU1GNjFlbm5UVlM5N0piQ01RUmNkZHNxZUhSVnNRRlVDNkdxWFVEdDZjS3NzOHJLd2ZYS0hLanFaTkJzQldZellOREJmUzFodXZqWTdSVDBFX2p5S0RFeDdJQkRLNjdmLS1ZazQ5NVJQdXFuQ1YzSEFmemdXb3o0OWZka1JyZUpaOF95N0VkcGV4UzRmSkgxcHhkWWZFVURTaU1RMQ?oc=5",
+            "categories": []
+          }
+        ],
+        "prestart_categories": [],
+        "hour_categories": [],
+        "recap_explanations": []
+      }
+    },
+    {
+      "kind": "large_move",
+      "month": "2025-12",
+      "bar_start_jst": "2025-12-19T16:00:00+09:00",
+      "hour_jst": 16,
+      "range_pips": 72.137,
+      "hour_return_pips": 68.637,
+      "news": {
+        "sources": [
+          {
+            "type": "world",
+            "status": "ok",
+            "articles": 4
+          },
+          {
+            "type": "fx_recap",
+            "status": "ok",
+            "articles": 10
+          }
+        ],
+        "world_prestart": [],
+        "world_within_hour": [],
+        "recap_post_hour": [
+          {
+            "pub_utc": "2025-12-19T08:00:00+00:00",
+            "title": "Outlook 2026: The dollar, yen and shifting market dynamics - CMC Markets",
+            "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOeVJPRkNyVDZjY3BvdFJUN0dZTEFJSmxOLW42YjRGZkRrLXNzQ1hVQ1RCenJDTjdEeWhZUkJGbHJiazFWMmZYRFhzOTlxdjFXWWYyQ2lkcWljZzBDZzRhWjhCUWhuUWhET1ZMWUFTTWg5bXdlY3ZWWmp5X2dwVWF6OGZRalo5a2Q2RnktSl9kVlQzWW9SNEw1Z1JUSl82cHJKVFRxNU9kR1ozWkk?oc=5",
+            "categories": []
+          }
+        ],
+        "world_after_hour": [
+          {
+            "pub_utc": "2025-12-19T08:00:00+00:00",
+            "title": "EIA updates its definitions and estimates of OPEC crude oil production capacity - U.S. Energy Information Administration (EIA) (.gov)",
+            "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE9UazZoUy11bjZGWmpGWHF4T3gzcU13RkhQOThWU2syVEhSSTVPYmZjN3VuUmNlT3hDNEtlUUJaZHZCN3czZjZxNk1MZUdmU2JnaGQ3Z2FwSHhHNlJsVFV0SGlpaw?oc=5",
+            "categories": [
+              "energy_supply"
+            ]
+          },
+          {
+            "pub_utc": "2025-12-19T08:00:00+00:00",
+            "title": "Trump announces lower drug price deals with 9 pharmaceutical companies - AP News",
+            "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQdTk1bTAyRzVnd0huRGJSck1iVHN1YXo1RkdWSlAteU5LdlBvR2ZIV3pIcjgwcWxUSjRuamsxVGN0bVoyeTlsMEtUazk3cVRDb2h0NjNOZXVJNXV4cTMtS001dUxLenZuVnphWjJ0U1ljX2tTdG9NbU1mS3M0dUZnYkdQa1RidXJZNktEd3FRckNERF84MVJCd3g4Y1I4RDZuRE9lQ0MwWGJYa1p0YmFoTEgwanBybG5SY3NBcnI2aVhyUQ?oc=5",
+            "categories": [
+              "us_politics_tariffs"
+            ]
+          },
+          {
+            "pub_utc": "2025-12-19T08:00:00+00:00",
+            "title": "See photos and documents from the latest Epstein file release - PBS",
+            "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQX3pITGI1T1JsWGxYUGg5T1hGQ3FGR2gxdUNlV3pIV05Vdm1WT1h4RHh6QkNSWFM1U1VhazU3TmdzbW40RTBFSkIwd3kzM2pRVmhsWno3STJ2Wl9sZENXYm9RNHFLNmg2Y0hZLWNlai1fWm8xY0YyRVV2Z1NabmlTOF9DU3dUWjg1VThuMnB3OXFMRXppc3RwZ1F4U1NhY2Iy?oc=5",
+            "categories": []
+          }
+        ],
+        "prestart_categories": [],
+        "hour_categories": [],
+        "recap_explanations": []
+      }
+    }
+  ],
+  "fit": {
+    "train_cases": 6,
+    "holdout_cases": 0,
+    "usable": false,
+    "reason": "INSUFFICIENT_HISTORICAL_NEWS_OR_HOLDOUT_COVERAGE",
+    "category_stats": {
+      "fed_us_rates": {
+        "shock_cases_with_prestart_news": 0,
+        "quiet_cases_with_prestart_news": 0,
+        "sample_shocks": 3,
+        "sample_quiet": 3,
+        "smoothed_likelihood_ratio": 1.0,
+        "weight_prior_points": 0.0,
+        "recap_weak_label_shock_cases": 0
+      },
+      "boj_japan_rates": {
+        "shock_cases_with_prestart_news": 0,
+        "quiet_cases_with_prestart_news": 0,
+        "sample_shocks": 3,
+        "sample_quiet": 3,
+        "smoothed_likelihood_ratio": 1.0,
+        "weight_prior_points": 0.0,
+        "recap_weak_label_shock_cases": 0
+      },
+      "us_inflation": {
+        "shock_cases_with_prestart_news": 0,
+        "quiet_cases_with_prestart_news": 0,
+        "sample_shocks": 3,
+        "sample_quiet": 3,
+        "smoothed_likelihood_ratio": 1.0,
+        "weight_prior_points": 0.0,
+        "recap_weak_label_shock_cases": 0
+      },
+      "us_employment": {
+        "shock_cases_with_prestart_news": 0,
+        "quiet_cases_with_prestart_news": 0,
+        "sample_shocks": 3,
+        "sample_quiet": 3,
+        "smoothed_likelihood_ratio": 1.0,
+        "weight_prior_points": 0.0,
+        "recap_weak_label_shock_cases": 0
+      },
+      "us_politics_tariffs": {
+        "shock_cases_with_prestart_news": 0,
+        "quiet_cases_with_prestart_news": 0,
+        "sample_shocks": 3,
+        "sample_quiet": 3,
+        "smoothed_likelihood_ratio": 1.0,
+        "weight_prior_points": 0.0,
+        "recap_weak_label_shock_cases": 0
+      },
+      "geopolitics_war_peace": {
+        "shock_cases_with_prestart_news": 0,
+        "quiet_cases_with_prestart_news": 0,
+        "sample_shocks": 3,
+        "sample_quiet": 3,
+        "smoothed_likelihood_ratio": 1.0,
+        "weight_prior_points": 0.0,
+        "recap_weak_label_shock_cases": 0
+      },
+      "energy_supply": {
+        "shock_cases_with_prestart_news": 0,
+        "quiet_cases_with_prestart_news": 0,
+        "sample_shocks": 3,
+        "sample_quiet": 3,
+        "smoothed_likelihood_ratio": 1.0,
+        "weight_prior_points": 0.0,
+        "recap_weak_label_shock_cases": 0
+      },
+      "risk_financial_system": {
+        "shock_cases_with_prestart_news": 0,
+        "quiet_cases_with_prestart_news": 0,
+        "sample_shocks": 3,
+        "sample_quiet": 3,
+        "smoothed_likelihood_ratio": 1.0,
+        "weight_prior_points": 0.0,
+        "recap_weak_label_shock_cases": 0
+      },
+      "china_economy": {
+        "shock_cases_with_prestart_news": 0,
+        "quiet_cases_with_prestart_news": 0,
+        "sample_shocks": 3,
+        "sample_quiet": 3,
+        "smoothed_likelihood_ratio": 1.0,
+        "weight_prior_points": 0.0,
+        "recap_weak_label_shock_cases": 0
+      },
+      "intervention": {
+        "shock_cases_with_prestart_news": 0,
+        "quiet_cases_with_prestart_news": 0,
+        "sample_shocks": 3,
+        "sample_quiet": 3,
+        "smoothed_likelihood_ratio": 1.0,
+        "weight_prior_points": 0.0,
+        "recap_weak_label_shock_cases": 0
+      }
+    },
+    "holdout_metrics": {},
+    "source_covered_shocks": 3,
+    "source_covered_quiet": 3
+  }
+}

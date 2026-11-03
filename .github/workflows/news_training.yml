@@ -46,6 +46,8 @@ jobs:
 
       - name: Persist study, model and status
         if: always()
+        env:
+          JOB_STATUS: ${{ job.status }}
         run: |
           python - <<'PY'
           import json,os

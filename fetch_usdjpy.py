@@ -90,11 +90,15 @@ def payload(interval, rows, **extra):
     }
 
 
-def fetch(interval, outputsize, end_date=None):
+def fetch(interval, outputsize=None, end_date=None, start_date=None):
     params = {
-        "symbol": "USD/JPY", "interval": interval, "outputsize": outputsize,
+        "symbol": "USD/JPY", "interval": interval,
         "timezone": "Asia/Tokyo", "apikey": os.environ["TWELVE_API_KEY"]
     }
+    if outputsize is not None:
+        params["outputsize"] = outputsize
+    if start_date:
+        params["start_date"] = start_date
     if end_date:
         params["end_date"] = end_date
     url = "https://api.twelvedata.com/time_series?" + urllib.parse.urlencode(params)
@@ -203,6 +207,23 @@ if not state.get("hourly_bootstrap_completed") or due(hourly_last.get("fetched_a
         errors.append("1h: " + str(exc))
 else:
     print("1h refresh not yet due")
+# Historical range endpoints fill any gap left by outputsize-only bootstrap.
+# A one-time result (including provider rejection) is recorded to prevent an
+# expensive repeated request on every hourly/on-demand invocation.
+if state.get("hourly_bootstrap_completed") and not state.get("hourly_tail_probe_completed"):
+    months = sorted(HOURS.glob("*.json"))
+    oldest_bar = next((values(p)[-1]["datetime"] for p in months if values(p)), None)
+    if oldest_bar and oldest_bar[:10] > hour_cutoff:
+        try:
+            start = hour_cutoff + " 00:00:00"
+            end = (parse_jst(oldest_bar) - timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")
+            extension = fetch("1h", start_date=start, end_date=end)
+            archive("1h", HOURS, extension, lambda s: s[:7], hour_cutoff)
+            state["hourly_tail_probe_returned_bars"] = len(extension)
+        except Exception as exc:
+            state["hourly_tail_probe_error"] = str(exc)
+            errors.append("1h historical tail: " + str(exc))
+    state["hourly_tail_probe_completed"] = True
 archive("1h", HOURS, [], lambda s: s[:7], hour_cutoff)
 manifest(HOURS, "1h", "month_jst")
 

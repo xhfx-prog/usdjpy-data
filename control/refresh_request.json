@@ -1,6 +1,6 @@
 {
-  "request_id": "chatgpt-on-demand-2026-11-03T12:30:54.594Z",
+  "request_id": "architecture-test-2026-11-03-1",
   "requested_by": "chatgpt",
-  "reason": "USDJPY updated OHLC needed for 2026-11-03 21:30 JST through 2026-11-04 12:00 JST analysis",
+  "reason": "Validate archive migration and on-demand refresh",
   "note": "Request latest data from configured GitHub Actions pipeline."
 }

@@ -1,6 +1,6 @@
 {
-  "request_id": "architecture-test-2026-11-03-1",
+  "request_id": "architecture-hourly-backfill-test-2026-11-03-2",
   "requested_by": "chatgpt",
-  "reason": "Validate archive migration and on-demand refresh",
+  "reason": "Run first yearly 1hour historical backfill, check coverage",
   "note": "Request latest data from configured GitHub Actions pipeline."
 }

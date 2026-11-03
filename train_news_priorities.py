@@ -172,8 +172,10 @@ def daily_samples(hourly,per_month=2):
     return sorted(out,key=lambda x:x["bar_start_jst"])
 
 
-def analyze_daily_articles(case,now,fetcher=fetch,sleep_seconds=3):
+def analyze_daily_articles(case,now,fetcher=None,sleep_seconds=3):
     """Retrospective same-day story topics; no publication-to-minute inference."""
+    if fetcher is None:
+        fetcher=fetch
     day=datetime.fromisoformat(case["bar_start_jst"])
     queries=(
         ("world",'(Iran OR Israel OR Qatar OR Trump OR tariff OR "Federal Reserve" OR "Bank of Japan" OR OPEC OR crude OR Treasury OR inflation OR payrolls OR ceasefire)'),

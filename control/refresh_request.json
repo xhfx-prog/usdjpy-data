@@ -1,0 +1,6 @@
+{
+  "request_id": "2026-11-03-initial-chatgpt-trigger-test",
+  "requested_by": "chatgpt",
+  "reason": "validate on-demand push event",
+  "note": "Update this file with a new request_id for each on-demand refresh."
+}

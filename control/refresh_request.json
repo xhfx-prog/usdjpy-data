@@ -1,5 +1,5 @@
 {
-  "request_id": "analysis-engine-regression-retry-2026-11-03T14:18:58.825Z",
+  "request_id": "analysis-engine-sr-regression-2026-11-03T14:20:38.818Z",
   "requested_by": "chatgpt",
-  "reason": "Retest repaired stall detection and generate analysis_latest.json"
+  "reason": "End-to-end run with corrected S/R clustering and weekend-day exclusion"
 }

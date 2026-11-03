@@ -349,10 +349,14 @@ def fit(samples,holdout_from="2026-08"):
           "recap_weak_label_shock_cases":sum(cat in r["news"]["recap_explanations"]
                                               for r in train if r["kind"]=="large_move")}
     # No learning from a few unrepresentative or inaccessible articles.
-    good_big=sum(r["kind"]=="large_move" and any(z["status"]=="ok" and z["articles"]>0
-                   for z in r["news"]["sources"]) for r in train)
-    good_quiet=sum(r["kind"]=="quiet_control" and any(z["status"]=="ok" and z["articles"]>0
-                   for z in r["news"]["sources"]) for r in train)
+    def actual_day_coverage(row):
+        news=row["news"]
+        if "daily_world_count" in news:
+            return news["daily_world_count"]+news["daily_fx_recap_count"]>0
+        return bool(news.get("world_prestart") or news.get("world_within_hour") or
+                    news.get("recap_post_hour"))
+    good_big=sum(r["kind"]=="large_move" and actual_day_coverage(r) for r in train)
+    good_quiet=sum(r["kind"]=="quiet_control" and actual_day_coverage(r) for r in train)
     outcome["source_covered_shocks"]=good_big
     outcome["source_covered_quiet"]=good_quiet
     if good_big<12 or good_quiet<12 or len(test)<10:

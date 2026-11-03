@@ -1,27 +1,27 @@
 {
   "schema_version": "1.0.0",
-  "generated_at_utc": "2026-11-03T18:54:31+00:00",
-  "analysis_asof_jst": "2026-11-04T03:54:30+09:00",
+  "generated_at_utc": "2026-11-03T19:55:38+00:00",
+  "analysis_asof_jst": "2026-11-04T04:55:38+09:00",
   "instrument": "USD/JPY",
   "data_quality": {
     "usable_for_current_trading": true,
-    "last_confirmed_1min_start_jst": "2026-11-04 03:53:00",
-    "last_close": 158.62668,
+    "last_confirmed_1min_start_jst": "2026-11-04 04:54:00",
+    "last_close": 158.72977,
     "price_type": "OHLC_UNSPECIFIED_BID_ASK_MID",
-    "age_minutes": 1.51473,
+    "age_minutes": 1.63767,
     "stale_threshold_minutes": 10,
-    "source_fetched_at_utc": "2026-11-03T18:54:29.736329+00:00",
+    "source_fetched_at_utc": "2026-11-03T19:55:37.076004+00:00",
     "quality_flags": []
   },
   "timeframes": {
-    "complete_5min": 538,
-    "complete_15min": 179,
-    "complete_1h": 1106,
-    "complete_4h": 267,
+    "complete_5min": 551,
+    "complete_15min": 183,
+    "complete_1h": 1107,
+    "complete_4h": 268,
     "day_candles": 142,
-    "hourly_atr14": 0.14484,
-    "last_complete_5min": "2026-11-04 03:45:00",
-    "last_complete_1h": "2026-11-04 02:00:00"
+    "hourly_atr14": 0.15177,
+    "last_complete_5min": "2026-11-04 04:50:00",
+    "last_complete_1h": "2026-11-04 03:00:00"
   },
   "market_structure": {
     "hourly_higher_high_higher_low_pairs_last5": 3,
@@ -40,7 +40,7 @@
             "5min"
           ],
           "last_reaction": "2026-11-03 21:50:00",
-          "distance_pips": 44.081
+          "distance_pips": 54.39
         },
         {
           "low": 158.10785,
@@ -52,7 +52,7 @@
             "4h"
           ],
           "last_reaction": "2026-10-21 06:00:00",
-          "distance_pips": 50.8115
+          "distance_pips": 61.1205
         },
         {
           "low": 158.03631,
@@ -65,10 +65,22 @@
             "4h"
           ],
           "last_reaction": "2026-10-22 06:00:00",
-          "distance_pips": 57.133
+          "distance_pips": 67.442
         }
       ],
       "resistance": [
+        {
+          "low": 158.75688,
+          "high": 158.76356,
+          "center": 158.76022,
+          "independent_reactions": 2,
+          "timeframes": [
+            "4h",
+            "5min"
+          ],
+          "last_reaction": "2026-11-04 04:30:00",
+          "distance_pips": 3.045
+        },
         {
           "low": 158.96242,
           "high": 158.96242,
@@ -79,7 +91,7 @@
             "4h"
           ],
           "last_reaction": "2026-10-14 20:00:00",
-          "distance_pips": 33.574
+          "distance_pips": 23.265
         },
         {
           "low": 159.02924,
@@ -91,18 +103,7 @@
             "4h"
           ],
           "last_reaction": "2026-09-25 00:00:00",
-          "distance_pips": 40.256
-        },
-        {
-          "low": 161.9891,
-          "high": 162.00732,
-          "center": 161.99821,
-          "independent_reactions": 2,
-          "timeframes": [
-            "1day"
-          ],
-          "last_reaction": "2026-06-25",
-          "distance_pips": 337.153
+          "distance_pips": 29.947
         }
       ]
     },
@@ -113,23 +114,23 @@
     "observed_sessions": {
       "tokyo": {
         "active": false,
-        "local_time": "2026-11-04T03:54:30+09:00",
+        "local_time": "2026-11-04T04:55:38+09:00",
         "bars": 0,
         "session_high": null,
         "session_low": null
       },
       "london": {
         "active": false,
-        "local_time": "2026-11-03T18:54:30+00:00",
+        "local_time": "2026-11-03T19:55:38+00:00",
         "bars": 0,
         "session_high": null,
         "session_low": null
       },
       "new_york": {
         "active": true,
-        "local_time": "2026-11-03T13:54:30-05:00",
-        "bars": 354,
-        "session_high": 158.64328,
+        "local_time": "2026-11-03T14:55:38-05:00",
+        "bars": 415,
+        "session_high": 158.76356,
         "session_low": 157.96416
       }
     },
@@ -150,16 +151,16 @@
     "new_short": "NOT_PROPOSED_NO_VERIFIED_MACRO_CONFIRMATION",
     "long": "NO_AUTOMATIC_ENTRY",
     "first_verified_resistance": {
-      "low": 158.96242,
-      "high": 158.96242,
-      "center": 158.96242,
+      "low": 158.75688,
+      "high": 158.76356,
+      "center": 158.76022,
       "independent_reactions": 2,
       "timeframes": [
-        "1day",
-        "4h"
+        "4h",
+        "5min"
       ],
-      "last_reaction": "2026-10-14 20:00:00",
-      "distance_pips": 33.574
+      "last_reaction": "2026-11-04 04:30:00",
+      "distance_pips": 3.045
     },
     "first_verified_support": {
       "low": 158.17136,
@@ -170,7 +171,7 @@
         "5min"
       ],
       "last_reaction": "2026-11-03 21:50:00",
-      "distance_pips": 44.081
+      "distance_pips": 54.39
     },
     "prediction_24h": "NOT_CALIBRATED",
     "prediction_72h": "NOT_CALIBRATED",

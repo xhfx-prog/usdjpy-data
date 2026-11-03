@@ -1,5 +1,5 @@
 {
-  "request_id": "analysis-engine-sr-regression-2026-11-03T14:20:38.818Z",
+  "request_id": "analysis-engine-session-regression-2026-11-03T14:24:36.267Z",
   "requested_by": "chatgpt",
-  "reason": "End-to-end run with corrected S/R clustering and weekend-day exclusion"
+  "reason": "Validate NY-0830 fakeout and programmatic session transition detection"
 }

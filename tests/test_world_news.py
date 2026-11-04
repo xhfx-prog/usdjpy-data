@@ -73,6 +73,34 @@ class WorldNewsTests(unittest.TestCase):
         self.assertEqual(s.classify_chronology(a,self.move,self.move,self.now),
                          "TIME_UNVERIFIED")
 
+    def test_statement_is_not_an_implemented_policy(self):
+        a=s.make_article("Treasury secretary warns on currency volatility",
+                         "https://example.org/remarks","Official",
+                         self.move.astimezone(timezone.utc),
+                         "RSS_PUBDATE_NOT_EVENT_TIME","us_government",
+                         "GOOGLE_RSS",self.now,"en")
+        self.assertEqual(s.novelty_check(a),"STATEMENT_ONLY_CHECK_NOVELTY")
+        self.assertFalse(a["implementation_verified"])
+        self.assertEqual(a["novelty_vs_prior_statement"],"NOT_CHECKED")
+
+    def test_actual_action_and_reversal_are_distinct(self):
+        self.assertEqual(s.classify_event_stage("Tariffs took effect today"),
+                         "REPORTED_ACTION_VERIFY_PRIMARY_SOURCE")
+        self.assertEqual(s.classify_event_stage("Tariffs postponed"),
+                         "REPORTED_REVERSAL_VERIFY")
+
+    def test_recap_is_explicitly_after_world_news_scan(self):
+        def fake(url):
+            return (json.dumps({"articles":[]}).encode() if "gdeltproject" in url
+                    else RSS if "news.google.com" in url else b"<rss><channel /></rss>")
+        result=s.collect(self.move,45,20,fetcher=fake,now=self.now)
+        order=result["investigation_order"]
+        self.assertEqual(order[0],"VERIFY_MOVE_ONSET_FROM_TIMESTAMPED_OHLC")
+        self.assertEqual(order[-1],"ONLY_THEN_CROSSCHECK_FX_RECAP_EXPLANATIONS")
+        self.assertEqual(len(result["recap_followup_queries_not_executed"]),2)
+        self.assertTrue(all("event_stage_headline_only" in x
+                            for x in result["candidates"]))
+
     def test_unavailable_feeds_cannot_generate_a_cause(self):
         def bad(url):
             raise OSError("source unavailable")

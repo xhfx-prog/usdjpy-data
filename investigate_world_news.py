@@ -138,6 +138,42 @@ def classify_chronology(article,start,move,end):
         return "SOURCE_TIMESTAMP_BEFORE_MOVE_EVENT_TIME_UNVERIFIED"
     return "POST_MOVE_CANNOT_BE_TRIGGER_FROM_THIS_TIMESTAMP"
 
+# Explanatory FX recaps belong to the final cross-check, NEVER the first search.
+# These are search templates for an investigator, not evidence of causation.
+def recap_followup_queries(move):
+    date=move.astimezone(JST).date().isoformat()
+    return [
+        f'USD JPY {date} Reuters market reaction explanation',
+        f'ドル円 {date} 変動 理由 市場 解説',
+    ]
+
+def classify_event_stage(title):
+    """Describe evidence in a headline, not the likelihood of a future policy."""
+    t=title.lower()
+    action=re.search(
+        r"\b(?:implemented|imposed|enacted|signed into law|entered into force|"
+        r"intervened|rate check conducted|launched strikes|began attacks|"
+        r"tariffs took effect|officially announced|formally approved)\b",t)
+    if action:
+        return "REPORTED_ACTION_VERIFY_PRIMARY_SOURCE"
+    if re.search(r"\b(?:delayed|postponed|suspended|withdrawn|reversed|rescinded|"
+                 r"cancelled|walked back)\b",t):
+        return "REPORTED_REVERSAL_VERIFY"
+    if re.search(r"\b(?:said|says|warned|warns|suggested|threatened|threatens|"
+                 r"hinted|remarks|commented|reiterated|vowed)\b",t):
+        return "STATEMENT_ONLY_CHECK_NOVELTY"
+    return "UNCLASSIFIED_VERIFY"
+
+def novelty_check(article):
+    """A single title cannot certify novelty, surprise or implementation."""
+    stage=classify_event_stage(article["title"])
+    article["event_stage_headline_only"]=stage
+    article["novelty_vs_prior_statement"]="NOT_CHECKED"
+    article["implementation_verified"]=False
+    article["market_expectation_surprise"]="NOT_CHECKED"
+    article["primary_source_verified"]=False
+    return stage
+
 def ranking(article,move):
     # Priority of an investigation candidate, NOT probability of causation.
     prior=article["chronology"].startswith("SOURCE_TIMESTAMP_BEFORE")
@@ -146,6 +182,7 @@ def ranking(article,move):
              "bbc.com","aljazeera.com","federalreserve.gov","state.gov","whitehouse.gov")
     publisher=article.get("publisher","").lower()
     title=article["title"].lower()
+    stage=novelty_check(article)
     score=15 if prior else 0
     if any(host.endswith(x) or x.split(".")[0] in publisher for x in trusted):
         score+=5
@@ -157,6 +194,14 @@ def ranking(article,move):
     important=r"\b(?:iran|israel|qatar|russia|ukraine|taiwan|china|u\\.s\\.|united states|trump|federal reserve|boj|bank of japan|opec|crude oil|hormuz|treasury|bond yields|inflation|payrolls|cpi|interest rates)\b"
     if re.search(high_impact,title):
         score+=8
+    # Statements about possible future policy are leads, not executed changes.
+    # Do not amplify routine rhetoric simply because a famous official said it.
+    if stage=="STATEMENT_ONLY_CHECK_NOVELTY":
+        score-=8
+    if stage=="REPORTED_ACTION_VERIFY_PRIMARY_SOURCE":
+        score+=6
+    if stage=="REPORTED_REVERSAL_VERIFY":
+        score+=5
     if re.search(important,title):
         score+=5
     if len(re.findall(r"\b(?:iran|israel|qatar|russia|ukraine|united states|u\\.s\\.|trump|china|taiwan|opec)\b",title))>=2:
@@ -256,9 +301,15 @@ def collect(move,pre_minutes=45,post_minutes=10,hints=None,
         "searched_from_jst":iso(start.astimezone(JST)),
         "searched_to_jst":iso(end.astimezone(JST)),
         "hints":hints or [],"news_sources":diagnostics,
+        "investigation_order":[
+            "VERIFY_MOVE_ONSET_FROM_TIMESTAMPED_OHLC",
+            "DISCOVER_WORLD_EVENTS_AND_OFFICIAL_RELEASES_WITHOUT_FX_RECAP_SEARCH",
+            "VERIFY_EVENT_TIME_NOVELTY_IMPLEMENTATION_AND_CROSS_MARKET_REACTIONS",
+            "ONLY_THEN_CROSSCHECK_FX_RECAP_EXPLANATIONS"],
+        "recap_followup_queries_not_executed":recap_followup_queries(move),
         "discovery_status":"NEWS_CANDIDATES_FOUND" if candidates else "NO_VERIFIED_NEWS_CANDIDATES",
         "chronology_note":"Index/publication timestamps do not prove underlying EVENT time; post-move publication is not evidence of an initial trigger.",
-        "interpretation_rule":"Separately verify event timestamps, competing events and oil/yield/equity reactions before assigning any cause.",
+        "interpretation_rule":"Verify event timestamps, competing events, novelty versus earlier official statements, action versus rhetoric, and oil/yield/equity reactions before assigning a cause. Do NOT infer irrelevance from a quiet net move: opposing catalysts may offset.",
         "candidates":candidates[:80],
         "totals":{"raw_results":len(articles),"in_window_unique":len(candidates),
            "timestamp_before_move":sum(c["chronology"].startswith("SOURCE_TIMESTAMP_BEFORE") for c in candidates),

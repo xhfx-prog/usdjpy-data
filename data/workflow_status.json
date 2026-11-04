@@ -1,19 +1,19 @@
 {
   "latest": {
-    "runner_started_at_utc": "2026-11-04T04:59:27.812417743Z",
-    "estimated_previous_cron_slot_utc": "2026-11-04T04:11:00+00:00",
-    "runner_start_delay_from_estimated_slot_seconds": 2907.8,
+    "runner_started_at_utc": "2026-11-04T06:00:03.904699882Z",
+    "estimated_previous_cron_slot_utc": "2026-11-04T05:11:00+00:00",
+    "runner_start_delay_from_estimated_slot_seconds": 2943.9,
     "schedule_expression": "11 * * * *",
     "refresh_request_id": "question-20261104-1017-1793755080090",
     "actual_scheduled_slot_known": false,
     "delay_is_lower_bound_only": true,
-    "recorded_at_utc": "2026-11-04T04:59:30.711490+00:00",
+    "recorded_at_utc": "2026-11-04T06:00:07.181355+00:00",
     "event": "schedule",
-    "run_id": "41776459575",
+    "run_id": "41782639616",
     "run_attempt": "1",
     "fetch_outcome": "success",
     "job_status_before_publish": "success",
-    "sha": "9b17ef92574fa4f07060dfe3e2482f829c2c2963"
+    "sha": "fbadbb87f10fc06e41a9cc3c943fb83c5a4e4546"
   },
   "recent_runs": [
     {
@@ -889,6 +889,22 @@
       "fetch_outcome": "success",
       "job_status_before_publish": "success",
       "sha": "9b17ef92574fa4f07060dfe3e2482f829c2c2963"
+    },
+    {
+      "runner_started_at_utc": "2026-11-04T06:00:03.904699882Z",
+      "estimated_previous_cron_slot_utc": "2026-11-04T05:11:00+00:00",
+      "runner_start_delay_from_estimated_slot_seconds": 2943.9,
+      "schedule_expression": "11 * * * *",
+      "refresh_request_id": "question-20261104-1017-1793755080090",
+      "actual_scheduled_slot_known": false,
+      "delay_is_lower_bound_only": true,
+      "recorded_at_utc": "2026-11-04T06:00:07.181355+00:00",
+      "event": "schedule",
+      "run_id": "41782639616",
+      "run_attempt": "1",
+      "fetch_outcome": "success",
+      "job_status_before_publish": "success",
+      "sha": "fbadbb87f10fc06e41a9cc3c943fb83c5a4e4546"
     }
   ]
 }

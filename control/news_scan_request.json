@@ -1,5 +1,5 @@
 {
-  "request_id": "world-news-catalyst-20261103-2230-final-v3",
+  "request_id": "world-news-first-implementation-test-20261104-1320",
   "move_at_jst": "2026-11-03T22:30:00+09:00",
   "pre_minutes": 60,
   "post_minutes": 15,
@@ -10,5 +10,5 @@
     "Trump",
     "ceasefire"
   ],
-  "description": "First end-to-end scan: discover global news before 22:30 JST USDJPY drop; do not use FX market recap articles as initial cause."
+  "description": "Regression: news-first chronology; verify statement/action differentiation and recap-last investigation order."
 }

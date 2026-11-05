@@ -1,0 +1,41 @@
+name: Audit USDJPY chart structure and real 4h candles
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/chart_structure_audit_request.json'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Calculate actual candle geometry and render independent chart
+        id: verify
+        run: python audit_chart_structure.py
+      - name: Record result even if audit fails
+        if: always()
+        env:
+          VERIFY_STATUS: ${{ steps.verify.outcome }}
+        run: |
+          python - <<'PY'
+          import json,os
+          from datetime import datetime,timezone
+          from pathlib import Path
+          o={"run_id":os.environ["GITHUB_RUN_ID"],"recorded_utc":datetime.now(timezone.utc).isoformat(),"outcome":os.environ["VERIFY_STATUS"]}
+          Path("data/chart_structure_audit_status.json").write_text(json.dumps(o,indent=2)+"\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/chart_structure_audit_status.json
+          if [ -f data/chart_structure_audit.json ]; then git add data/chart_structure_audit.json; fi
+          if [ -f data/chart_audit_4h_20261106.svg ]; then git add data/chart_audit_4h_20261106.svg; fi
+          git commit -m "Record independent USDJPY chart geometry audit"
+          git pull --rebase origin main
+          git push origin HEAD:main

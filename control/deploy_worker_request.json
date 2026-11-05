@@ -1,7 +1,7 @@
 {
   "confirmation": "DEPLOY_USDJPY_CHART",
-  "expected_worker_blob_sha": "387e28f429765607aed7d300230c8b7b45a61d90",
+  "expected_worker_blob_sha": "f74848263ca0a4feb9a18e454682718786cfe118",
   "requested_by": "chatgpt",
-  "purpose": "Re-run SHA-pinned Cloudflare deployment and record actual job outcomes",
-  "sequence": 2
+  "purpose": "Run Node regression tests for synchronous private Python worker integration",
+  "sequence": 3
 }

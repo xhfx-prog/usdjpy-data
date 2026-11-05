@@ -1,0 +1,283 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at_utc": "2026-11-05T15:46:37+00:00",
+  "analysis_asof_jst": "2026-11-05T06:00:00+09:00",
+  "instrument": "USD/JPY",
+  "data_quality": {
+    "usable_for_current_trading": true,
+    "last_confirmed_1min_start_jst": "2026-11-05 05:59:00",
+    "last_close": 158.42861,
+    "price_type": "OHLC_UNSPECIFIED_BID_ASK_MID",
+    "age_minutes": 1.0,
+    "stale_threshold_minutes": 10,
+    "source_fetched_at_utc": "2026-11-05T15:00:49.720793+00:00",
+    "quality_flags": []
+  },
+  "timeframes": {
+    "complete_5min": 648,
+    "complete_15min": 216,
+    "complete_1h": 1133,
+    "complete_4h": 274,
+    "day_candles": 143,
+    "hourly_atr14": 0.19861,
+    "last_complete_5min": "2026-11-05 05:55:00",
+    "last_complete_1h": "2026-11-05 05:00:00"
+  },
+  "market_structure": {
+    "timeframe_assessments": {
+      "1day": {
+        "state": "UNRESOLVED",
+        "alignment": "MIXED",
+        "swing_structure": "MIXED",
+        "ema20": 157.94171,
+        "ema50": 158.00145,
+        "ema20_slope_per_bar": 0.03103,
+        "ema20_slope_in_atr": 0.03586,
+        "recent_observed_width": 2.69482,
+        "recent_width_in_atr": 3.11432,
+        "recent_window_bars": 12,
+        "atr14": 0.8653,
+        "bars": 143,
+        "last_complete_bar": "2026-11-04"
+      },
+      "4h": {
+        "state": "UP",
+        "alignment": "UP",
+        "swing_structure": "MIXED",
+        "ema20": 158.11381,
+        "ema50": 157.92511,
+        "ema20_slope_per_bar": 0.0237,
+        "ema20_slope_in_atr": 0.05577,
+        "recent_observed_width": 1.34303,
+        "recent_width_in_atr": 3.16022,
+        "recent_window_bars": 12,
+        "atr14": 0.42498,
+        "bars": 274,
+        "last_complete_bar": "2026-11-05 00:00:00"
+      },
+      "1h": {
+        "state": "UP",
+        "alignment": "UP",
+        "swing_structure": "MIXED",
+        "ema20": 158.34546,
+        "ema50": 158.20721,
+        "ema20_slope_per_bar": 0.00972,
+        "ema20_slope_in_atr": 0.04893,
+        "recent_observed_width": 0.52737,
+        "recent_width_in_atr": 2.6553,
+        "recent_window_bars": 12,
+        "atr14": 0.19861,
+        "bars": 1133,
+        "last_complete_bar": "2026-11-05 05:00:00"
+      },
+      "15min": {
+        "state": "UP",
+        "alignment": "UP",
+        "swing_structure": "UP",
+        "ema20": 158.42439,
+        "ema50": 158.37602,
+        "ema20_slope_per_bar": 0.00474,
+        "ema20_slope_in_atr": 0.06873,
+        "recent_observed_width": 0.27295,
+        "recent_width_in_atr": 3.9558,
+        "recent_window_bars": 12,
+        "atr14": 0.069,
+        "bars": 216,
+        "last_complete_bar": "2026-11-05 05:45:00"
+      },
+      "5min": {
+        "state": "UNRESOLVED",
+        "alignment": "MIXED",
+        "swing_structure": "MIXED",
+        "ema20": 158.45139,
+        "ema50": 158.43205,
+        "ema20_slope_per_bar": -0.0014,
+        "ema20_slope_in_atr": -0.03788,
+        "recent_observed_width": 0.09848,
+        "recent_width_in_atr": 2.6645,
+        "recent_window_bars": 12,
+        "atr14": 0.03696,
+        "bars": 648,
+        "last_complete_bar": "2026-11-05 05:55:00"
+      },
+      "1min": {
+        "state": "DOWN",
+        "alignment": "DOWN",
+        "swing_structure": "MIXED",
+        "ema20": 158.44542,
+        "ema50": 158.45693,
+        "ema20_slope_per_bar": -0.00085,
+        "ema20_slope_in_atr": -0.08706,
+        "recent_observed_width": 0.03129,
+        "recent_width_in_atr": 3.21583,
+        "recent_window_bars": 12,
+        "atr14": 0.00973,
+        "bars": 3240,
+        "last_complete_bar": "2026-11-05 05:59:00"
+      }
+    },
+    "parent_direction": "UP",
+    "hourly_higher_high_higher_low_pairs_last5": 1,
+    "hourly_lower_high_lower_low_pairs_last5": 2,
+    "prior_hours_rising": false,
+    "upper_stall": null,
+    "sharp_decline_recovery": null,
+    "support_resistance": {
+      "support": [
+        {
+          "low": 158.41506,
+          "high": 158.44284,
+          "center": 158.42895,
+          "independent_reactions": 2,
+          "timeframes": [
+            "15min",
+            "5min"
+          ],
+          "last_reaction": "2026-11-05 05:10:00",
+          "distance_pips": 0.034
+        },
+        {
+          "low": 158.36283,
+          "high": 158.38826,
+          "center": 158.37876,
+          "independent_reactions": 3,
+          "timeframes": [
+            "15min",
+            "5min"
+          ],
+          "last_reaction": "2026-11-05 04:15:00",
+          "distance_pips": 4.985
+        },
+        {
+          "low": 158.32594,
+          "high": 158.33833,
+          "center": 158.32594,
+          "independent_reactions": 2,
+          "timeframes": [
+            "15min",
+            "5min"
+          ],
+          "last_reaction": "2026-11-05 01:40:00",
+          "distance_pips": 10.267
+        }
+      ],
+      "resistance": [
+        {
+          "low": 158.39021,
+          "high": 158.44882,
+          "center": 158.42036,
+          "independent_reactions": 6,
+          "timeframes": [
+            "15min",
+            "4h",
+            "5min"
+          ],
+          "last_reaction": "2026-11-05 04:00:00",
+          "distance_pips": 0.8255
+        },
+        {
+          "low": 158.45535,
+          "high": 158.47482,
+          "center": 158.46674,
+          "independent_reactions": 5,
+          "timeframes": [
+            "15min",
+            "1day",
+            "4h",
+            "5min"
+          ],
+          "last_reaction": "2026-11-05 03:30:00",
+          "distance_pips": 3.813
+        },
+        {
+          "low": 158.50333,
+          "high": 158.53513,
+          "center": 158.51772,
+          "independent_reactions": 5,
+          "timeframes": [
+            "15min",
+            "1day",
+            "4h",
+            "5min"
+          ],
+          "last_reaction": "2026-11-05 01:20:00",
+          "distance_pips": 8.911
+        }
+      ]
+    },
+    "phase": "UPTREND",
+    "directional_bias": "UP_CANDIDATE"
+  },
+  "session_calendar": {
+    "observed_sessions": {
+      "tokyo": {
+        "active": false,
+        "local_time": "2026-11-05T06:00:00+09:00",
+        "bars": 0,
+        "session_high": null,
+        "session_low": null
+      },
+      "london": {
+        "active": false,
+        "local_time": "2026-11-04T21:00:00+00:00",
+        "bars": 0,
+        "session_high": null,
+        "session_low": null
+      },
+      "new_york": {
+        "active": true,
+        "local_time": "2026-11-04T16:00:00-05:00",
+        "bars": 480,
+        "session_high": 158.69451,
+        "session_low": 158.16714
+      }
+    },
+    "time_flags": [
+      "GOTOBI_CALENDAR_DAY_NOT_HOLIDAY_ADJUSTED"
+    ],
+    "weekday_jst": "Thursday",
+    "session_effect_probabilities": "UNVALIDATED"
+  },
+  "session_opening_reversals": [],
+  "fundamentals": {
+    "event_calendar": "UNAVAILABLE_UNLESS_VERIFIED_EVENT_FEED_CONNECTED",
+    "usd_rates": "NOT_CONNECTED",
+    "dxy": "NOT_CONNECTED",
+    "order_flow": "NOT_CONNECTED",
+    "cftc": "NOT_CONNECTED"
+  },
+  "decision": {
+    "status": "EVALUATED",
+    "new_short": "NOT_PROPOSED_NO_VERIFIED_MACRO_CONFIRMATION",
+    "long": "NO_AUTOMATIC_ENTRY",
+    "first_verified_resistance": {
+      "low": 158.45535,
+      "high": 158.47482,
+      "center": 158.46674,
+      "independent_reactions": 5,
+      "timeframes": [
+        "15min",
+        "1day",
+        "4h",
+        "5min"
+      ],
+      "last_reaction": "2026-11-05 03:30:00",
+      "distance_pips": 3.813
+    },
+    "first_verified_support": {
+      "low": 158.36283,
+      "high": 158.38826,
+      "center": 158.37876,
+      "independent_reactions": 3,
+      "timeframes": [
+        "15min",
+        "5min"
+      ],
+      "last_reaction": "2026-11-05 04:15:00",
+      "distance_pips": 4.985
+    },
+    "prediction_24h": "NOT_CALIBRATED",
+    "prediction_72h": "NOT_CALIBRATED",
+    "note": "Observed price structure only. No probabilities or catalyst claims without validated inputs."
+  }
+}

@@ -568,63 +568,6 @@ const definitions = [
     annotations: { readOnlyHint:true, destructiveHint:false, openWorldHint:true }
   },
   {
-    name: "get_usdjpy_bundle",
-    description:
-      "For OHLC-only use; prefer get_usdjpy_analysis for current USDJPY market analysis. " +
-      "Return 1min, 5min, 15min, 1h, 4h and daily OHLC together, " +
-      "with a conditional single 1min Twelve Data fetch. " +
-      "Rejects stale 1min candles (> 2 min after last close). " +
-      "Always check fetched_at, latest_confirmed_1min_bar and freshness_ok.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        minute_bars: {
-          type:"integer",minimum:1,maximum:2000
-        },
-        five_minute_bars: {
-          type:"integer",minimum:1,maximum:2000
-        },
-        fifteen_minute_bars: {
-          type:"integer",minimum:1,maximum:2000
-        },
-        hourly_bars: {
-          type:"integer",minimum:1,maximum:2000
-        },
-        four_hour_bars: {
-          type:"integer",minimum:1,maximum:2000
-        },
-        daily_bars: {
-          type:"integer",minimum:1,maximum:2000
-        }
-      },
-      additionalProperties: false
-    },
-    annotations: {
-      readOnlyHint:true,
-      destructiveHint:false
-    }
-  },
-  {
-    name: "get_latest_usdjpy",
-    description:
-      "Backward-compatible OHLC tool. Prefer get_usdjpy_bundle " +
-      "for current analysis to minimize API requests.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        interval: {
-          type:"string",
-          enum:["1min","5min","15min","1h","4h","1day"]
-        },
-        size: {
-          type:"integer",minimum:1,maximum:2000
-        }
-      },
-      additionalProperties:false
-    },
-    annotations: { readOnlyHint:true }
-  },
-  {
     name: "get_usdjpy_history",
     description:
       "Read long-term hourly, derived 4h and daily OHLC " +

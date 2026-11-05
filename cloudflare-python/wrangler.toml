@@ -1,0 +1,5 @@
+name = "usdjpy-python-engine"
+main = "worker.py"
+compatibility_date = "2026-11-05"
+compatibility_flags = ["python_workers"]
+workers_dev = false

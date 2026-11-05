@@ -1,6 +1,6 @@
 {
-  "request_id": "chat-daily-refresh-fix-621a43a",
+  "request_id": "repair-merge-tests-20261106-0350",
   "requested_by": "chatgpt",
-  "reason": "Verify daily OHLC refresh after JST-date schedule fix",
-  "requested_at_utc": "2026-11-05T12:35:00Z"
+  "reason": "Verify chart geometry regression suite and conflict-safe publication after fixes",
+  "requested_at_utc": "2026-11-05T18:50:00Z"
 }

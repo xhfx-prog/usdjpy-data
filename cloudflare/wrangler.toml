@@ -6,3 +6,19 @@ workers_dev = true
 [[services]]
 binding = "PYTHON_ANALYZER"
 service = "usdjpy-python-engine"
+
+# Approximate protection against anonymous traffic spikes; no user action needed.
+# Counts are per Cloudflare location, not strict account-wide quotas.
+[[ratelimits]]
+name = "USDJPY_IP_LIMIT"
+namespace_id = "61927611"
+[ratelimits.simple]
+limit = 24
+period = 60
+
+[[ratelimits]]
+name = "USDJPY_POP_LIMIT"
+namespace_id = "61927612"
+[ratelimits.simple]
+limit = 100
+period = 60

@@ -13,6 +13,18 @@ rpc = {
                              "fifteen_minute_bars": 3, "hourly_bars": 5,
                              "four_hour_bars": 4, "daily_bars": 5}}
 }
+# Assert the model is offered only the canonical current-analysis tool
+# plus the historical archive reader. The old handlers may remain internally.
+list_rpc = {"jsonrpc":"2.0","id":36,"method":"tools/list","params":{}}
+list_req = urllib.request.Request(url, data=json.dumps(list_rpc).encode("utf-8"),
+    headers={"Content-Type":"application/json",
+             "Accept":"application/json, text/event-stream"},
+    method="POST")
+with urllib.request.urlopen(list_req, timeout=20) as response:
+    tool_list = json.load(response)
+names = {t["name"] for t in tool_list["result"]["tools"]}
+assert names == {"get_usdjpy_analysis", "get_usdjpy_history"}, names
+
 req = urllib.request.Request(url, data=json.dumps(rpc).encode("utf-8"),
     headers={"Content-Type": "application/json",
              "Accept": "application/json, text/event-stream",

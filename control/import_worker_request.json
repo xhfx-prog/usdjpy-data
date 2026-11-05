@@ -1,0 +1,5 @@
+{
+  "request": "import deployed usdjpy-chart v4.1 source",
+  "requested_by": "chatgpt",
+  "note": "No Cloudflare deploy. Source-only import."
+}

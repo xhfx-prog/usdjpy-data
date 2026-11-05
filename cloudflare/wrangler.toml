@@ -2,3 +2,7 @@ name = "usdjpy-chart"
 main = "worker.js"
 compatibility_date = "2026-11-05"
 workers_dev = true
+
+[[services]]
+binding = "PYTHON_ANALYZER"
+service = "usdjpy-python-engine"

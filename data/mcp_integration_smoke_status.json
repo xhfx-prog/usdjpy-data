@@ -1,11 +1,6 @@
 {
-  "tested_at_utc": "2026-11-05T13:54:29.496905+00:00",
-  "status": "PASS",
-  "tool": "get_usdjpy_analysis",
-  "latest_confirmed_1min_start_jst": "2026-11-05 22:53:00",
-  "python_snapshot_source": "PYTHON_ON_DEMAND",
-  "python_snapshot_lag_in_candles": 4,
-  "python_engine_recomputed_for_current_1min": false,
-  "twelve_data_requests": 1,
-  "all_six_timeframes_present": true
+  "tested_at_utc": "2026-11-05T14:52:04.786089+00:00",
+  "status": "FAIL",
+  "workflow_run_id": "42049159774",
+  "reason": "Inspect GitHub Actions step logs"
 }

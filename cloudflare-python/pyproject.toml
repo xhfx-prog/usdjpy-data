@@ -2,7 +2,7 @@
 name = "usdjpy-python-engine"
 version = "0.1.0"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = ["tzdata"]
 
 [dependency-groups]
 dev = ["workers-py"]

@@ -736,13 +736,14 @@ async function handleMCP(request, env) {
   let rpc;
 
   try {
-    rpc = await request.json();
-  } catch {
-    return respond({
-      jsonrpc:"2.0",
-      id:null,
-      error:{code:-32700,message:"Parse error"}
-    },400);
+    rpc = await checkedRPC(request);
+  } catch(e) {
+    const tooLarge=String(e.message)==="MCP_BODY_TOO_LARGE";
+    return respond({jsonrpc:"2.0",id:null,error:{code:tooLarge?-32000:-32700,
+      message:tooLarge?"Request too large":"Parse error"}},tooLarge?413:400);
+  }
+  if(!rpc || typeof rpc!=="object" || Array.isArray(rpc) || rpc.jsonrpc!=="2.0") {
+    return respond({jsonrpc:"2.0",id:rpc?.id??null,error:{code:-32600,message:"Invalid Request"}},400);
   }
 
   const id = rpc.id ?? null;
@@ -778,7 +779,7 @@ async function handleMCP(request, env) {
 
       case "tools/call": {
         const name = rpc.params?.name;
-        const args = rpc.params?.arguments || {};
+        const args = validateToolArgs(name, rpc.params?.arguments);
         let data;
 
         if (name === "get_usdjpy_analysis") {
@@ -861,6 +862,85 @@ async function handleMCP(request, env) {
   }
 }
 
+
+const MAX_RPC_BYTES = 16384;
+function validateMCPEnvelope(request, url) {
+  if (url.pathname !== "/mcp") return null;
+  if (request.method !== "POST") {
+    return new Response(null,{status:405,headers:{"Allow":"POST","Cache-Control":"no-store"}});
+  }
+  const origin = request.headers.get("Origin");
+  if (origin) {
+    let parsed;
+    try { parsed=new URL(origin); } catch (_) {
+      return respond({error:"INVALID_ORIGIN"},403);
+    }
+    if (parsed.origin !== url.origin) return respond({error:"CROSS_ORIGIN_MCP_FORBIDDEN"},403);
+  }
+  const ct=(request.headers.get("Content-Type")||"").toLowerCase();
+  if (ct.split(";")[0].trim() !== "application/json") {
+    return respond({error:"JSON_CONTENT_TYPE_REQUIRED"},415);
+  }
+  const len=request.headers.get("Content-Length");
+  if (len !== null && (!Number.isSafeInteger(Number(len)) ||
+      Number(len)<0 || Number(len)>MAX_RPC_BYTES)) {
+    return respond({error:"MCP_BODY_TOO_LARGE"},413);
+  }
+  return null;
+}
+async function checkedRPC(request) {
+  const stream=request.body;
+  if (!stream) throw Error("EMPTY_MCP_BODY");
+  const reader=stream.getReader();
+  const chunks=[];
+  let total=0;
+  try {
+    while (true) {
+      const {done,value}=await reader.read();
+      if (done) break;
+      total+=value.byteLength;
+      if(total>MAX_RPC_BYTES) throw Error("MCP_BODY_TOO_LARGE");
+      chunks.push(value);
+    }
+  } finally {try{await reader.cancel()}catch(_){}}
+  const bytes=new Uint8Array(total);
+  let index=0;
+  for(const c of chunks){bytes.set(c,index);index+=c.byteLength}
+  return JSON.parse(new TextDecoder("utf-8",{fatal:true}).decode(bytes));
+}
+function validateToolArgs(name, args) {
+  if (args===undefined) args={};
+  if (args===null || Array.isArray(args) || typeof args!=="object") {
+    throw Error("INVALID_TOOL_ARGUMENTS");
+  }
+  const fields=name==="get_usdjpy_history"
+    ? ["interval","size","start_date","end_date"]
+    : name==="get_latest_usdjpy" ? ["interval","size"]
+    : name==="get_usdjpy_analysis" || name==="get_usdjpy_bundle"
+      ? ["minute_bars","five_minute_bars","fifteen_minute_bars","hourly_bars","four_hour_bars","daily_bars"]
+      : [];
+  if(!fields.length || Object.keys(args).some(k=>!fields.includes(k))) {
+    throw Error("UNKNOWN_TOOL_OR_ARGUMENT");
+  }
+  for(const [k,v] of Object.entries(args)){
+    if(k==="interval"){
+      const intervals=name==="get_usdjpy_history" ?
+        ["1h","4h","1day"] : ["1min","5min","15min","1h","4h","1day"];
+      if(!intervals.includes(v)) throw Error("INVALID_INTERVAL");
+    }else if(k==="start_date" || k==="end_date"){
+      if(typeof v!=="string" || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(v) ||
+        Number.isNaN(Date.parse(v+"T00:00:00Z"))) throw Error("INVALID_DATE");
+    }else if(!Number.isInteger(v) || v<1 || v>2000) {
+      throw Error("INVALID_BAR_COUNT");
+    }
+  }
+  if(name==="get_usdjpy_history" && !args.interval) throw Error("HISTORY_INTERVAL_REQUIRED");
+  if(args.start_date && args.end_date && args.start_date>args.end_date) {
+    throw Error("INVALID_DATE_RANGE");
+  }
+  return args;
+}
+
 // Anonymous MCP access remains read-only. Bound rate limits reduce the cost
 // exposure while a proper OAuth login/connection is provisioned. Do not put
 // Cloudflare API or GitHub write tokens in this public resource server.
@@ -895,6 +975,9 @@ async function protectExpensiveRequest(request, env, url) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if(url.pathname!=="/mcp" && url.pathname!=="/") return respond({error:"NOT_FOUND"},404);
+    const invalid=validateMCPEnvelope(request,url);
+    if(invalid) return invalid;
     const denied = await protectExpensiveRequest(request,env,url);
     if (denied) return denied;
 
@@ -902,21 +985,11 @@ export default {
       return handleMCP(request,env);
     }
 
-    if (url.pathname === "/bundle") {
-      try {
-        return respond(await bundle(env));
-      } catch(e) {
-        return respond({
-          error:String(e.message)
-        },502);
-      }
-    }
-
     return respond({
       service:"USDJPY Market Data",
       version:"4.1.0",
       mcp:"/mcp",
-      bundle:"/bundle"
+      status:"read-only"
     });
   }
 };

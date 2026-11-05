@@ -81,6 +81,9 @@ jobs:
       - name: Check JavaScript syntax
         run: node --check cloudflare/worker.js
 
+      - name: Test MCP and Python analysis reconciliation
+        run: node --test tests/worker_analysis_integration.test.mjs
+
       - name: Deploy existing Worker
         id: worker_deploy
         uses: cloudflare/wrangler-action@v4

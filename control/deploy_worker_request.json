@@ -2,6 +2,6 @@
   "confirmation": "DEPLOY_USDJPY_CHART",
   "expected_worker_blob_sha": "387e28f429765607aed7d300230c8b7b45a61d90",
   "requested_by": "chatgpt",
-  "purpose": "One-time verify GitHub Actions deployment of unchanged Cloudflare Worker v4.1",
-  "sequence": 1
+  "purpose": "Re-run SHA-pinned Cloudflare deployment and record actual job outcomes",
+  "sequence": 2
 }

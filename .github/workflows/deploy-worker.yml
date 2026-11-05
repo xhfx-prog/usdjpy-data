@@ -82,7 +82,7 @@ jobs:
         run: node --check cloudflare/worker.js
 
       - name: Test MCP and Python analysis reconciliation
-        run: node --test tests/worker_analysis_integration.test.mjs tests/inline_python_worker.test.mjs
+        run: node --test tests/worker_analysis_integration.test.mjs tests/inline_python_worker.test.mjs tests/mcp_security.test.mjs
 
       - name: Deploy existing Worker
         id: worker_deploy

@@ -1,0 +1,584 @@
+{
+  "audit": "STRUCTURE_GEOMETRY_DIAGNOSTIC_NOT_PRODUCTION_SIGNAL",
+  "description": "No lookahead: confirmed 4h/hourly and 5min candles only, and pivots require right-hand confirmation.",
+  "cutoffs": [
+    {
+      "asof_jst": "2026-11-05T06:00:00+09:00",
+      "last_4h_start_jst": "2026-11-05 00:00:00",
+      "number_of_4h_candles": 46,
+      "4h_range": {
+        "high": 158.76356,
+        "low": 156.66118
+      },
+      "4h_atr14": 0.42498,
+      "old_engine_4h_state": "RANGE",
+      "old_engine_1h_state": "RANGE",
+      "independent_pivots_radius2": {
+        "highs": [
+          {
+            "time": "2026-10-28 08:00:00",
+            "price": 158.0444,
+            "bar_index": 12
+          },
+          {
+            "time": "2026-10-29 00:00:00",
+            "price": 158.33594,
+            "bar_index": 16
+          },
+          {
+            "time": "2026-10-29 20:00:00",
+            "price": 158.11773,
+            "bar_index": 21
+          },
+          {
+            "time": "2026-11-02 16:00:00",
+            "price": 158.00845,
+            "bar_index": 31
+          },
+          {
+            "time": "2026-11-03 04:00:00",
+            "price": 158.07079,
+            "bar_index": 34
+          },
+          {
+            "time": "2026-11-04 04:00:00",
+            "price": 158.76356,
+            "bar_index": 40
+          }
+        ],
+        "lows": [
+          {
+            "time": "2026-10-28 16:00:00",
+            "price": 157.65688,
+            "bar_index": 14
+          },
+          {
+            "time": "2026-10-29 08:00:00",
+            "price": 157.61952,
+            "bar_index": 18
+          },
+          {
+            "time": "2026-10-30 20:00:00",
+            "price": 156.9716,
+            "bar_index": 27
+          },
+          {
+            "time": "2026-11-03 16:00:00",
+            "price": 157.75012,
+            "bar_index": 37
+          },
+          {
+            "time": "2026-11-04 12:00:00",
+            "price": 157.42053,
+            "bar_index": 42
+          }
+        ]
+      },
+      "independent_pivots_radius3": {
+        "highs": [
+          {
+            "time": "2026-10-29 00:00:00",
+            "price": 158.33594,
+            "bar_index": 16
+          },
+          {
+            "time": "2026-10-29 20:00:00",
+            "price": 158.11773,
+            "bar_index": 21
+          },
+          {
+            "time": "2026-11-04 04:00:00",
+            "price": 158.76356,
+            "bar_index": 40
+          }
+        ],
+        "lows": [
+          {
+            "time": "2026-10-28 16:00:00",
+            "price": 157.65688,
+            "bar_index": 14
+          },
+          {
+            "time": "2026-10-29 08:00:00",
+            "price": 157.61952,
+            "bar_index": 18
+          },
+          {
+            "time": "2026-10-30 20:00:00",
+            "price": 156.9716,
+            "bar_index": 27
+          },
+          {
+            "time": "2026-11-03 16:00:00",
+            "price": 157.75012,
+            "bar_index": 37
+          },
+          {
+            "time": "2026-11-04 12:00:00",
+            "price": 157.42053,
+            "bar_index": 42
+          }
+        ]
+      },
+      "triangle_geometry_test": {
+        "status": "UNCONFIRMED",
+        "reason": "PIVOT_FAMILIES_NOT_CONVERGING",
+        "upper": {
+          "slope_per_4h_bar": 0.01112,
+          "intercept": 157.943494,
+          "max_abs_residual": 0.37528,
+          "points": [
+            {
+              "time": "2026-10-29 00:00:00",
+              "price": 158.33594
+            },
+            {
+              "time": "2026-10-29 20:00:00",
+              "price": 158.11773
+            },
+            {
+              "time": "2026-11-02 16:00:00",
+              "price": 158.00845
+            },
+            {
+              "time": "2026-11-03 04:00:00",
+              "price": 158.07079
+            },
+            {
+              "time": "2026-11-04 04:00:00",
+              "price": 158.76356
+            }
+          ],
+          "projected_at_last_completed_4h": 158.44388
+        },
+        "lower": {
+          "slope_per_4h_bar": -0.003066,
+          "intercept": 157.568339,
+          "max_abs_residual": 0.51397,
+          "points": [
+            {
+              "time": "2026-10-28 16:00:00",
+              "price": 157.65688
+            },
+            {
+              "time": "2026-10-29 08:00:00",
+              "price": 157.61952
+            },
+            {
+              "time": "2026-10-30 20:00:00",
+              "price": 156.9716
+            },
+            {
+              "time": "2026-11-03 16:00:00",
+              "price": 157.75012
+            },
+            {
+              "time": "2026-11-04 12:00:00",
+              "price": 157.42053
+            }
+          ],
+          "projected_at_last_completed_4h": 157.43039
+        }
+      },
+      "latest_5min_confirmed": {
+        "t": "2026-11-05 05:55:00",
+        "o": 158.43505,
+        "h": 158.44794,
+        "l": 158.42702,
+        "c": 158.42861
+      }
+    },
+    {
+      "asof_jst": "2026-11-05T14:00:00+09:00",
+      "last_4h_start_jst": "2026-11-05 08:00:00",
+      "number_of_4h_candles": 48,
+      "4h_range": {
+        "high": 158.76356,
+        "low": 156.66118
+      },
+      "4h_atr14": 0.4359,
+      "old_engine_4h_state": "DOWN",
+      "old_engine_1h_state": "DOWN",
+      "independent_pivots_radius2": {
+        "highs": [
+          {
+            "time": "2026-10-28 08:00:00",
+            "price": 158.0444,
+            "bar_index": 12
+          },
+          {
+            "time": "2026-10-29 00:00:00",
+            "price": 158.33594,
+            "bar_index": 16
+          },
+          {
+            "time": "2026-10-29 20:00:00",
+            "price": 158.11773,
+            "bar_index": 21
+          },
+          {
+            "time": "2026-11-02 16:00:00",
+            "price": 158.00845,
+            "bar_index": 31
+          },
+          {
+            "time": "2026-11-03 04:00:00",
+            "price": 158.07079,
+            "bar_index": 34
+          },
+          {
+            "time": "2026-11-04 04:00:00",
+            "price": 158.76356,
+            "bar_index": 40
+          },
+          {
+            "time": "2026-11-05 00:00:00",
+            "price": 158.69451,
+            "bar_index": 45
+          }
+        ],
+        "lows": [
+          {
+            "time": "2026-10-28 16:00:00",
+            "price": 157.65688,
+            "bar_index": 14
+          },
+          {
+            "time": "2026-10-29 08:00:00",
+            "price": 157.61952,
+            "bar_index": 18
+          },
+          {
+            "time": "2026-10-30 20:00:00",
+            "price": 156.9716,
+            "bar_index": 27
+          },
+          {
+            "time": "2026-11-03 16:00:00",
+            "price": 157.75012,
+            "bar_index": 37
+          },
+          {
+            "time": "2026-11-04 12:00:00",
+            "price": 157.42053,
+            "bar_index": 42
+          }
+        ]
+      },
+      "independent_pivots_radius3": {
+        "highs": [
+          {
+            "time": "2026-10-29 00:00:00",
+            "price": 158.33594,
+            "bar_index": 16
+          },
+          {
+            "time": "2026-10-29 20:00:00",
+            "price": 158.11773,
+            "bar_index": 21
+          },
+          {
+            "time": "2026-11-04 04:00:00",
+            "price": 158.76356,
+            "bar_index": 40
+          }
+        ],
+        "lows": [
+          {
+            "time": "2026-10-28 16:00:00",
+            "price": 157.65688,
+            "bar_index": 14
+          },
+          {
+            "time": "2026-10-29 08:00:00",
+            "price": 157.61952,
+            "bar_index": 18
+          },
+          {
+            "time": "2026-10-30 20:00:00",
+            "price": 156.9716,
+            "bar_index": 27
+          },
+          {
+            "time": "2026-11-03 16:00:00",
+            "price": 157.75012,
+            "bar_index": 37
+          },
+          {
+            "time": "2026-11-04 12:00:00",
+            "price": 157.42053,
+            "bar_index": 42
+          }
+        ]
+      },
+      "triangle_geometry_test": {
+        "status": "UNCONFIRMED",
+        "reason": "PIVOT_FAMILIES_NOT_CONVERGING",
+        "upper": {
+          "slope_per_4h_bar": 0.030867,
+          "intercept": 157.275372,
+          "max_abs_residual": 0.25404,
+          "points": [
+            {
+              "time": "2026-10-29 20:00:00",
+              "price": 158.11773
+            },
+            {
+              "time": "2026-11-02 16:00:00",
+              "price": 158.00845
+            },
+            {
+              "time": "2026-11-03 04:00:00",
+              "price": 158.07079
+            },
+            {
+              "time": "2026-11-04 04:00:00",
+              "price": 158.76356
+            },
+            {
+              "time": "2026-11-05 00:00:00",
+              "price": 158.69451
+            }
+          ],
+          "projected_at_last_completed_4h": 158.7261
+        },
+        "lower": {
+          "slope_per_4h_bar": -0.003066,
+          "intercept": 157.568339,
+          "max_abs_residual": 0.51397,
+          "points": [
+            {
+              "time": "2026-10-28 16:00:00",
+              "price": 157.65688
+            },
+            {
+              "time": "2026-10-29 08:00:00",
+              "price": 157.61952
+            },
+            {
+              "time": "2026-10-30 20:00:00",
+              "price": 156.9716
+            },
+            {
+              "time": "2026-11-03 16:00:00",
+              "price": 157.75012
+            },
+            {
+              "time": "2026-11-04 12:00:00",
+              "price": 157.42053
+            }
+          ],
+          "projected_at_last_completed_4h": 157.42426
+        }
+      },
+      "latest_5min_confirmed": {
+        "t": "2026-11-05 13:55:00",
+        "o": 157.97968,
+        "h": 157.97968,
+        "l": 157.92738,
+        "c": 157.93322
+      }
+    },
+    {
+      "asof_jst": "2026-11-06T00:00:00+09:00",
+      "last_4h_start_jst": "2026-11-05 20:00:00",
+      "number_of_4h_candles": 51,
+      "4h_range": {
+        "high": 158.76356,
+        "low": 156.66118
+      },
+      "4h_atr14": 0.48423,
+      "old_engine_4h_state": "DOWN",
+      "old_engine_1h_state": "UNRESOLVED",
+      "independent_pivots_radius2": {
+        "highs": [
+          {
+            "time": "2026-10-28 08:00:00",
+            "price": 158.0444,
+            "bar_index": 12
+          },
+          {
+            "time": "2026-10-29 00:00:00",
+            "price": 158.33594,
+            "bar_index": 16
+          },
+          {
+            "time": "2026-10-29 20:00:00",
+            "price": 158.11773,
+            "bar_index": 21
+          },
+          {
+            "time": "2026-11-02 16:00:00",
+            "price": 158.00845,
+            "bar_index": 31
+          },
+          {
+            "time": "2026-11-03 04:00:00",
+            "price": 158.07079,
+            "bar_index": 34
+          },
+          {
+            "time": "2026-11-04 04:00:00",
+            "price": 158.76356,
+            "bar_index": 40
+          },
+          {
+            "time": "2026-11-05 00:00:00",
+            "price": 158.69451,
+            "bar_index": 45
+          }
+        ],
+        "lows": [
+          {
+            "time": "2026-10-28 16:00:00",
+            "price": 157.65688,
+            "bar_index": 14
+          },
+          {
+            "time": "2026-10-29 08:00:00",
+            "price": 157.61952,
+            "bar_index": 18
+          },
+          {
+            "time": "2026-10-30 20:00:00",
+            "price": 156.9716,
+            "bar_index": 27
+          },
+          {
+            "time": "2026-11-03 16:00:00",
+            "price": 157.75012,
+            "bar_index": 37
+          },
+          {
+            "time": "2026-11-04 12:00:00",
+            "price": 157.42053,
+            "bar_index": 42
+          },
+          {
+            "time": "2026-11-05 12:00:00",
+            "price": 157.77231,
+            "bar_index": 48
+          }
+        ]
+      },
+      "independent_pivots_radius3": {
+        "highs": [
+          {
+            "time": "2026-10-29 00:00:00",
+            "price": 158.33594,
+            "bar_index": 16
+          },
+          {
+            "time": "2026-10-29 20:00:00",
+            "price": 158.11773,
+            "bar_index": 21
+          },
+          {
+            "time": "2026-11-04 04:00:00",
+            "price": 158.76356,
+            "bar_index": 40
+          },
+          {
+            "time": "2026-11-05 00:00:00",
+            "price": 158.69451,
+            "bar_index": 45
+          }
+        ],
+        "lows": [
+          {
+            "time": "2026-10-28 16:00:00",
+            "price": 157.65688,
+            "bar_index": 14
+          },
+          {
+            "time": "2026-10-29 08:00:00",
+            "price": 157.61952,
+            "bar_index": 18
+          },
+          {
+            "time": "2026-10-30 20:00:00",
+            "price": 156.9716,
+            "bar_index": 27
+          },
+          {
+            "time": "2026-11-03 16:00:00",
+            "price": 157.75012,
+            "bar_index": 37
+          },
+          {
+            "time": "2026-11-04 12:00:00",
+            "price": 157.42053,
+            "bar_index": 42
+          }
+        ]
+      },
+      "triangle_geometry_test": {
+        "status": "UNCONFIRMED",
+        "reason": "PIVOT_FAMILIES_NOT_CONVERGING",
+        "upper": {
+          "slope_per_4h_bar": 0.030867,
+          "intercept": 157.275372,
+          "max_abs_residual": 0.25404,
+          "points": [
+            {
+              "time": "2026-10-29 20:00:00",
+              "price": 158.11773
+            },
+            {
+              "time": "2026-11-02 16:00:00",
+              "price": 158.00845
+            },
+            {
+              "time": "2026-11-03 04:00:00",
+              "price": 158.07079
+            },
+            {
+              "time": "2026-11-04 04:00:00",
+              "price": 158.76356
+            },
+            {
+              "time": "2026-11-05 00:00:00",
+              "price": 158.69451
+            }
+          ],
+          "projected_at_last_completed_4h": 158.8187
+        },
+        "lower": {
+          "slope_per_4h_bar": 0.009944,
+          "intercept": 157.164749,
+          "max_abs_residual": 0.46163,
+          "points": [
+            {
+              "time": "2026-10-29 08:00:00",
+              "price": 157.61952
+            },
+            {
+              "time": "2026-10-30 20:00:00",
+              "price": 156.9716
+            },
+            {
+              "time": "2026-11-03 16:00:00",
+              "price": 157.75012
+            },
+            {
+              "time": "2026-11-04 12:00:00",
+              "price": 157.42053
+            },
+            {
+              "time": "2026-11-05 12:00:00",
+              "price": 157.77231
+            }
+          ],
+          "projected_at_last_completed_4h": 157.66194
+        }
+      },
+      "latest_5min_confirmed": {
+        "t": "2026-11-05 23:55:00",
+        "o": 158.12604,
+        "h": 158.15849,
+        "l": 158.00617,
+        "c": 158.07805
+      }
+    }
+  ]
+}

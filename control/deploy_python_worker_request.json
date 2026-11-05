@@ -1,0 +1,4 @@
+{
+  "intent": "Deploy private Python worker with canonical analyze_usdjpy.py",
+  "sequence": 1
+}

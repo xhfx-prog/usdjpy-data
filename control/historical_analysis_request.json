@@ -1,5 +1,10 @@
 {
   "as_of_jst": "2026-11-05T14:00:00+09:00",
-  "purpose": "Historical USDJPY 14:00 JST analysis; use only fully confirmed pre-cutoff candles",
-  "sequence": 2
+  "purpose": "Independent no-lookahead structural regime regression of revised chart geometry",
+  "sequence": 3,
+  "cutoffs_jst": [
+    "2026-11-05T06:00:00+09:00",
+    "2026-11-05T14:00:00+09:00",
+    "2026-11-06T01:00:00+09:00"
+  ]
 }

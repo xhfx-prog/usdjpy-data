@@ -1,18 +1,30 @@
 {
-  "audited_at_utc": "2026-11-05T17:16:58.543342+00:00",
+  "audited_at_utc": "2026-11-05T18:14:31.214209+00:00",
   "source": "GitHub REST API /actions/workflows/update.yml/runs",
   "note": "Run created_at is NOT the intended cron slot; a missing slot may reflect skipped scheduling.",
-  "total_count": 98,
+  "total_count": 99,
   "recent_runs": [
+    {
+      "id": 42082302501,
+      "event": "workflow_dispatch",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-05T18:14:24Z",
+      "run_started_at": "2026-11-05T18:14:24Z",
+      "updated_at": "2026-11-05T18:14:28Z",
+      "run_attempt": 1,
+      "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/42082302501",
+      "head_sha": "2ead13b5d9d98ae8ced784430b9e0cb49ee4555b"
+    },
     {
       "id": 42073056505,
       "event": "schedule",
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "failure",
       "created_at": "2026-11-05T17:16:51Z",
-      "run_started_at": "2026-11-05T17:16:51Z",
-      "updated_at": "2026-11-05T17:16:54Z",
-      "run_attempt": 1,
+      "run_started_at": "2026-11-05T18:10:24Z",
+      "updated_at": "2026-11-05T18:10:44Z",
+      "run_attempt": 2,
       "html_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/42073056505",
       "head_sha": "dd00a8b12cd9878e1e9b2a27b3e3934b4f2c2aad"
     },

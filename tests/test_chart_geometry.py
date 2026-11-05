@@ -50,7 +50,7 @@ class ChartGeometryTests(unittest.TestCase):
         for name,span in configs.items():
             with self.subTest(frame=name):
                 size=span+28
-                highs=[157.5+0.1*((i//8)%3)+0.03 for i in range(size)]
+                highs=[157.5+0.1*((i//8)%3)+0.002*(i%8)+0.03 for i in range(size)]
                 lows=[x-.1 for x in highs]
                 closes=[(h+l)/2 for h,l in zip(highs,lows)]
                 step={"1day":1440,"4h":240,"1h":60,"15min":15,

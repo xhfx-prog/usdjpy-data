@@ -5,7 +5,7 @@ const text=readFileSync("cloudflare/worker.js","utf8");
 const a=text.indexOf("async function analysisWithFreshPython(");
 const b=text.indexOf("// Historical OHLC exclusively from GitHub.",a);
 assert.ok(a>=0 && b>a,"Inline Python integration source exists");
-const make=new Function("bundle","history","merge","count","Request",
+const make=new Function("bundle","history","merge","count","Request","recentMinuteArchive",
  text.slice(a,b)+"return analysisWithFreshPython;");
 const candle={datetime:"2026-11-05 23:47:00",open:"158.20",high:"158.30",low:"158.19",close:"158.25"};
 const base={symbol:"USD/JPY",latest_confirmed_1min_bar:candle.datetime,
@@ -16,7 +16,7 @@ const base={symbol:"USD/JPY",latest_confirmed_1min_bar:candle.datetime,
 function instantiate(pyResult){
  const calls=[];
  const engine=make(async()=>base,async()=>({values:Array(1000).fill(candle)}),
-  (a,b)=>a.concat(b), (v,d)=>v??d,Request);
+  (a,b)=>a.concat(b), (v,d)=>v??d,Request,async()=>[candle]);
  const env={PYTHON_ANALYZER:{fetch:async request=>{
    calls.push(JSON.parse(await request.text()));
    return Response.json(pyResult);
@@ -33,6 +33,7 @@ test("one MCP call returns inline Python computation on identical confirmed minu
  const result=await instance.call();
  assert.equal(instance.calls.length,1);
  assert.equal(instance.calls[0].source,"USDJPY_MCP_FRESH_BUNDLE");
+ assert.equal(instance.calls[0]["1min"].length,2,"merges retained minute archive");
  assert.equal(result.analysis_integration.full_python_engine_recomputed_for_current_1min,true);
  assert.equal(result.analysis_integration.python_snapshot_lag_in_candles,0);
  assert.equal(result.analysis_integration.requires_on_demand_python_refresh,false);
@@ -45,6 +46,6 @@ test("reject Python output referencing an older minute",async()=>{
  await assert.rejects(instantiate(report).call(),/VALIDATION_FAILED/);
 });
 test("fail closed when private Python service is unavailable",async()=>{
- const engine=make(async()=>base,async()=>({values:[]}),()=>[],(v,d)=>v??d,Request);
+ const engine=make(async()=>base,async()=>({values:[]}),()=>[],(v,d)=>v??d,Request,async()=>[]);
  await assert.rejects(engine({},{}),/SERVICE_BINDING_MISSING/);
 });

@@ -492,6 +492,26 @@ async function analysisWithLiveBars(env, args = {}) {
   };
 }
 
+// Load retained 1-minute session history without any Twelve Data requests.
+// This extends the deterministic Python engine's 5min/15min support and
+// resistance computation across >=72h, instead of relying on only 1200 minutes.
+async function recentMinuteArchive() {
+  const index = await github("history_1min_index.json");
+  const sessions = index.sessions;
+  if (!Array.isArray(sessions) || !sessions.length) {
+    throw Error("GITHUB_MINUTE_HISTORY_INDEX_EMPTY");
+  }
+  const selected = sessions.slice(0, 6);
+  const parts = await Promise.all(selected.map(async session => {
+    if (typeof session.path !== "string" ||
+        !/^data\\/history_1min\\/\\d{4}-\\d{2}-\\d{2}\\.json$/.test(session.path)) {
+      throw Error("UNSAFE_MINUTE_ARCHIVE_PATH");
+    }
+    return saved(session.path, 1);
+  }));
+  return merge([], parts.flat()).slice(0, 6500);
+}
+
 // Real-time full canonical Python evaluation, synchronous inside ONE MCP call.
 // The private Python Worker is only reachable over a Cloudflare Service Binding.
 // On any error, fail closed; never substitute a stale GitHub Python snapshot.
@@ -499,7 +519,7 @@ async function analysisWithFreshPython(env, args = {}) {
   if (!env.PYTHON_ANALYZER?.fetch) {
     throw Error("PYTHON_ANALYZER_SERVICE_BINDING_MISSING");
   }
-  const [live, archiveHours] = await Promise.all([
+  const [live, archiveHours, archiveMinutes] = await Promise.all([
     bundle(env, {
       minute_bars: Math.max(500, count(args.minute_bars, 1200)),
       five_minute_bars: Math.max(60, count(args.five_minute_bars, 60)),
@@ -508,7 +528,8 @@ async function analysisWithFreshPython(env, args = {}) {
       four_hour_bars: Math.max(48, count(args.four_hour_bars, 48)),
       daily_bars: Math.max(150, count(args.daily_bars, 150))
     }),
-    history({interval: "1h", size: 1200})
+    history({interval: "1h", size: 1200}),
+    recentMinuteArchive()
   ]);
   if (!live.freshness_ok) throw Error("STALE_CURRENT_1MIN");
   const current = live.series["1min"].values[0];
@@ -516,12 +537,17 @@ async function analysisWithFreshPython(env, args = {}) {
     throw Error("LIVE_1MIN_MISMATCH");
   }
   const hours = merge(live.series["1h"].values, archiveHours.values);
+  const fullMinutes = merge(live.series["1min"].values, archiveMinutes)
+    .slice(0, 6500);
+  if (!fullMinutes.length || fullMinutes[0].datetime !== current.datetime) {
+    throw Error("ARCHIVE_MINUTE_MERGE_MISMATCH");
+  }
   const input = {
     symbol: "USD/JPY",
     source: "USDJPY_MCP_FRESH_BUNDLE",
     fetched_at: live.fetched_at,
     latest_confirmed_1min_bar: current.datetime,
-    "1min": live.series["1min"].values,
+    "1min": fullMinutes,
     "1h": hours,
     "1day": live.series["1day"].values
   };

@@ -261,6 +261,21 @@ function pack(interval, rows, size, source) {
   };
 }
 
+
+// The current-price analysis tools must not silently return stale minute candles.
+// Historical queries remain available separately through get_usdjpy_history.
+function requireFreshMinuteData(m) {
+  if (m.freshnessOK && m.latest) return;
+  const age = m.ageMinutes == null ? "unknown" : m.ageMinutes.toFixed(2);
+  throw Error(
+    "STALE_1MIN_DATA: latest_confirmed_1min_bar=" + (m.latest || "none") +
+    "; minutes_since_close=" + age +
+    "; GitHub=" + (m.githubError || "ok") +
+    "; TwelveData=" + (m.liveError || "not fresh") +
+    ". Do not present stale USDJPY prices as current; report data unavailable."
+  );
+}
+
 // One request returns all six timeframes.
 async function bundle(env, args = {}) {
   const sizes = {
@@ -284,6 +299,7 @@ async function bundle(env, args = {}) {
     saved("usdjpy_1h.json", 60),
     saved("usdjpy_1day.json", null)
   ]);
+  requireFreshMinuteData(m);
 
   // Fill delayed GitHub hourly data using only complete
   // 60-minute blocks from the recent minute data.
@@ -419,9 +435,11 @@ const definitions = [
   {
     name: "get_usdjpy_bundle",
     description:
-      "Preferred tool for current USDJPY analysis. Returns " +
-      "1min, 5min, 15min, 1h, 4h and daily OHLC together. " +
-      "Only a conditional 1min Twelve Data request is made.",
+      "Use FIRST for every current USDJPY price or market analysis before making claims. " +
+      "Return 1min, 5min, 15min, 1h, 4h and daily OHLC together, " +
+      "with a conditional single 1min Twelve Data fetch. " +
+      "Rejects stale 1min candles (> 2 min after last close). " +
+      "Always check fetched_at, latest_confirmed_1min_bar and freshness_ok.",
     inputSchema: {
       type: "object",
       properties: {
@@ -566,6 +584,7 @@ async function handleMCP(request, env) {
                 size*PERIOD[interval]+PERIOD[interval]
               )
             );
+            requireFreshMinuteData(m);
 
             const values = interval === "1min"
               ? m.rows.slice(0,size)

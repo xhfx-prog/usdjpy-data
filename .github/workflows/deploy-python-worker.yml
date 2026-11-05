@@ -1,0 +1,68 @@
+name: Deploy private Python USDJPY analysis Worker
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'cloudflare-python/**'
+      - 'analyze_usdjpy.py'
+      - 'tests/test_python_worker_bridge.py'
+      - 'control/deploy_python_worker_request.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: usdjpy-python-worker-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy-python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Test the exact Python engine and bridge
+        run: python -m unittest discover -s tests -p 'test_python_worker_bridge.py' -v
+
+      - name: Bundle canonical Python engine (same source, no duplicated logic)
+        run: cp analyze_usdjpy.py cloudflare-python/analyze_usdjpy.py
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Deploy the PRIVATE Python Worker
+        id: deploy
+        working-directory: cloudflare-python
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          uv run pywrangler deploy
+
+      - name: Publish deployment audit
+        if: always()
+        env:
+          DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
+        run: |
+          python - <<'PY'
+          import os,json
+          from datetime import datetime,timezone
+          from pathlib import Path
+          o={"at_utc":datetime.now(timezone.utc).isoformat(),
+             "run_id":os.environ.get("GITHUB_RUN_ID"),
+             "run_url":"https://github.com/"+os.environ["GITHUB_REPOSITORY"]+"/actions/runs/"+os.environ["GITHUB_RUN_ID"],
+             "deploy_outcome":os.environ["DEPLOY_OUTCOME"]}
+          Path("data/python_worker_deploy_status.json").write_text(json.dumps(o,indent=2)+"\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/python_worker_deploy_status.json
+          git commit -m "Record private USDJPY Python Worker deploy outcome"
+          git pull --rebase origin main
+          git push origin HEAD:main

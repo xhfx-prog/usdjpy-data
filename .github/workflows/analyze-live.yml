@@ -23,6 +23,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Regression-test existing Python analyzer
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+
       - name: Validate and recompute using existing Python analyzer
         id: analyze
         run: python analyze_live_request.py
@@ -52,6 +55,9 @@ jobs:
                       "/actions/runs/"+os.environ.get("GITHUB_RUN_ID",""),
             "analysis_outcome":os.environ["ANALYSIS_OUTCOME"],
             "matched_output":success,
+            "strict_freshness_ok_at_compute":output.get("strict_freshness_ok_at_compute") if success else False,
+            "input_live_fetched_at":output.get("input_live_fetched_at") if success else None,
+            "analysis_generated_at_utc":output.get("analysis",{}).get("generated_at_utc") if success else None,
             "last_confirmed_1min_start_jst":output.get("last_confirmed_1min_start_jst") if success else None
           }
           Path("data/analysis_live_status.json").write_text(

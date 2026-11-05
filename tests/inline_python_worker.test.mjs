@@ -49,3 +49,37 @@ test("fail closed when private Python service is unavailable",async()=>{
  const engine=make(async()=>base,async()=>({values:[]}),()=>[],(v,d)=>v??d,Request,async()=>[]);
  await assert.rejects(engine({},{}),/SERVICE_BINDING_MISSING/);
 });
+
+test("validate and merge six daily minute partitions without extra Twelve Data calls",async()=>{
+ const first=text.indexOf("async function recentMinuteArchive()");
+ const last=text.indexOf("// Real-time full canonical Python evaluation",first);
+ assert.ok(first>=0 && last>first);
+ const makeArchive=new Function("github","saved","merge",
+    text.slice(first,last)+"return recentMinuteArchive;");
+ const dates=Array.from({length:6},(_,i)=>"2026-11-"+String(6-i).padStart(2,"0"));
+ let savedCalls=0;
+ const getter=async path=>({sessions:dates.map(x=>({
+     path:"data/history_1min/"+x+".json"
+ }))});
+ const saved=async path=>{
+     savedCalls++;
+     return [{datetime:path.slice(-15,-5)+" 00:00:00",open:"158",high:"158",low:"158",close:"158"}];
+ };
+ const merger=(a,b)=>[...a,...b].sort((x,y)=>y.datetime.localeCompare(x.datetime));
+ const archive=makeArchive(getter,saved,merger);
+ const rows=await archive();
+ assert.equal(savedCalls,6);
+ assert.equal(rows.length,6);
+ assert.equal(rows[0].datetime.slice(0,10),"2026-11-06");
+});
+test("reject any minute archive partition with traversal or invalid date",async()=>{
+ const first=text.indexOf("async function recentMinuteArchive()");
+ const last=text.indexOf("// Real-time full canonical Python evaluation",first);
+ const makeArchive=new Function("github","saved","merge",
+    text.slice(first,last)+"return recentMinuteArchive;");
+ for(const path of ["data/history_1min/../../bad.json","data/history_1min/2026-11-xx.json"]){
+   const archive=makeArchive(async()=>({sessions:[{path}]}),
+     async()=>{throw Error("Unexpected archive fetch");},(a,b)=>a.concat(b));
+   await assert.rejects(archive(),/UNSAFE_MINUTE_ARCHIVE_PATH/);
+ }
+});

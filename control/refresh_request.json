@@ -1,5 +1,6 @@
 {
-  "request_id": "morning-20261105-0858-1793836673370",
+  "request_id": "chat-ondemand-20261105074311419",
   "requested_by": "chatgpt",
-  "reason": "Morning 09:00 JST on-demand USDJPY refresh 2026-11-05"
+  "reason": "USDJPY 2026-11-05 16:00 JST move verification; fresh 1min OHLC requested",
+  "requested_at_utc": "2026-11-05T07:43:11.419Z"
 }

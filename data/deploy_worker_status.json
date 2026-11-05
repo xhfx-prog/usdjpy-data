@@ -1,7 +1,7 @@
 {
-  "recorded_at_utc": "2026-11-05T13:47:30.193510+00:00",
-  "run_id": "42038833125",
-  "run_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/42038833125",
+  "recorded_at_utc": "2026-11-05T14:02:49.321292+00:00",
+  "run_id": "42041174876",
+  "run_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/42041174876",
   "event": "push",
   "request_sequence": 2,
   "expected_worker_blob_sha": "387e28f429765607aed7d300230c8b7b45a61d90",

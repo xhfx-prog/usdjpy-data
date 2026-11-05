@@ -13,7 +13,7 @@ def analyze_payload(payload, now=None):
     days = payload.get("1day", [])
     if not (isinstance(minutes,list) and isinstance(hours,list) and isinstance(days,list)):
         raise ValueError("INVALID_SERIES")
-    if not (150 <= len(minutes) <= 2000 and 100 <= len(hours) <= 2000 and 60 <= len(days) <= 2000):
+    if not (150 <= len(minutes) <= 6500 and 100 <= len(hours) <= 2000 and 60 <= len(days) <= 2000):
         raise ValueError("INSUFFICIENT_HISTORY")
     minute = engine.normalized(minutes, now, "1min", max_invalid_fraction=0.015)
     hourly = engine.normalized(hours, now, "1h", max_invalid_fraction=0.015)

@@ -20,9 +20,21 @@ jobs:
         with:
           python-version: '3.11'
       - name: Verify production MCP analysis tool
+        id: verify
         run: python tests/smoke_mcp_integration.py
       - name: Publish smoke status
+        if: always()
+        env:
+          VERIFY_OUTCOME: ${{ steps.verify.outcome }}
         run: |
+          python - <<'PY'
+          import json,os
+          from datetime import datetime,timezone
+          from pathlib import Path
+          path=Path("data/mcp_integration_smoke_status.json")
+          if os.environ["VERIFY_OUTCOME"] != "success":
+              path.write_text(json.dumps({"tested_at_utc":datetime.now(timezone.utc).isoformat(),"status":"FAIL","workflow_run_id":os.environ.get("GITHUB_RUN_ID"),"reason":"Inspect GitHub Actions step logs"},indent=2)+"\n")
+          PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/mcp_integration_smoke_status.json

@@ -361,23 +361,50 @@ async function bundle(env, args = {}) {
 // GitHub Python-analyzer snapshot. The snapshot is NEVER relabeled as a
 // computation using the live bars; its valid-as-of time is always explicit.
 // A new Python evaluation requires rerunning analyze_usdjpy.py in GitHub.
+// One current-data request returns live OHLC and the newest valid *Python*
+// analysis (hourly or request-bound on-demand). Never treat an older Python
+// snapshot as recalculated using later 1min candles.
 async function analysisWithLiveBars(env, args = {}) {
-  const [live, engine] = await Promise.all([
+  const [live, snapshots] = await Promise.all([
     bundle(env, {
-      minute_bars: count(args.minute_bars, 300),
+      minute_bars: count(args.minute_bars, 500),
       five_minute_bars: count(args.five_minute_bars, 60),
       fifteen_minute_bars: count(args.fifteen_minute_bars, 24),
       hourly_bars: count(args.hourly_bars, 200),
       four_hour_bars: count(args.four_hour_bars, 48),
       daily_bars: count(args.daily_bars, 150)
     }),
-    github("analysis_latest.json")
+    Promise.allSettled([
+      github("analysis_live_latest.json"),
+      github("analysis_latest.json")
+    ])
   ]);
-  if (engine.instrument !== "USD/JPY" ||
-      !engine.data_quality?.last_confirmed_1min_start_jst ||
-      !engine.market_structure?.timeframe_assessments) {
-    throw Error("INVALID_PYTHON_ANALYSIS_SNAPSHOT");
+  const candidates = [];
+  const liveSnapshot = snapshots[0].status === "fulfilled" ? snapshots[0].value : null;
+  if (liveSnapshot?.recomputed_from_live_1min === true &&
+      liveSnapshot.analysis?.instrument === "USD/JPY" &&
+      liveSnapshot.analysis?.data_quality?.last_confirmed_1min_start_jst ===
+        liveSnapshot.last_confirmed_1min_start_jst) {
+    candidates.push({ report: liveSnapshot.analysis,
+      source: "PYTHON_ON_DEMAND",
+      request_id: liveSnapshot.request_id,
+      input_live_fetched_at: liveSnapshot.input_live_fetched_at });
   }
+  const scheduled = snapshots[1].status === "fulfilled" ? snapshots[1].value : null;
+  if (scheduled?.instrument === "USD/JPY" &&
+      scheduled.data_quality?.last_confirmed_1min_start_jst) {
+    candidates.push({ report: scheduled, source: "PYTHON_SCHEDULED",
+      request_id: null, input_live_fetched_at: null });
+  }
+  if (!candidates.length) throw Error("NO_VALID_PYTHON_ANALYSIS_SNAPSHOT");
+  candidates.sort((a,b) =>
+    b.report.data_quality.last_confirmed_1min_start_jst.localeCompare(
+      a.report.data_quality.last_confirmed_1min_start_jst));
+  const selected = candidates[0];
+  const engine = selected.report;
+  if (!engine.market_structure?.timeframe_assessments)
+    throw Error("INVALID_PYTHON_ANALYSIS_SNAPSHOT");
+
   const current = live.series["1min"].values[0];
   if (!current) throw Error("NO_LIVE_1MIN_DATA");
   const engineBar = engine.data_quality.last_confirmed_1min_start_jst;
@@ -386,13 +413,9 @@ async function analysisWithLiveBars(env, args = {}) {
   );
   const snapshotCurrent = gap === 0 &&
     Number(current.close) === Number(engine.data_quality.last_close);
-  const recent = live.series["1min"].values;
-  // This is strictly a live OHLC overlay, NOT a substitute for a full
-  // deterministic Python re-evaluation of EMA, pivots or support/resistance.
-  const lookback = recent.slice(0, 180);
-  const start = lookback[lookback.length - 1]?.datetime || null;
-  const liveHigh = Math.max(...lookback.map(x => Number(x.high)));
-  const liveLow = Math.min(...lookback.map(x => Number(x.low)));
+  const recent = live.series["1min"].values.slice(0, 180);
+  const liveHigh = Math.max(...recent.map(x => Number(x.high)));
+  const liveLow = Math.min(...recent.map(x => Number(x.low)));
   const oldClose = Number(engine.data_quality.last_close);
   const newClose = Number(current.close);
   const liveOverlay = {
@@ -401,16 +424,17 @@ async function analysisWithLiveBars(env, args = {}) {
     latest_high: Number(current.high),
     latest_low: Number(current.low),
     latest_close: newClose,
-    change_from_python_snapshot_pips: Number(((newClose - oldClose) * 100).toFixed(3)),
+    change_from_python_snapshot_pips:
+      Number(((newClose - oldClose) * 100).toFixed(3)),
     python_snapshot_close: oldClose,
-    observed_recent_minutes: lookback.length,
-    observed_from_jst: start,
+    observed_recent_minutes: recent.length,
+    observed_from_jst: recent[recent.length - 1]?.datetime || null,
     recent_window_high: Number.isFinite(liveHigh) ? liveHigh : null,
     recent_window_low: Number.isFinite(liveLow) ? liveLow : null,
     recent_window_mid: Number.isFinite(liveHigh + liveLow)
       ? Number(((liveHigh + liveLow) / 2).toFixed(5)) : null
   };
-  const result = {
+  return {
     symbol: "USD/JPY",
     fetched_at: live.fetched_at,
     latest_confirmed_1min_bar: current.datetime,
@@ -420,22 +444,26 @@ async function analysisWithLiveBars(env, args = {}) {
     analysis_integration: {
       live_bars_acquired_before_return: true,
       python_engine: "analyze_usdjpy.py (GitHub Actions)",
+      python_snapshot_source: selected.source,
+      python_snapshot_request_id: selected.request_id,
+      python_snapshot_live_input_fetched_at: selected.input_live_fetched_at,
       python_snapshot_generated_at_utc: engine.generated_at_utc,
       python_snapshot_analysis_asof_jst: engine.analysis_asof_jst,
       python_snapshot_last_1min_start_jst: engineBar,
       python_snapshot_lag_in_candles: gap,
       python_snapshot_matches_current_1min: snapshotCurrent,
-      full_python_engine_recomputed_for_live_bars: false,
+      python_engine_was_run_on_live_request: selected.source === "PYTHON_ON_DEMAND",
+      full_python_engine_recomputed_for_current_1min: snapshotCurrent,
+      requires_on_demand_python_refresh: !snapshotCurrent,
       interpretation_policy: snapshotCurrent
-        ? "SNAPSHOT_MATCHES_LIVE_CANDLE"
-        : "PYTHON_RESULT_IS_HISTORICAL_ONLY_REEVALUATION_REQUIRED_FOR_CURRENT_SIGNAL",
+        ? "PYTHON_ANALYSIS_MATCHES_CURRENT_LIVE_CANDLE"
+        : "PYTHON_ANALYSIS_IS_HISTORICAL_ONLY_RECOMPUTE_BEFORE_USING_CURRENT_SIGNALS",
       no_current_signal_from_stale_python_decision: !snapshotCurrent
     },
     live_overlay: liveOverlay,
     series: live.series,
     python_analysis_snapshot: engine
   };
-  return result;
 }
 
 // Historical OHLC exclusively from GitHub.
@@ -519,7 +547,9 @@ const definitions = [
       "MANDATORY FIRST tool for any user request analyzing CURRENT USD/JPY. " +
       "Fetch the newest confirmed 1-minute OHLC with conditional one-call Twelve Data access, " +
       "derive all six timeframes, and attach the deterministic Python analysis_latest.json " +
-      "with explicit as-of and lag checks. If the Python snapshot is stale, DO NOT present " +
+      "with explicit as-of and lag checks. If snapshot is stale, submit confirmed " +
+      "1min bars and fetched_at to control/live_analysis_request.json through GitHub " +
+      "and verify data/analysis_live_latest.json, then check freshness again. DO NOT present " +
       "its trend/SR/decision as recalculated or current. Includes observed live OHLC overlay. " +
       "Never answer current USDJPY analysis from the Python snapshot alone.",
     inputSchema: {

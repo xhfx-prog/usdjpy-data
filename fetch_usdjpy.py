@@ -230,7 +230,14 @@ manifest(HOURS, "1h", "month_jst")
 # Daily history is a separate event-study archive: once per day max,
 # newest 7 candles only after initial 10-year bootstrap; never repeatedly
 # overwrite historical years. Provider exchange-day labels are preserved.
-if due(state.get("daily_last_attempt_utc"), 24):
+daily_now_jst = NOW.astimezone(JST)
+daily_date_jst = daily_now_jst.date().isoformat()
+last_daily_attempt = state.get("daily_last_attempt_utc")
+last_daily_attempt_jst = (
+    datetime.fromisoformat(last_daily_attempt.replace("Z", "+00:00")).astimezone(JST).date().isoformat()
+    if last_daily_attempt else None
+)
+if daily_now_jst.hour >= 8 and last_daily_attempt_jst != daily_date_jst:
     state["daily_last_attempt_utc"] = NOW.isoformat()
     try:
         if not state.get("daily_bootstrap_completed"):

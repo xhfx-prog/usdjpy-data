@@ -19,7 +19,7 @@ NY = ZoneInfo("America/New_York")
 LONDON = ZoneInfo("Europe/London")
 UTC = timezone.utc
 DATA = Path("data")
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 
 
 def stamp(s):
@@ -489,9 +489,15 @@ def chart_geometry(rows, name):
     Prefer recent complete turning points and tolerate intrabar line overshoots.
     A new trend needs a break followed by acceptance, not a single wick.
     """
-    scale={"4h":(28,1),"1h":(64,2),"15min":(64,2),"5min":(48,2)}
+    # Full structural window, followed by a shorter local-shape window.
+    # Kept separately from describe_timeframe()'s momentum lookback.
+    # Daily: 12 trading weeks; 4h: 10 trading days; 1h: 6 trading days;
+    # 15m: 48h; 5m: 20h; 1m: 6h. Time ranges are reported from real bars.
+    scale={"1day":(60,2),"4h":(60,2),"1h":(144,2),
+           "15min":(192,2),"5min":(240,3),"1min":(360,4)}
     if name not in scale or len(rows)<18:
-        return {"pattern":"NOT_EVALUATED","structure":"UNRESOLVED"}
+        return {"pattern":"NOT_EVALUATED","structure":"UNRESOLVED",
+                "available_closed_candles":len(rows)}
     span, radius=scale[name]
     observed=rows[-span:]
     vol=atr(observed) or 0.01
@@ -502,6 +508,7 @@ def chart_geometry(rows, name):
     highs=hi[-4:]
     lows=lo[-4:]
     candles=len(observed)
+    # Local shape is never inferred from the whole structural window alone.
     lookback=max(12,candles//2)
     recent=observed[-lookback:]
     ceiling=max(x["h"] for x in recent)
@@ -551,8 +558,41 @@ def chart_geometry(rows, name):
                "RANGE_WITH_LOWER_REJECTION" if recovered else
                "CONSOLIDATION" if is_compression or has_range else
                "UNRESOLVED")
+    # Put the actual observation period and reasons in every result so that
+    # consumers can audit each timeframe rather than receiving opaque labels.
+    swing_highs=[{"t":p["t"],"price":n(p["price"])} for p in highs]
+    swing_lows=[{"t":p["t"],"price":n(p["price"])} for p in lows]
     return {"pattern":pattern,"structure":structure,
             "local_direction_not_structural_trend":True,
+            "analysis_window":{
+                "configured_candles":span,
+                "actual_completed_candles":candles,
+                "window_from_jst":observed[0]["t"],
+                "window_to_jst":observed[-1]["t"],
+                "local_pattern_candles":len(recent),
+                "local_pattern_from_jst":recent[0]["t"],
+                "local_pattern_to_jst":recent[-1]["t"],
+                "confirmed_swing_radius_candles":radius,
+                "strict_future_data_exclusion":True},
+            "chart_observations":{
+                "structural_window_high":n(max(x["h"] for x in observed)),
+                "structural_window_low":n(min(x["l"] for x in observed)),
+                "local_window_high":n(ceiling),
+                "local_window_low":n(floor),
+                "local_last_close":n(price),
+                "local_net_change":n(recent[-1]["c"]-recent[0]["c"]),
+                "recent_swing_high_difference":n(top_step) if top_step is not None else None,
+                "recent_swing_low_difference":n(bottom_step) if bottom_step is not None else None,
+                "confirmed_swing_highs":swing_highs,
+                "confirmed_swing_lows":swing_lows},
+            "judgement_evidence":{
+                "highs_non_rising_with_tolerance":descending,
+                "lows_non_falling_with_tolerance":ascending,
+                "converging_pivots":is_compression,
+                "range_oscillations_at_least_2":has_range,
+                "two_closes_below_support_zone":close_below,
+                "two_closes_above_resistance_zone":close_above,
+                "wick_below_support_followed_by_recovery":recovered},
             "support_zone":{"center":n(support),"tolerance":n(tolerance)},
             "resistance_zone":{"center":n(resistance),"tolerance":n(tolerance)},
             "recovered_after_wick_below_support":recovered,
@@ -589,26 +629,28 @@ def lower_timeframe_recovery(m5):
             "low_retested":any(x["l"]<trough-0.005 for x in bars[lowidx+1:])}
 
 def multi_timeframe_structure(daily, h4, h1, m15, m5, minute):
+    # Every timeframe receives the same shape recognition algorithm, with
+    # explicit scale-specific windows and two distinct output labels:
+    # recent candle direction and the wider chart structure.
     ordered=(("1day",daily),("4h",h4),("1h",h1),
              ("15min",m15),("5min",m5),("1min",minute))
-    frames={name:describe_timeframe(rows,name) for name,rows in ordered}
-    # Preserve direction of recent candles as an observation, not a claim
-    # about the entire higher-timeframe market regime.
-    for name,bars in (("4h",h4),("1h",h1),("15min",m15),("5min",m5)):
-        recent_direction=frames[name]["state"]
+    frames={}
+    for name,bars in ordered:
+        momentum=describe_timeframe(bars,name)
+        recent_direction=momentum["state"]
         shape=chart_geometry(bars,name)
-        frames[name]["recent_candle_direction"]=recent_direction
-        frames[name]["chart_geometry"]=shape
-        if name in ("4h","1h") and shape["structure"] in (
-                "CONSOLIDATION","RANGE_WITH_LOWER_REJECTION"):
-            frames[name]["state"]="RANGE"
-        elif name in ("4h","1h") and shape["structure"]=="BREAKDOWN_CONFIRMED":
-            frames[name]["state"]="DOWN"
-        elif name in ("4h","1h") and shape["structure"]=="BREAKOUT_CONFIRMED":
-            frames[name]["state"]="UP"
-    # A lower timeframe cannot override the 4h regime. If the 4h geometry
-    # establishes consolidation, directional bias is not extrapolated from
-    # the local last eight 4h closes.
+        momentum["recent_candle_direction"]=recent_direction
+        momentum["chart_geometry"]=shape
+        structure=shape["structure"]
+        if structure in ("CONSOLIDATION","RANGE_WITH_LOWER_REJECTION"):
+            momentum["state"]="RANGE"
+        elif structure=="BREAKDOWN_CONFIRMED":
+            momentum["state"]="DOWN"
+        elif structure=="BREAKOUT_CONFIRMED":
+            momentum["state"]="UP"
+        # Unknown structure: report local direction but do not pretend the
+        # structure itself is a trend. The two labels remain available.
+        frames[name]=momentum
     if frames["4h"]["state"]=="RANGE":
         parent="RANGE"
     else:

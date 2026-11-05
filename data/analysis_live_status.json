@@ -1,10 +1,13 @@
 {
-  "recorded_at_utc": "2026-11-05T13:56:12.072834+00:00",
-  "request_id": "mcp-python-20261105225400-20261105135557453",
+  "recorded_at_utc": "2026-11-05T14:00:23.645627+00:00",
+  "request_id": "mcp-python-regression-20261105225800-20261105140012956",
   "event": "push",
-  "run_id": "42040189636",
-  "run_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/42040189636",
+  "run_id": "42040819584",
+  "run_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/42040819584",
   "analysis_outcome": "success",
   "matched_output": true,
-  "last_confirmed_1min_start_jst": "2026-11-05 22:54:00"
+  "strict_freshness_ok_at_compute": true,
+  "input_live_fetched_at": "2026-11-05T14:00:12.956Z",
+  "analysis_generated_at_utc": "2026-11-05T14:00:23+00:00",
+  "last_confirmed_1min_start_jst": "2026-11-05 22:58:00"
 }

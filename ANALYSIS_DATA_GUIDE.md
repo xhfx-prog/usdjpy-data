@@ -4,7 +4,7 @@ This repository separates **archival coverage** from **the minimum data needed f
 
 ## Acquisition
 
-- `.github/workflows/update.yml`: **on-demand only**. Push changes to `control/refresh_request.json` to refresh; optional `workflow_dispatch`. No scheduled cron. Reading a GitHub file (GET/fetch_file) does **not** trigger Actions.
+- `.github/workflows/update.yml`: **hourly archival collection at minute 11 (UTC/JST)** plus on-demand refresh using a push to `control/refresh_request.json`; optional `workflow_dispatch`. Both modes use `fetch_usdjpy.py` to merge/deduplicate new candles into historical files. Reading a GitHub file (`GET`/`fetch_file`) does **not** trigger Actions.
 - `fetch_usdjpy.py`: Twelve Data collector. Minute series every actual run, hourly series when at least 1 hour old, exchange-calendar daily series once every 24 hours. Data calls and GitHub file reads are distinct.
 - A new `request_id` in `control/refresh_request.json` triggers `push`. Verify the same `refresh_request_id`, `event=push`, `fetch_outcome=success` in `data/workflow_status.json`, and confirm `fetched_at` and newest `datetime` in `data/usdjpy_1min.json` advanced. A submitted request alone does not confirm freshness.
 
@@ -28,7 +28,7 @@ Hourly bars are stored in **Asia/Tokyo**. Daily bars retain **Twelve Data exchan
 4. Before answering, recheck the newest bar against the question time. When data remain stale, state the precise missing range rather than constructing a current price narrative from stale information.
 5. Do not issue repeated refresh requests for one user question while an existing request is in flight.
 
-**Trade-off:** No scheduled fetch means unused API quota is conserved, but gaps in minute archives can arise if there is no request for more than the provider's 1,500-bar recovery window. Hourly/daily series are still refreshed incrementally when a request occurs; a complete minute-level history is not guaranteed across long idle periods. A daily 09:00 analysis needs its own on-demand trigger; it does not run automatically merely because Actions exists.
+**Why both modes exist:** Scheduled hourly runs preserve minute/hour/day archives even when there are no ChatGPT questions. Question-time push runs fill the gap since the most recent scheduled run. Both write to the same deduplicated history. The 09:00 ChatGPT analysis must trigger/verify its own refresh when data are stale; the scheduled cadence alone cannot guarantee fresh data.
 
 ## Analysis reading order
 
@@ -45,7 +45,7 @@ No single timeframe establishes support/resistance purely by high/low extremes. 
 ## Maintenance and audit
 
 - `data/workflow_status.json` contains per-run `event`, `fetch_outcome`, and request id. `data/workflow_runs_audit.json` audits GitHub Actions execution history.
-- On-demand GitHub Actions jobs may be delayed or fail. A successful update never guarantees freshness for subsequent questions.
+- Scheduled GitHub jobs may be delayed/skipped, and on-demand Actions jobs may be delayed or fail. A successful update never guarantees freshness for subsequent questions.
 - Archives are merged/deduplicated by timestamp, and old partitions are trimmed as they exceed the retention horizon.
 - The daily archive is initially fetched once and is supplemented by a small number of recent confirmed daily candles at most once per 24 hours. Old years are not re-fetched.
 - `data/usdjpy_1day.json` is a compact, backward-compatible 200-bar view, not the historical source of truth.

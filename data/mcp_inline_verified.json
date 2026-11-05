@@ -1,0 +1,21 @@
+{
+  "verified_at_utc": "2026-11-05T14:59:14.766Z",
+  "verification_source": "Connected USDJPY Market Data MCP tool call (not GitHub Actions edge)",
+  "status": "PASS",
+  "tool": "get_usdjpy_analysis",
+  "last_confirmed_1min_jst": "2026-11-05 23:57:00",
+  "freshness_ok": true,
+  "python_engine": "analyze_usdjpy.py (Cloudflare Python Worker)",
+  "python_snapshot_source": "PYTHON_WORKER_INLINE",
+  "python_snapshot_lag_in_candles": 0,
+  "full_python_engine_recomputed_for_current_1min": true,
+  "single_mcp_call_completed": true,
+  "python_input_bar_counts": {
+    "1min": 500,
+    "1h": 1202,
+    "1day": 108
+  },
+  "twelve_data_requests": 1,
+  "confirmed_close_matches_python": true,
+  "github_actions_required_per_request": false
+}

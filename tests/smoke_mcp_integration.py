@@ -45,13 +45,15 @@ assert data["latest_confirmed_1min_bar"] == data["live_overlay"]["last_confirmed
 assert 0 <= data["twelve_data_requests"] <= 1
 assert len(data["series"]) == 6
 integrated = data["analysis_integration"]
-assert integrated["python_engine"] == "analyze_usdjpy.py (GitHub Actions)"
-assert integrated["python_snapshot_source"] in ("PYTHON_ON_DEMAND", "PYTHON_SCHEDULED")
+assert integrated["python_engine"] == "analyze_usdjpy.py (Cloudflare Python Worker)"
+assert integrated["python_snapshot_source"] == "PYTHON_WORKER_INLINE"
 assert "python_snapshot_lag_in_candles" in integrated
-assert integrated["requires_on_demand_python_refresh"] == (
-    not integrated["python_snapshot_matches_current_1min"]
-)
+assert integrated["requires_on_demand_python_refresh"] is False
+assert integrated["full_python_engine_recomputed_for_current_1min"] is True
+assert integrated["python_snapshot_lag_in_candles"] == 0
+assert integrated["single_mcp_call_completed"] is True
 assert "market_structure" in data["python_analysis_snapshot"]
+assert data["python_analysis_snapshot"]["data_quality"]["last_confirmed_1min_start_jst"] == data["latest_confirmed_1min_bar"]
 audit = {
     "tested_at_utc": datetime.now(timezone.utc).isoformat(),
     "status": "PASS",

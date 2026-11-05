@@ -950,7 +950,7 @@ async function protectExpensiveRequest(request, env, url) {
   let isExpensive = isBundle;
   if (url.pathname === "/mcp" && request.method === "POST") {
     try {
-      const rpc = await request.clone().json();
+      const rpc = await checkedRPC(request.clone());
       isExpensive = rpc?.method === "tools/call";
     } catch (_) { return null; } // Existing MCP parser returns parse error.
   }

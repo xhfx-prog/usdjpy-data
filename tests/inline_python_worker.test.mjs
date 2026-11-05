@@ -36,7 +36,7 @@ test("one MCP call returns inline Python computation on identical confirmed minu
  assert.equal(result.analysis_integration.full_python_engine_recomputed_for_current_1min,true);
  assert.equal(result.analysis_integration.python_snapshot_lag_in_candles,0);
  assert.equal(result.analysis_integration.requires_on_demand_python_refresh,false);
- assert.equal(result.python_analysis_snapshot,report.analysis);
+ assert.deepEqual(result.python_analysis_snapshot,report.analysis);
 });
 test("reject Python output referencing an older minute",async()=>{
  const report={execution:"CLOUDFLARE_PYTHON_WORKER_INLINE",full_python_engine_recomputed:true,

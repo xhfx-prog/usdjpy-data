@@ -113,7 +113,7 @@ jobs:
           REQUEST_EVENT: ${{ github.event_name }}
         run: |
           python - <<'PY'
-          import json, os
+          import json, os, subprocess
           from datetime import datetime, timezone
           from pathlib import Path
           request_file = Path("control/deploy_worker_request.json")
@@ -125,6 +125,8 @@ jobs:
               "event": os.environ["REQUEST_EVENT"],
               "request_sequence": request.get("sequence"),
               "expected_worker_blob_sha": request.get("expected_worker_blob_sha"),
+              "actual_worker_blob_sha": subprocess.check_output(["git","hash-object","cloudflare/worker.js"],text=True).strip(),
+              "github_sha": os.environ.get("GITHUB_SHA"),
               "deploy_outcome": os.environ["DEPLOY_OUTCOME"],
               "mcp_verification_outcome": os.environ["VERIFY_OUTCOME"],
               "job_state_before_audit": os.environ["JOB_STATE"],

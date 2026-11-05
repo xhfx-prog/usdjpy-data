@@ -23,7 +23,9 @@ VERSION = "1.0.0"
 
 
 def stamp(s):
-    return datetime.strptime(s, "%Y-%m-%d %H:%M:%S").replace(tzinfo=JST)
+    # ISO-formatted provider timestamps: fromisoformat avoids the expensive
+    # _strptime parser thousands of times inside the Cloudflare Python Worker.
+    return datetime.fromisoformat(s).replace(tzinfo=JST)
 
 
 def iso(d):

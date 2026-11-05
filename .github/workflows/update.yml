@@ -7,6 +7,8 @@ on:
       - main
     paths:
       - 'control/refresh_request.json'
+  schedule:
+    - cron: '11 * * * *'
 
 permissions:
   contents: write

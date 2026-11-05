@@ -357,6 +357,87 @@ async function bundle(env, args = {}) {
   };
 }
 
+// A single MCP call combines freshly acquired 1min bars with the exact
+// GitHub Python-analyzer snapshot. The snapshot is NEVER relabeled as a
+// computation using the live bars; its valid-as-of time is always explicit.
+// A new Python evaluation requires rerunning analyze_usdjpy.py in GitHub.
+async function analysisWithLiveBars(env, args = {}) {
+  const [live, engine] = await Promise.all([
+    bundle(env, {
+      minute_bars: count(args.minute_bars, 300),
+      five_minute_bars: count(args.five_minute_bars, 60),
+      fifteen_minute_bars: count(args.fifteen_minute_bars, 24),
+      hourly_bars: count(args.hourly_bars, 200),
+      four_hour_bars: count(args.four_hour_bars, 48),
+      daily_bars: count(args.daily_bars, 150)
+    }),
+    github("analysis_latest.json")
+  ]);
+  if (engine.instrument !== "USD/JPY" ||
+      !engine.data_quality?.last_confirmed_1min_start_jst ||
+      !engine.market_structure?.timeframe_assessments) {
+    throw Error("INVALID_PYTHON_ANALYSIS_SNAPSHOT");
+  }
+  const current = live.series["1min"].values[0];
+  if (!current) throw Error("NO_LIVE_1MIN_DATA");
+  const engineBar = engine.data_quality.last_confirmed_1min_start_jst;
+  const gap = Math.round(
+    (timestamp(current.datetime) - timestamp(engineBar)) / 60000
+  );
+  const snapshotCurrent = gap === 0 &&
+    Number(current.close) === Number(engine.data_quality.last_close);
+  const recent = live.series["1min"].values;
+  // This is strictly a live OHLC overlay, NOT a substitute for a full
+  // deterministic Python re-evaluation of EMA, pivots or support/resistance.
+  const lookback = recent.slice(0, 180);
+  const start = lookback[lookback.length - 1]?.datetime || null;
+  const liveHigh = Math.max(...lookback.map(x => Number(x.high)));
+  const liveLow = Math.min(...lookback.map(x => Number(x.low)));
+  const oldClose = Number(engine.data_quality.last_close);
+  const newClose = Number(current.close);
+  const liveOverlay = {
+    last_confirmed_1min_start_jst: current.datetime,
+    latest_open: Number(current.open),
+    latest_high: Number(current.high),
+    latest_low: Number(current.low),
+    latest_close: newClose,
+    change_from_python_snapshot_pips: Number(((newClose - oldClose) * 100).toFixed(3)),
+    python_snapshot_close: oldClose,
+    observed_recent_minutes: lookback.length,
+    observed_from_jst: start,
+    recent_window_high: Number.isFinite(liveHigh) ? liveHigh : null,
+    recent_window_low: Number.isFinite(liveLow) ? liveLow : null,
+    recent_window_mid: Number.isFinite(liveHigh + liveLow)
+      ? Number(((liveHigh + liveLow) / 2).toFixed(5)) : null
+  };
+  const result = {
+    symbol: "USD/JPY",
+    fetched_at: live.fetched_at,
+    latest_confirmed_1min_bar: current.datetime,
+    freshness_ok: live.freshness_ok,
+    twelve_data_requests: live.twelve_data_requests,
+    twelve_cache_hit: live.twelve_cache_hit,
+    analysis_integration: {
+      live_bars_acquired_before_return: true,
+      python_engine: "analyze_usdjpy.py (GitHub Actions)",
+      python_snapshot_generated_at_utc: engine.generated_at_utc,
+      python_snapshot_analysis_asof_jst: engine.analysis_asof_jst,
+      python_snapshot_last_1min_start_jst: engineBar,
+      python_snapshot_lag_in_candles: gap,
+      python_snapshot_matches_current_1min: snapshotCurrent,
+      full_python_engine_recomputed_for_live_bars: false,
+      interpretation_policy: snapshotCurrent
+        ? "SNAPSHOT_MATCHES_LIVE_CANDLE"
+        : "PYTHON_RESULT_IS_HISTORICAL_ONLY_REEVALUATION_REQUIRED_FOR_CURRENT_SIGNAL",
+      no_current_signal_from_stale_python_decision: !snapshotCurrent
+    },
+    live_overlay: liveOverlay,
+    series: live.series,
+    python_analysis_snapshot: engine
+  };
+  return result;
+}
+
 // Historical OHLC exclusively from GitHub.
 // No Twelve Data API calls.
 async function history(args) {
@@ -433,9 +514,32 @@ async function history(args) {
 
 const definitions = [
   {
+    name: "get_usdjpy_analysis",
+    description:
+      "MANDATORY FIRST tool for any user request analyzing CURRENT USD/JPY. " +
+      "Fetch the newest confirmed 1-minute OHLC with conditional one-call Twelve Data access, " +
+      "derive all six timeframes, and attach the deterministic Python analysis_latest.json " +
+      "with explicit as-of and lag checks. If the Python snapshot is stale, DO NOT present " +
+      "its trend/SR/decision as recalculated or current. Includes observed live OHLC overlay. " +
+      "Never answer current USDJPY analysis from the Python snapshot alone.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        minute_bars: { type:"integer",minimum:1,maximum:2000 },
+        five_minute_bars: { type:"integer",minimum:1,maximum:2000 },
+        fifteen_minute_bars: { type:"integer",minimum:1,maximum:2000 },
+        hourly_bars: { type:"integer",minimum:1,maximum:2000 },
+        four_hour_bars: { type:"integer",minimum:1,maximum:2000 },
+        daily_bars: { type:"integer",minimum:1,maximum:2000 }
+      },
+      additionalProperties: false
+    },
+    annotations: { readOnlyHint:true, destructiveHint:false, openWorldHint:true }
+  },
+  {
     name: "get_usdjpy_bundle",
     description:
-      "Use FIRST for every current USDJPY price or market analysis before making claims. " +
+      "For OHLC-only use; prefer get_usdjpy_analysis for current USDJPY market analysis. " +
       "Return 1min, 5min, 15min, 1h, 4h and daily OHLC together, " +
       "with a conditional single 1min Twelve Data fetch. " +
       "Rejects stale 1min candles (> 2 min after last close). " +
@@ -566,7 +670,9 @@ async function handleMCP(request, env) {
         const args = rpc.params?.arguments || {};
         let data;
 
-        if (name === "get_usdjpy_bundle") {
+        if (name === "get_usdjpy_analysis") {
+          data = await analysisWithLiveBars(env,args);
+        } else if (name === "get_usdjpy_bundle") {
           data = await bundle(env,args);
         } else if (name === "get_usdjpy_history") {
           data = await history(args);

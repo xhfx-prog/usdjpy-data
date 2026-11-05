@@ -1,19 +1,22 @@
 # USD/JPY OHLC storage and analysis guide
 
-## Interactive analysis after MCP integration (primary path, 2026-11-05)
+## Current live analysis (single MCP request, 2026-11-05)
 
-For **every** request for a current USD/JPY market assessment:
+**The canonical interactive entrypoint is `USDJPY Market Data.get_usdjpy_analysis`.**
 
-1. Call the connected `USDJPY Market Data.get_usdjpy_analysis` MCP tool **before** interpreting prices or any saved Python analysis. Confirm `fetched_at`, `latest_confirmed_1min_bar`, and `freshness_ok=true`. The Worker blocks old 1min bars. Do not use a stale report as the current quote.
-2. This call returns six OHLC timeframes **and** the most recent complete, deterministic Python analysis. Check `analysis_integration.python_snapshot_last_1min_start_jst`, `python_snapshot_source`, `python_snapshot_lag_in_candles` and `requires_on_demand_python_refresh`. The Worker **does not rerun Python**; it compares the separate Python analysis timestamp with live candles.
-3. If the Python analysis is behind and a current recomputation is necessary, use the **same fetched** 1min values from the MCP response. GitHub `fetch_file` `control/live_analysis_request.json` for SHA, then GitHub `update_file` with a new unique `request_id`, `source="USDJPY Market Data MCP"`, `symbol="USD/JPY"`, original MCP `fetched_at`, and `values` (confirmed 1min bars). Do **not** call Twelve Data again for this step.
-4. This push triggers `.github/workflows/analyze-live.yml`, which executes **the existing** `analyze_usdjpy.py` evaluation with the input minute bars, merges them with historical hourly and daily data, and writes `data/analysis_live_latest.json`. It makes **zero Twelve Data calls**. Re-read this result and match the exact `request_id`, latest confirmed candle start and close against the submitted payload. An accepted GitHub file update alone is not a completed analysis.
-5. Refresh the 1-minute MCP observation before final response if the job took long. If the newly fetched last confirmed candle differs from the Python report, the report must be identified as a **time-stamped earlier Python evaluation**; do not claim that its signals are recalculated as of the newer candle.
-6. Only once per user question send a live-analysis request unless there is a clearly new request. Do not create a loop trying to force per-minute freshness through GitHub Actions latency. State the actual timestamps and unavailable coverage clearly.
-7. If the MCP tool was not called, no present-tense current USDJPY analysis should be produced. GitHub data retrieval alone is not a substitute for the latest live quote unless it satisfies the same freshness gate.
+One call performs all of the following **synchronously**:
 
-**Important limitation:** GitHub actions initiated from ChatGPT's authenticated GitHub connector still depend on the assistant invoking that connector. The public read-only Worker has no GitHub write credentials and cannot autonomously start the Python job; treating an on-demand GitHub action as automatic inside the MCP would be incorrect. This separation avoids putting a GitHub write token on an unauthenticated public endpoint.
+1. Read cached GitHub candles and obtain the latest *confirmed* 1-minute OHLC from Twelve Data only when needed; fail closed if the newest confirmed minute is stale.
+2. Form 5-minute and 15-minute candles and retrieve extended GitHub 1-hour archives, deriving 4-hour candles; read saved daily OHLC.
+3. Use the **Cloudflare Service Binding** `PYTHON_ANALYZER` to privately invoke Worker `usdjpy-python-engine`. This runs the **unchanged canonical** `analyze_usdjpy.py` deterministic `evaluate` function on the same latest confirmed 1-minute OHLC in the request.
+4. Verify the Python result's last-confirmed 1-minute timestamp and close exactly match the price just fetched. If Python computation, freshness or equality checks fail, return an error rather than an old GitHub Python snapshot.
+5. Return all six OHLC timeframes, `analysis` / `python_analysis_snapshot`, and `analysis_integration` with `python_snapshot_source=PYTHON_WORKER_INLINE`, `full_python_engine_recomputed_for_current_1min=true`, `python_snapshot_lag_in_candles=0`, and `single_mcp_call_completed=true`.
 
+**There is no GitHub Actions invocation or request-file update in the interactive analysis path.** `control/live_analysis_request.json` and `analyze-live.yml` remain legacy paths; do not use them for ordinary interactive analysis.
+
+The Python worker is private (`workers_dev=false`) and reachable via service binding only. Its source is in `cloudflare-python/analysis_core.py` and `cloudflare-python/worker.py`; `.github/workflows/deploy-python-worker.yml` deploys the canonical `analyze_usdjpy.py` copied from the repository root.
+
+The assistant must still **choose to invoke the tool** in a normal chat. Project instructions and task prompts make it the primary entrypoint but cannot force the ChatGPT host to invoke any plugin. Once invoked, however, the entire acquisition/analysis sequence is program-controlled.
 
 This repository separates **archival coverage** from **the minimum data needed for a normal analysis**.
 

@@ -44,6 +44,51 @@ class ChartGeometryTests(unittest.TestCase):
         data[-1]["l"]=data[-1]["l"]-.7
         self.assertNotEqual(a.chart_geometry(data,"4h")["structure"],"BREAKDOWN_CONFIRMED")
 
+    def test_all_six_timeframes_have_auditable_windows(self):
+        configs={"1day":60,"4h":60,"1h":144,"15min":192,
+                 "5min":240,"1min":360}
+        for name,span in configs.items():
+            with self.subTest(frame=name):
+                size=span+28
+                highs=[157.5+0.1*((i//8)%3)+0.03 for i in range(size)]
+                lows=[x-.1 for x in highs]
+                closes=[(h+l)/2 for h,l in zip(highs,lows)]
+                step={"1day":1440,"4h":240,"1h":60,"15min":15,
+                      "5min":5,"1min":1}[name]
+                rows=bars_from(highs,lows,closes,step)
+                shape=a.chart_geometry(rows,name)
+                w=shape["analysis_window"]
+                self.assertEqual(w["configured_candles"],span)
+                self.assertEqual(w["actual_completed_candles"],span)
+                self.assertEqual(w["window_from_jst"],rows[-span]["t"])
+                self.assertEqual(w["window_to_jst"],rows[-1]["t"])
+                self.assertTrue(w["strict_future_data_exclusion"])
+                self.assertIn("judgement_evidence",shape)
+                self.assertIn("chart_observations",shape)
+                self.assertTrue(len(shape["chart_observations"]["confirmed_swing_highs"])>0)
+
+    def test_each_frame_state_retains_separate_recent_direction(self):
+        names={"1day":60,"4h":60,"1h":144,"15min":192,
+               "5min":240,"1min":360}
+        inputs={}
+        for name,span in names.items():
+            size=span+32
+            hi=[157.6+.08*((i//6)%3)+.03 for i in range(size)]
+            lo=[x-.12 for x in hi]
+            cl=[(h+l)/2 for h,l in zip(hi,lo)]
+            mins={"1day":1440,"4h":240,"1h":60,
+                  "15min":15,"5min":5,"1min":1}[name]
+            inputs[name]=bars_from(hi,lo,cl,mins)
+        frames,parent=a.multi_timeframe_structure(
+            inputs["1day"],inputs["4h"],inputs["1h"],
+            inputs["15min"],inputs["5min"],inputs["1min"])
+        self.assertEqual(set(frames),set(names))
+        for name in names:
+            self.assertIn("recent_candle_direction",frames[name])
+            self.assertIn("analysis_window",frames[name]["chart_geometry"])
+            self.assertIn("state",frames[name])
+        self.assertIn(parent,("UP","DOWN","RANGE","UNRESOLVED"))
+
     def test_five_minute_rebound_detected(self):
         highs=[158.4-0.01*i for i in range(14)]
         lows=[x-.06 for x in highs]

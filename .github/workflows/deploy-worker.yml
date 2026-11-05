@@ -1,6 +1,11 @@
 name: Deploy USDJPY MCP Worker (manual, guarded)
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'control/deploy_worker_request.json'
   workflow_dispatch:
     inputs:
       confirmation:
@@ -17,12 +22,25 @@ concurrency:
 
 jobs:
   deploy:
-    if: ${{ github.event.inputs.confirmation == 'DEPLOY_USDJPY_CHART' }}
+    if: ${{ github.event_name == 'push' || github.event.inputs.confirmation == 'DEPLOY_USDJPY_CHART' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Validate on-demand deployment request
+        if: github.event_name == 'push'
+        run: |
+          python - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          request = json.loads(Path("control/deploy_worker_request.json").read_text(encoding="utf-8"))
+          actual = subprocess.check_output(["git","hash-object","cloudflare/worker.js"],text=True).strip()
+          assert request.get("confirmation") == "DEPLOY_USDJPY_CHART", "Confirmation missing"
+          assert request.get("expected_worker_blob_sha") == actual, "Worker source changed since authorization"
+          print("Approved deployment for Worker blob SHA:", actual)
+          PY
 
       - name: Check Worker source and credentials
         working-directory: cloudflare
@@ -44,7 +62,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: cloudflare
-          command: deploy
+          command: deploy --keep-vars
 
       - name: Validate deployed MCP endpoint
         run: |

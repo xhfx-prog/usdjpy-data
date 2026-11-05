@@ -1,6 +1,6 @@
 {
-  "schema_version": "1.0.0",
-  "generated_at_utc": "2026-11-05T16:02:08+00:00",
+  "schema_version": "1.1.0",
+  "generated_at_utc": "2026-11-05T16:45:26+00:00",
   "analysis_asof_jst": "2026-11-05T14:00:00+09:00",
   "instrument": "USD/JPY",
   "data_quality": {
@@ -40,7 +40,7 @@
         "last_complete_bar": "2026-11-04"
       },
       "4h": {
-        "state": "DOWN",
+        "state": "RANGE",
         "swing_structure": "DOWN",
         "recent_net_change": -0.71666,
         "recent_net_change_pips": -71.666,
@@ -51,7 +51,46 @@
         "recent_window_bars": 8,
         "atr14": 0.4359,
         "bars": 276,
-        "last_complete_bar": "2026-11-05 08:00:00"
+        "last_complete_bar": "2026-11-05 08:00:00",
+        "recent_candle_direction": "DOWN",
+        "chart_geometry": {
+          "pattern": "CONVERGING_RANGE_CANDIDATE",
+          "structure": "CONSOLIDATION",
+          "local_direction_not_structural_trend": true,
+          "support_zone": {
+            "center": 158.16714,
+            "tolerance": 0.11333
+          },
+          "resistance_zone": {
+            "center": 158.69451,
+            "tolerance": 0.11333
+          },
+          "recovered_after_wick_below_support": false,
+          "last_two_confirmed_swing_highs": [
+            {
+              "t": "2026-11-04 04:00:00",
+              "price": 158.76356
+            },
+            {
+              "t": "2026-11-05 00:00:00",
+              "price": 158.69451
+            }
+          ],
+          "last_two_confirmed_swing_lows": [
+            {
+              "t": "2026-11-04 12:00:00",
+              "price": 157.42053
+            },
+            {
+              "t": "2026-11-05 00:00:00",
+              "price": 158.16714
+            }
+          ],
+          "range_oscillations": 4,
+          "lookback_bars": 14,
+          "volatility_atr14": 0.4359,
+          "boundary_confirmation": "TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"
+        }
       },
       "1h": {
         "state": "DOWN",
@@ -65,7 +104,46 @@
         "recent_window_bars": 10,
         "atr14": 0.18407,
         "bars": 1141,
-        "last_complete_bar": "2026-11-05 13:00:00"
+        "last_complete_bar": "2026-11-05 13:00:00",
+        "recent_candle_direction": "DOWN",
+        "chart_geometry": {
+          "pattern": "BROAD_RANGE_CANDIDATE",
+          "structure": "BREAKDOWN_CONFIRMED",
+          "local_direction_not_structural_trend": true,
+          "support_zone": {
+            "center": 158.16714,
+            "tolerance": 0.04786
+          },
+          "resistance_zone": {
+            "center": 158.43846,
+            "tolerance": 0.04786
+          },
+          "recovered_after_wick_below_support": false,
+          "last_two_confirmed_swing_highs": [
+            {
+              "t": "2026-11-05 04:00:00",
+              "price": 158.55741
+            },
+            {
+              "t": "2026-11-05 09:00:00",
+              "price": 158.43846
+            }
+          ],
+          "last_two_confirmed_swing_lows": [
+            {
+              "t": "2026-11-04 22:00:00",
+              "price": 158.22086
+            },
+            {
+              "t": "2026-11-05 02:00:00",
+              "price": 158.16714
+            }
+          ],
+          "range_oscillations": 3,
+          "lookback_bars": 32,
+          "volatility_atr14": 0.18407,
+          "boundary_confirmation": "TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"
+        }
       },
       "15min": {
         "state": "RANGE",
@@ -79,7 +157,46 @@
         "recent_window_bars": 12,
         "atr14": 0.08996,
         "bars": 248,
-        "last_complete_bar": "2026-11-05 13:45:00"
+        "last_complete_bar": "2026-11-05 13:45:00",
+        "recent_candle_direction": "RANGE",
+        "chart_geometry": {
+          "pattern": "BROAD_RANGE_CANDIDATE",
+          "structure": "CONSOLIDATION",
+          "local_direction_not_structural_trend": true,
+          "support_zone": {
+            "center": 157.77231,
+            "tolerance": 0.02339
+          },
+          "resistance_zone": {
+            "center": 157.99409,
+            "tolerance": 0.02339
+          },
+          "recovered_after_wick_below_support": false,
+          "last_two_confirmed_swing_highs": [
+            {
+              "t": "2026-11-05 09:00:00",
+              "price": 158.43846
+            },
+            {
+              "t": "2026-11-05 12:30:00",
+              "price": 157.99409
+            }
+          ],
+          "last_two_confirmed_swing_lows": [
+            {
+              "t": "2026-11-05 11:45:00",
+              "price": 157.88331
+            },
+            {
+              "t": "2026-11-05 13:15:00",
+              "price": 157.77231
+            }
+          ],
+          "range_oscillations": 3,
+          "lookback_bars": 32,
+          "volatility_atr14": 0.08996,
+          "boundary_confirmation": "TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"
+        }
       },
       "5min": {
         "state": "RANGE",
@@ -93,7 +210,46 @@
         "recent_window_bars": 12,
         "atr14": 0.05667,
         "bars": 744,
-        "last_complete_bar": "2026-11-05 13:55:00"
+        "last_complete_bar": "2026-11-05 13:55:00",
+        "recent_candle_direction": "RANGE",
+        "chart_geometry": {
+          "pattern": "BROAD_RANGE_CANDIDATE",
+          "structure": "CONSOLIDATION",
+          "local_direction_not_structural_trend": true,
+          "support_zone": {
+            "center": 157.77231,
+            "tolerance": 0.01473
+          },
+          "resistance_zone": {
+            "center": 157.99752,
+            "tolerance": 0.01473
+          },
+          "recovered_after_wick_below_support": false,
+          "last_two_confirmed_swing_highs": [
+            {
+              "t": "2026-11-05 13:00:00",
+              "price": 157.90302
+            },
+            {
+              "t": "2026-11-05 13:45:00",
+              "price": 157.99752
+            }
+          ],
+          "last_two_confirmed_swing_lows": [
+            {
+              "t": "2026-11-05 13:00:00",
+              "price": 157.8354
+            },
+            {
+              "t": "2026-11-05 13:25:00",
+              "price": 157.77231
+            }
+          ],
+          "range_oscillations": 3,
+          "lookback_bars": 24,
+          "volatility_atr14": 0.05667,
+          "boundary_confirmation": "TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"
+        }
       },
       "1min": {
         "state": "UP",
@@ -110,7 +266,95 @@
         "last_complete_bar": "2026-11-05 13:59:00"
       }
     },
-    "parent_direction": "DOWN",
+    "parent_direction": "RANGE",
+    "higher_timeframe_chart_context": {
+      "4h": {
+        "pattern": "CONVERGING_RANGE_CANDIDATE",
+        "structure": "CONSOLIDATION",
+        "local_direction_not_structural_trend": true,
+        "support_zone": {
+          "center": 158.16714,
+          "tolerance": 0.11333
+        },
+        "resistance_zone": {
+          "center": 158.69451,
+          "tolerance": 0.11333
+        },
+        "recovered_after_wick_below_support": false,
+        "last_two_confirmed_swing_highs": [
+          {
+            "t": "2026-11-04 04:00:00",
+            "price": 158.76356
+          },
+          {
+            "t": "2026-11-05 00:00:00",
+            "price": 158.69451
+          }
+        ],
+        "last_two_confirmed_swing_lows": [
+          {
+            "t": "2026-11-04 12:00:00",
+            "price": 157.42053
+          },
+          {
+            "t": "2026-11-05 00:00:00",
+            "price": 158.16714
+          }
+        ],
+        "range_oscillations": 4,
+        "lookback_bars": 14,
+        "volatility_atr14": 0.4359,
+        "boundary_confirmation": "TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"
+      },
+      "1h": {
+        "pattern": "BROAD_RANGE_CANDIDATE",
+        "structure": "BREAKDOWN_CONFIRMED",
+        "local_direction_not_structural_trend": true,
+        "support_zone": {
+          "center": 158.16714,
+          "tolerance": 0.04786
+        },
+        "resistance_zone": {
+          "center": 158.43846,
+          "tolerance": 0.04786
+        },
+        "recovered_after_wick_below_support": false,
+        "last_two_confirmed_swing_highs": [
+          {
+            "t": "2026-11-05 04:00:00",
+            "price": 158.55741
+          },
+          {
+            "t": "2026-11-05 09:00:00",
+            "price": 158.43846
+          }
+        ],
+        "last_two_confirmed_swing_lows": [
+          {
+            "t": "2026-11-04 22:00:00",
+            "price": 158.22086
+          },
+          {
+            "t": "2026-11-05 02:00:00",
+            "price": 158.16714
+          }
+        ],
+        "range_oscillations": 3,
+        "lookback_bars": 32,
+        "volatility_atr14": 0.18407,
+        "boundary_confirmation": "TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"
+      }
+    },
+    "five_minute_rebound": {
+      "status": "REBOUND_IN_PROGRESS",
+      "trough_start_jst": "2026-11-05 13:25:00",
+      "trough": 157.77231,
+      "pre_trough_high": 157.99409,
+      "last_complete_5m_close": 157.93322,
+      "recovery_fraction": 0.72554,
+      "post_trough_high": 157.99752,
+      "low_retested": false
+    },
     "hourly_higher_high_higher_low_pairs_last5": 0,
     "hourly_lower_high_lower_low_pairs_last5": 2,
     "prior_hours_rising": false,
@@ -220,8 +464,8 @@
         }
       ]
     },
-    "phase": "DOWNTREND_WITH_LOCAL_REBOUND",
-    "directional_bias": "DOWNTREND_REBOUND_UNCONFIRMED"
+    "phase": "HIGHER_TIMEFRAME_CONSOLIDATION_WITH_5M_REBOUND",
+    "directional_bias": "WAIT_FOR_RANGE_BOUNDARY_CONFIRMATION"
   },
   "session_calendar": {
     "observed_sessions": {

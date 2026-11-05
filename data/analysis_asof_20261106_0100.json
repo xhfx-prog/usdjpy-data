@@ -1,0 +1,525 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at_utc": "2026-11-05T16:45:26+00:00",
+  "analysis_asof_jst": "2026-11-06T01:00:00+09:00",
+  "instrument": "USD/JPY",
+  "data_quality": {
+    "usable_for_current_trading": false,
+    "last_confirmed_1min_start_jst": "2026-11-05 23:59:00",
+    "last_close": 158.07805,
+    "price_type": "OHLC_UNSPECIFIED_BID_ASK_MID",
+    "age_minutes": 61.0,
+    "stale_threshold_minutes": 10,
+    "source_fetched_at_utc": "2026-11-05T15:00:49.720793+00:00",
+    "quality_flags": [
+      "STALE_PRICE_NO_CURRENT_LEVELS"
+    ]
+  },
+  "timeframes": {
+    "complete_5min": 864,
+    "complete_15min": 288,
+    "complete_1h": 1151,
+    "complete_4h": 279,
+    "day_candles": 143,
+    "hourly_atr14": 0.19521,
+    "last_complete_5min": "2026-11-05 23:55:00",
+    "last_complete_1h": "2026-11-05 23:00:00"
+  },
+  "market_structure": {
+    "timeframe_assessments": {
+      "1day": {
+        "state": "UP",
+        "swing_structure": "MIXED",
+        "recent_net_change": 0.98789,
+        "recent_net_change_pips": 98.789,
+        "recent_progress_fraction": 0.46989,
+        "recent_direction_reversals": 3,
+        "recent_observed_width": 2.10238,
+        "recent_width_in_atr": 2.42965,
+        "recent_window_bars": 8,
+        "atr14": 0.8653,
+        "bars": 143,
+        "last_complete_bar": "2026-11-04"
+      },
+      "4h": {
+        "state": "RANGE",
+        "swing_structure": "MIXED",
+        "recent_net_change": -0.45753,
+        "recent_net_change_pips": -45.753,
+        "recent_progress_fraction": -0.49613,
+        "recent_direction_reversals": 2,
+        "recent_observed_width": 0.9222,
+        "recent_width_in_atr": 1.90447,
+        "recent_window_bars": 8,
+        "atr14": 0.48423,
+        "bars": 279,
+        "last_complete_bar": "2026-11-05 20:00:00",
+        "recent_candle_direction": "DOWN",
+        "chart_geometry": {
+          "pattern": "BROAD_RANGE_CANDIDATE",
+          "structure": "CONSOLIDATION",
+          "local_direction_not_structural_trend": true,
+          "support_zone": {
+            "center": 157.77231,
+            "tolerance": 0.1259
+          },
+          "resistance_zone": {
+            "center": 158.69451,
+            "tolerance": 0.1259
+          },
+          "recovered_after_wick_below_support": false,
+          "last_two_confirmed_swing_highs": [
+            {
+              "t": "2026-11-04 04:00:00",
+              "price": 158.76356
+            },
+            {
+              "t": "2026-11-05 00:00:00",
+              "price": 158.69451
+            }
+          ],
+          "last_two_confirmed_swing_lows": [
+            {
+              "t": "2026-11-05 00:00:00",
+              "price": 158.16714
+            },
+            {
+              "t": "2026-11-05 12:00:00",
+              "price": 157.77231
+            }
+          ],
+          "range_oscillations": 5,
+          "lookback_bars": 14,
+          "volatility_atr14": 0.48423,
+          "boundary_confirmation": "TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"
+        }
+      },
+      "1h": {
+        "state": "RANGE",
+        "swing_structure": "DOWN",
+        "recent_net_change": 0.18428,
+        "recent_net_change_pips": 18.428,
+        "recent_progress_fraction": 0.26532,
+        "recent_direction_reversals": 1,
+        "recent_observed_width": 0.69456,
+        "recent_width_in_atr": 3.55801,
+        "recent_window_bars": 10,
+        "atr14": 0.19521,
+        "bars": 1151,
+        "last_complete_bar": "2026-11-05 23:00:00",
+        "recent_candle_direction": "UNRESOLVED",
+        "chart_geometry": {
+          "pattern": "BROAD_RANGE_CANDIDATE",
+          "structure": "CONSOLIDATION",
+          "local_direction_not_structural_trend": true,
+          "support_zone": {
+            "center": 157.77231,
+            "tolerance": 0.05075
+          },
+          "resistance_zone": {
+            "center": 158.43846,
+            "tolerance": 0.05075
+          },
+          "recovered_after_wick_below_support": false,
+          "last_two_confirmed_swing_highs": [
+            {
+              "t": "2026-11-05 04:00:00",
+              "price": 158.55741
+            },
+            {
+              "t": "2026-11-05 09:00:00",
+              "price": 158.43846
+            }
+          ],
+          "last_two_confirmed_swing_lows": [
+            {
+              "t": "2026-11-05 02:00:00",
+              "price": 158.16714
+            },
+            {
+              "t": "2026-11-05 13:00:00",
+              "price": 157.77231
+            }
+          ],
+          "range_oscillations": 3,
+          "lookback_bars": 32,
+          "volatility_atr14": 0.19521,
+          "boundary_confirmation": "TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"
+        }
+      },
+      "15min": {
+        "state": "DOWN",
+        "swing_structure": "UP",
+        "recent_net_change": -0.34529,
+        "recent_net_change_pips": -34.529,
+        "recent_progress_fraction": -0.70358,
+        "recent_direction_reversals": 6,
+        "recent_observed_width": 0.49076,
+        "recent_width_in_atr": 5.64027,
+        "recent_window_bars": 12,
+        "atr14": 0.08701,
+        "bars": 288,
+        "last_complete_bar": "2026-11-05 23:45:00",
+        "recent_candle_direction": "DOWN",
+        "chart_geometry": {
+          "pattern": "CONVERGING_RANGE_CANDIDATE",
+          "structure": "BREAKDOWN_CONFIRMED",
+          "local_direction_not_structural_trend": true,
+          "support_zone": {
+            "center": 158.39849,
+            "tolerance": 0.02262
+          },
+          "resistance_zone": {
+            "center": 158.49693,
+            "tolerance": 0.02262
+          },
+          "recovered_after_wick_below_support": false,
+          "last_two_confirmed_swing_highs": [
+            {
+              "t": "2026-11-05 21:30:00",
+              "price": 158.49111
+            },
+            {
+              "t": "2026-11-05 22:15:00",
+              "price": 158.49693
+            }
+          ],
+          "last_two_confirmed_swing_lows": [
+            {
+              "t": "2026-11-05 20:15:00",
+              "price": 158.32745
+            },
+            {
+              "t": "2026-11-05 22:00:00",
+              "price": 158.39849
+            }
+          ],
+          "range_oscillations": 1,
+          "lookback_bars": 32,
+          "volatility_atr14": 0.08701,
+          "boundary_confirmation": "TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"
+        }
+      },
+      "5min": {
+        "state": "DOWN",
+        "swing_structure": "MIXED",
+        "recent_net_change": -0.35026,
+        "recent_net_change_pips": -35.026,
+        "recent_progress_fraction": -0.7194,
+        "recent_direction_reversals": 1,
+        "recent_observed_width": 0.48688,
+        "recent_width_in_atr": 6.84397,
+        "recent_window_bars": 12,
+        "atr14": 0.07114,
+        "bars": 864,
+        "last_complete_bar": "2026-11-05 23:55:00",
+        "recent_candle_direction": "DOWN",
+        "chart_geometry": {
+          "pattern": "BROAD_RANGE_CANDIDATE",
+          "structure": "BREAKDOWN_CONFIRMED",
+          "local_direction_not_structural_trend": true,
+          "support_zone": {
+            "center": 158.39657,
+            "tolerance": 0.0185
+          },
+          "resistance_zone": {
+            "center": 158.49305,
+            "tolerance": 0.0185
+          },
+          "recovered_after_wick_below_support": false,
+          "last_two_confirmed_swing_highs": [
+            {
+              "t": "2026-11-05 23:15:00",
+              "price": 158.49266
+            },
+            {
+              "t": "2026-11-05 23:30:00",
+              "price": 158.49305
+            }
+          ],
+          "last_two_confirmed_swing_lows": [
+            {
+              "t": "2026-11-05 22:30:00",
+              "price": 158.4426
+            },
+            {
+              "t": "2026-11-05 23:00:00",
+              "price": 158.39657
+            }
+          ],
+          "range_oscillations": 3,
+          "lookback_bars": 24,
+          "volatility_atr14": 0.07114,
+          "boundary_confirmation": "TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"
+        }
+      },
+      "1min": {
+        "state": "DOWN",
+        "swing_structure": "DOWN",
+        "recent_net_change": -0.23555,
+        "recent_net_change_pips": -23.555,
+        "recent_progress_fraction": -0.72564,
+        "recent_direction_reversals": 7,
+        "recent_observed_width": 0.32461,
+        "recent_width_in_atr": 5.24241,
+        "recent_window_bars": 20,
+        "atr14": 0.06192,
+        "bars": 4320,
+        "last_complete_bar": "2026-11-05 23:59:00"
+      }
+    },
+    "parent_direction": "RANGE",
+    "higher_timeframe_chart_context": {
+      "4h": {
+        "pattern": "BROAD_RANGE_CANDIDATE",
+        "structure": "CONSOLIDATION",
+        "local_direction_not_structural_trend": true,
+        "support_zone": {
+          "center": 157.77231,
+          "tolerance": 0.1259
+        },
+        "resistance_zone": {
+          "center": 158.69451,
+          "tolerance": 0.1259
+        },
+        "recovered_after_wick_below_support": false,
+        "last_two_confirmed_swing_highs": [
+          {
+            "t": "2026-11-04 04:00:00",
+            "price": 158.76356
+          },
+          {
+            "t": "2026-11-05 00:00:00",
+            "price": 158.69451
+          }
+        ],
+        "last_two_confirmed_swing_lows": [
+          {
+            "t": "2026-11-05 00:00:00",
+            "price": 158.16714
+          },
+          {
+            "t": "2026-11-05 12:00:00",
+            "price": 157.77231
+          }
+        ],
+        "range_oscillations": 5,
+        "lookback_bars": 14,
+        "volatility_atr14": 0.48423,
+        "boundary_confirmation": "TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"
+      },
+      "1h": {
+        "pattern": "BROAD_RANGE_CANDIDATE",
+        "structure": "CONSOLIDATION",
+        "local_direction_not_structural_trend": true,
+        "support_zone": {
+          "center": 157.77231,
+          "tolerance": 0.05075
+        },
+        "resistance_zone": {
+          "center": 158.43846,
+          "tolerance": 0.05075
+        },
+        "recovered_after_wick_below_support": false,
+        "last_two_confirmed_swing_highs": [
+          {
+            "t": "2026-11-05 04:00:00",
+            "price": 158.55741
+          },
+          {
+            "t": "2026-11-05 09:00:00",
+            "price": 158.43846
+          }
+        ],
+        "last_two_confirmed_swing_lows": [
+          {
+            "t": "2026-11-05 02:00:00",
+            "price": 158.16714
+          },
+          {
+            "t": "2026-11-05 13:00:00",
+            "price": 157.77231
+          }
+        ],
+        "range_oscillations": 3,
+        "lookback_bars": 32,
+        "volatility_atr14": 0.19521,
+        "boundary_confirmation": "TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"
+      }
+    },
+    "five_minute_rebound": {
+      "status": "NO_CONFIRMED_POST_LOW_RECOVERY"
+    },
+    "hourly_higher_high_higher_low_pairs_last5": 4,
+    "hourly_lower_high_lower_low_pairs_last5": 1,
+    "prior_hours_rising": true,
+    "upper_stall": {
+      "start": "2026-11-05 22:18:00",
+      "end": "2026-11-05 22:48:00",
+      "ceiling": 158.49693,
+      "near_ceiling_bars": 23,
+      "independent_attempts": 5,
+      "duration_minutes": 30,
+      "subsequent_drop_pips": 48.404,
+      "breakout_confirmed_after": false
+    },
+    "sharp_decline_recovery": {
+      "trough_time": "2026-11-05 23:43:00",
+      "trough": 158.2417,
+      "pre_20min_high": 158.49305,
+      "drop_pips": 25.135,
+      "last_close": 158.07805,
+      "recovery_fraction": 0.0,
+      "recovered_above_pre_high": false,
+      "seconds_since_trough": 960
+    },
+    "support_resistance": {
+      "support": [
+        {
+          "low": 158.01329,
+          "high": 158.0398,
+          "center": 158.02625,
+          "independent_reactions": 4,
+          "timeframes": [
+            "15min",
+            "1day",
+            "5min"
+          ],
+          "last_reaction": "2026-11-05 10:45:00",
+          "distance_pips": 5.18
+        },
+        {
+          "low": 157.96416,
+          "high": 157.96416,
+          "center": 157.96416,
+          "independent_reactions": 2,
+          "timeframes": [
+            "15min",
+            "1h"
+          ],
+          "last_reaction": "2026-11-03 22:30:00",
+          "distance_pips": 11.389
+        },
+        {
+          "low": 157.86493,
+          "high": 157.89237,
+          "center": 157.87859,
+          "independent_reactions": 6,
+          "timeframes": [
+            "15min",
+            "4h",
+            "5min"
+          ],
+          "last_reaction": "2026-11-05 15:25:00",
+          "distance_pips": 19.946
+        }
+      ],
+      "resistance": [
+        {
+          "low": 158.11773,
+          "high": 158.13553,
+          "center": 158.11941,
+          "independent_reactions": 3,
+          "timeframes": [
+            "1h",
+            "4h",
+            "5min"
+          ],
+          "last_reaction": "2026-11-05 10:55:00",
+          "distance_pips": 4.1355
+        },
+        {
+          "low": 158.22877,
+          "high": 158.29333,
+          "center": 158.27017,
+          "independent_reactions": 5,
+          "timeframes": [
+            "15min",
+            "4h",
+            "5min"
+          ],
+          "last_reaction": "2026-11-05 18:00:00",
+          "distance_pips": 19.212
+        },
+        {
+          "low": 158.29775,
+          "high": 158.3556,
+          "center": 158.33594,
+          "independent_reactions": 9,
+          "timeframes": [
+            "15min",
+            "1day",
+            "1h",
+            "4h",
+            "5min"
+          ],
+          "last_reaction": "2026-11-05 18:55:00",
+          "distance_pips": 25.789
+        }
+      ]
+    },
+    "phase": "UNAVAILABLE_STALE",
+    "directional_bias": "NO_CURRENT_DIRECTION"
+  },
+  "session_calendar": {
+    "observed_sessions": {
+      "tokyo": {
+        "active": false,
+        "local_time": "2026-11-06T01:00:00+09:00",
+        "bars": 0,
+        "session_high": null,
+        "session_low": null
+      },
+      "london": {
+        "active": true,
+        "local_time": "2026-11-05T16:00:00+00:00",
+        "bars": 420,
+        "session_high": 158.49693,
+        "session_low": 158.00617
+      },
+      "new_york": {
+        "active": true,
+        "local_time": "2026-11-05T11:00:00-05:00",
+        "bars": 120,
+        "session_high": 158.49693,
+        "session_low": 158.00617
+      }
+    },
+    "time_flags": [
+      "FRIDAY_WEEKEND_POSITIONING_POSSIBLE"
+    ],
+    "weekday_jst": "Friday",
+    "session_effect_probabilities": "UNVALIDATED"
+  },
+  "session_opening_reversals": [
+    {
+      "window": "NEW_YORK_CASH_0930",
+      "window_start_jst": "2026-11-05T23:30:00+09:00",
+      "minutes_since_window": 90,
+      "pre_window_close": 158.47474,
+      "first_15min_high": 158.49305,
+      "first_15min_low": 158.2417,
+      "first_direction": "down",
+      "latest_close": 158.07805,
+      "interpretation": "INITIAL_DOWN_NOT_FULLY_REVERSED",
+      "causality": "NOT_ESTABLISHED_FROM_OHLC"
+    }
+  ],
+  "fundamentals": {
+    "event_calendar": "UNAVAILABLE_UNLESS_VERIFIED_EVENT_FEED_CONNECTED",
+    "usd_rates": "NOT_CONNECTED",
+    "dxy": "NOT_CONNECTED",
+    "order_flow": "NOT_CONNECTED",
+    "cftc": "NOT_CONNECTED"
+  },
+  "decision": {
+    "status": "BLOCKED_STALE",
+    "new_short": "NOT_PROPOSED_NO_VERIFIED_MACRO_CONFIRMATION",
+    "long": "NO_AUTOMATIC_ENTRY",
+    "first_verified_resistance": null,
+    "first_verified_support": null,
+    "prediction_24h": "NOT_CALIBRATED",
+    "prediction_72h": "NOT_CALIBRATED",
+    "note": "Observed price structure only. No probabilities or catalyst claims without validated inputs."
+  }
+}

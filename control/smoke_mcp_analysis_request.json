@@ -1,0 +1,5 @@
+{
+  "test": "first-end-to-end-production-smoke",
+  "purpose": "Verify real get_usdjpy_analysis RPC response from Cloudflare",
+  "sequence": 1
+}

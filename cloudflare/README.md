@@ -1,12 +1,28 @@
+## Deployment now enabled
+
+The deployed v4.1 Worker source is imported at `cloudflare/worker.js`.
+Successful deployment and verification are recorded at
+`data/deploy_worker_status.json` (run ID 42034158644).
+
+A push to `main` that changes **`cloudflare/worker.js`** triggers deployment.
+A push only changing archived data, analysis, documentation or the workflow
+does not. A SHA-pinned request in `control/deploy_worker_request.json` also
+triggers deployment; workflow_dispatch requires its manual confirmation value.
+The pipeline checks source syntax and tool discovery, deploys with
+`--keep-vars` to preserve the existing `TWELVE_API_KEY` Cloudflare secret,
+and writes an audit record. Never edit Worker source in Cloudflare's dashboard.
+
+**No automatic rollback is implemented.** On failure, consult the Actions
+job and audit file; restore the last known-good GitHub source and redeploy
+if necessary. Passing tool discovery does not alone verify market-data
+freshness or data quality.
+
 # Cloudflare Worker deployment (not yet activated)
 
 The existing Worker `usdjpy-chart` runs the USDJPY MCP service at
 `https://usdjpy-chart.xxhappyfrenzyxx.workers.dev/mcp`.
 
-This directory is reserved for the **exact running Worker source**. Do not
-deploy a reconstructed or stale copy. The source file `worker.js` is
-deliberately NOT included until the live v4.1 implementation is imported and
-checked against its `tools/list` response and OHLC behavior.
+The `worker.js` source was imported from the previously deployed Worker.
 
 ## Separation of concerns
 

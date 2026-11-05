@@ -414,6 +414,21 @@ async function analysisWithLiveBars(env, args = {}) {
   );
   const snapshotCurrent = gap === 0 &&
     Number(current.close) === Number(engine.data_quality.last_close);
+  // A GitHub Actions Python run takes time; 1-3 subsequent minutes are normal.
+  // Permit recent structure as *context* only when the market has barely moved.
+  // This is NOT a claim that Python evaluated the current 1-minute bar.
+  const deltaPips = (Number(current.close) -
+    Number(engine.data_quality.last_close)) * 100;
+  const runAgeMinutes = (Date.now() -
+    Date.parse(engine.generated_at_utc)) / 60000;
+  const recentPythonContextUsable = (
+    snapshotCurrent || (
+      Number.isFinite(runAgeMinutes) &&
+      runAgeMinutes >= 0 && runAgeMinutes <= 5 &&
+      gap >= 0 && gap <= 3 &&
+      Math.abs(deltaPips) <= 5
+    )
+  );
   const recent = live.series["1min"].values.slice(0, 180);
   const liveHigh = Math.max(...recent.map(x => Number(x.high)));
   const liveLow = Math.min(...recent.map(x => Number(x.low)));
@@ -455,11 +470,16 @@ async function analysisWithLiveBars(env, args = {}) {
       python_snapshot_matches_current_1min: snapshotCurrent,
       python_engine_was_run_on_live_request: selected.source === "PYTHON_ON_DEMAND",
       full_python_engine_recomputed_for_current_1min: snapshotCurrent,
-      requires_on_demand_python_refresh: !snapshotCurrent,
+      python_analysis_recent_context_usable: recentPythonContextUsable,
+      python_snapshot_age_minutes: Math.round(runAgeMinutes * 100) / 100,
+      live_close_change_since_python_pips: Math.round(deltaPips * 1000) / 1000,
+      requires_on_demand_python_refresh: !recentPythonContextUsable,
       interpretation_policy: snapshotCurrent
         ? "PYTHON_ANALYSIS_MATCHES_CURRENT_LIVE_CANDLE"
-        : "PYTHON_ANALYSIS_IS_HISTORICAL_ONLY_RECOMPUTE_BEFORE_USING_CURRENT_SIGNALS",
-      no_current_signal_from_stale_python_decision: !snapshotCurrent
+        : recentPythonContextUsable
+          ? "PYTHON_ANALYSIS_VALID_RECENT_CONTEXT_WITH_LIVE_1MIN_PRICE_OVERLAY_NOT_RECOMPUTED_AT_CURRENT_BAR"
+          : "PYTHON_ANALYSIS_IS_HISTORICAL_ONLY_RECOMPUTE_BEFORE_USING_CURRENT_SIGNALS",
+      no_current_signal_from_stale_python_decision: !recentPythonContextUsable
     },
     live_overlay: liveOverlay,
     series: live.series,

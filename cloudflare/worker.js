@@ -89,7 +89,8 @@ async function live(env, size) {
     throw Error("TWELVE_API_KEY missing");
   }
 
-  const n = Math.max(10, Math.min(2000, size));
+  // Reuse the same cache entry for ordinary 1min, 5min and 15min analysis requests.
+  const n = size <= 500 ? 500 : size <= 1500 ? 1500 : 2000;
   const key = new Request(
     `https://usdjpy-cache.invalid/1min?size=${n}`
   );

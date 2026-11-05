@@ -142,9 +142,24 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/
-          if ! git diff --cached --quiet; then
+          # Preserve this run's output before moving onto the newest branch.
+          mkdir -p /tmp/usdjpy-publish-snapshot
+          cp -a data /tmp/usdjpy-publish-snapshot/data
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git reset --hard origin/main
+            python scripts/merge_publish.py /tmp/usdjpy-publish-snapshot/data data
+            git add -A data/
+            if git diff --cached --quiet; then
+              echo "Remote already has equal or newer data"
+              exit 0
+            fi
             git commit -m "Update USDJPY market data and run diagnostics"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
+            if git push origin HEAD:main; then
+              echo "Published USDJPY snapshot on attempt $attempt"
+              exit 0
+            fi
+            echo "Concurrent push detected, retrying on newest origin/main ($attempt/5)"
+          done
+          echo "Could not publish after five retries" >&2
+          exit 1

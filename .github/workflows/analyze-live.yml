@@ -1,0 +1,36 @@
+name: Recompute USDJPY Python analysis from MCP live bars
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/live_analysis_request.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: usdjpy-python-live-analysis
+  cancel-in-progress: false
+
+jobs:
+  recompute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate and recompute using existing Python analyzer
+        run: python analyze_live_request.py
+      - name: Publish request-bound Python analysis
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/analysis_live_latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish on-demand USDJPY Python live re-evaluation"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi

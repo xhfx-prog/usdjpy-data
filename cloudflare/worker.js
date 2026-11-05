@@ -504,7 +504,8 @@ async function recentMinuteArchive() {
   const selected = sessions.slice(0, 6);
   const parts = await Promise.all(selected.map(async session => {
     if (typeof session.path !== "string" ||
-        !/^data\\/history_1min\\/\\d{4}-\\d{2}-\\d{2}\\.json$/.test(session.path)) {
+        !session.path.startsWith("data/history_1min/") ||
+        !/^\\d{4}-\\d{2}-\\d{2}\\.json$/.test(session.path.slice(18))) {
       throw Error("UNSAFE_MINUTE_ARCHIVE_PATH");
     }
     return saved(session.path, 1);

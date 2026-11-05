@@ -62,6 +62,8 @@ def main():
         "input_live_fetched_at": payload["fetched_at"],
         "last_confirmed_1min_start_jst": last_live["t"],
         "age_at_compute_seconds": round(completed_age_seconds, 2),
+        "strict_freshness_ok_at_compute": completed_age_seconds < 120,
+        "recheck_freshness_when_read": True,
         "minute_input_bars": len(live),
         "total_merged_minute_bars": len(minute),
         "python_engine": "analyze_usdjpy.py",

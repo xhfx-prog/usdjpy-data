@@ -2,6 +2,6 @@
   "confirmation": "DEPLOY_USDJPY_CHART",
   "expected_worker_blob_sha": "f74848263ca0a4feb9a18e454682718786cfe118",
   "requested_by": "chatgpt",
-  "purpose": "Run Node regression tests for synchronous private Python worker integration",
-  "sequence": 3
+  "purpose": "Verify inline Python worker regression tests after assertion fix",
+  "sequence": 4
 }

@@ -4,7 +4,7 @@ This repository separates **archival coverage** from **the minimum data needed f
 
 ## Acquisition
 
-- `.github/workflows/update.yml`: hourly cron at minute 11 (UTC and JST share minute values); on-demand refresh via pushes of `control/refresh_request.json`; optional `workflow_dispatch`.
+- `.github/workflows/update.yml`: **on-demand only**. Push changes to `control/refresh_request.json` to refresh; optional `workflow_dispatch`. No scheduled cron. Reading a GitHub file (GET/fetch_file) does **not** trigger Actions.
 - `fetch_usdjpy.py`: Twelve Data collector. Minute series every actual run, hourly series when at least 1 hour old, exchange-calendar daily series once every 24 hours. Data calls and GitHub file reads are distinct.
 - A new `request_id` in `control/refresh_request.json` triggers `push`. Verify the same `refresh_request_id`, `event=push`, `fetch_outcome=success` in `data/workflow_status.json`, and confirm `fetched_at` and newest `datetime` in `data/usdjpy_1min.json` advanced. A submitted request alone does not confirm freshness.
 
@@ -20,9 +20,19 @@ The year/month/day retention is a target ceiling, **not a promise that every hou
 
 Hourly bars are stored in **Asia/Tokyo**. Daily bars retain **Twelve Data exchange-day labels**; do not assume they are New York 17:00 close bars. Avoid combining the two calendars without reconciliation.
 
+## Mandatory on-demand freshness gate (all interactive USD/JPY analyses)
+
+1. Read `data/usdjpy_1min.json` to establish the last completed minute candle and `fetched_at`. A normal read does not request new Twelve Data observations.
+2. If the requested time window extends beyond the current dataset (or if the newest candle is more than 10 minutes older than the analysis time), fetch `control/refresh_request.json`, then update it with its current blob SHA and a unique `request_id`. This push starts the data acquisition workflow. **Do not stop after the first fetch or report stale bars as current.**
+3. Re-read `data/workflow_status.json` until `latest.event=push`, `latest.refresh_request_id` matches the submitted id, and `fetch_outcome=success` and `job_status_before_publish=success`. Then re-read `data/usdjpy_1min.json` and confirm that `fetched_at` and newest candle advanced and the candle range covers the question. If workflow execution is delayed/failed, explicitly state its state; do not claim refresh success based on the request commit alone.
+4. Before answering, recheck the newest bar against the question time. When data remain stale, state the precise missing range rather than constructing a current price narrative from stale information.
+5. Do not issue repeated refresh requests for one user question while an existing request is in flight.
+
+**Trade-off:** No scheduled fetch means unused API quota is conserved, but gaps in minute archives can arise if there is no request for more than the provider's 1,500-bar recovery window. Hourly/daily series are still refreshed incrementally when a request occurs; a complete minute-level history is not guaranteed across long idle periods. A daily 09:00 analysis needs its own on-demand trigger; it does not run automatically merely because Actions exists.
+
 ## Analysis reading order
 
-1. **Every question about near-term USD/JPY**: fetch newest minute JSON, examine `fetched_at` and last completed candle. Trigger on-demand refresh when more than 10 minutes stale; never substitute third-party pivots for missing candles.
+1. **Every question about near-term USD/JPY**: fetch newest minute JSON, examine `fetched_at` and last completed candle. Trigger on-demand refresh when more than 10 minutes stale **or when the question requests later candles**; never substitute third-party pivots for missing candles.
 2. **Classify context**: read 200 recent hourly candles, supplement previous monthly hourly partitions if structural S/Rs or range breakout require it. Construct 4-hour bars from hourly if needed.
 3. **Ranging market**: use recent 1-min and corresponding daily minute archive as needed to assemble 5/15-min candles; identify repeated reversals, middle, limits, breadth, and breakout/retest.
 4. **Trending market**: focus 1h/4h structure, major swing highs/lows, overlapping S/R, momentum; widen hourly lookback toward 1 year if major levels are breached.
@@ -35,7 +45,7 @@ No single timeframe establishes support/resistance purely by high/low extremes. 
 ## Maintenance and audit
 
 - `data/workflow_status.json` contains per-run `event`, `fetch_outcome`, and request id. `data/workflow_runs_audit.json` audits GitHub Actions execution history.
-- GitHub scheduled jobs may be delayed or skipped. A successful update never guarantees future punctuality.
+- On-demand GitHub Actions jobs may be delayed or fail. A successful update never guarantees freshness for subsequent questions.
 - Archives are merged/deduplicated by timestamp, and old partitions are trimmed as they exceed the retention horizon.
 - The daily archive is initially fetched once and is supplemented by a small number of recent confirmed daily candles at most once per 24 hours. Old years are not re-fetched.
 - `data/usdjpy_1day.json` is a compact, backward-compatible 200-bar view, not the historical source of truth.

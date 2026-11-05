@@ -1,4 +1,5 @@
 {
   "as_of_jst": "2026-11-05T06:00:00+09:00",
-  "purpose": "Test historical 06 JST market analysis using pre-cutoff candles"
+  "purpose": "Verify no-EMA structure detects 2026-11-05 06:00 high-price consolidation",
+  "sequence": 1
 }

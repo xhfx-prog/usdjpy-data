@@ -1,5 +1,5 @@
 {
   "test": "first-end-to-end-production-smoke",
-  "purpose": "Verify production tool-list consolidation and live Python analysis together",
-  "sequence": 2
+  "purpose": "Confirm production single MCP call recomputes canonical Python with current confirmed 1min",
+  "sequence": 3
 }

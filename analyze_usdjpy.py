@@ -417,51 +417,70 @@ def ema_series(values, period):
 
 
 def describe_timeframe(rows, name):
-    """Measure each timeframe independently; never overwrite its parent."""
-    if len(rows) < 55:
+    """Classify the CURRENT structure, not the lagged 20/50-bar EMA trend.
+
+    A prior rally may leave a bullish background, but ten sideways 1h
+    candles must be called a range rather than an ongoing hourly uptrend.
+    Every observation uses closed candles only.
+    """
+    window = {"1day": 8, "4h": 8, "1h": 10,
+              "15min": 12, "5min": 12, "1min": 20}.get(name, 10)
+    if len(rows) < max(16, window + 2):
         return {"state": "INSUFFICIENT_HISTORY", "bars": len(rows)}
-    closes = [x["c"] for x in rows]
-    e20 = ema_series(closes, 20)
-    e50 = ema_series(closes, 50)
-    current, fast, slow = closes[-1], e20[-1], e50[-1]
-    recent = rows[-min(12, len(rows)-50):]
     volatility = atr(rows)
     if not volatility or volatility <= 0:
         return {"state": "INSUFFICIENT_VOLATILITY", "bars": len(rows)}
-    # The indicator periods are conventional observation windows, not
-    # arbitrary 20-/50-bar requirements for range formation.
-    slope = (fast - e20[-6])/5
-    alignment = "UP" if current > fast > slow else ("DOWN" if current < fast < slow else "MIXED")
-    # Slope is normalized by the timeframe's own volatility.
-    slope_units = slope / volatility
-    turning_high = pivots(rows[-min(100,len(rows)):], "h", 2)
-    turning_low = pivots(rows[-min(100,len(rows)):], "l", 2)
-    swing_state = "UNRESOLVED"
-    if len(turning_high) >= 2 and len(turning_low) >= 2:
-        uh = turning_high[-1]["price"] > turning_high[-2]["price"]
-        ul = turning_low[-1]["price"] > turning_low[-2]["price"]
-        dh = turning_high[-1]["price"] < turning_high[-2]["price"]
-        dl = turning_low[-1]["price"] < turning_low[-2]["price"]
-        swing_state = "UP" if uh and ul else ("DOWN" if dh and dl else "MIXED")
-    # Record trend evidence separately: a consolidation does not cancel an
-    # established parent trend merely because local candles move sideways.
-    up_votes = int(alignment=="UP") + int(slope_units > 0.035) + int(swing_state=="UP")
-    down_votes = int(alignment=="DOWN") + int(slope_units < -0.035) + int(swing_state=="DOWN")
-    direction = "UP" if up_votes >= 2 and up_votes > down_votes else (
-        "DOWN" if down_votes >= 2 and down_votes > up_votes else "UNRESOLVED")
-    width = max(b["h"] for b in recent)-min(b["l"] for b in recent)
-    # Width is reported continuously, rather than turning one elapsed bar
-    # into a discontinuous rule for whether a box exists.
-    return {"state": direction, "alignment": alignment,
-            "swing_structure": swing_state,
-            "ema20": n(fast), "ema50": n(slow),
-            "ema20_slope_per_bar": n(slope),
-            "ema20_slope_in_atr": n(slope_units),
-            "recent_observed_width": n(width),
-            "recent_width_in_atr": n(width/volatility),
-            "recent_window_bars": len(recent), "atr14": n(volatility),
-            "bars": len(rows), "last_complete_bar": rows[-1]["t"]}
-
+    recent = rows[-window:]
+    width = max(x["h"] for x in recent) - min(x["l"] for x in recent)
+    if width <= 0:
+        return {"state": "UNRESOLVED", "bars": len(rows)}
+    closes = [x["c"] for x in recent]
+    net = closes[-1] - closes[0]
+    progress = net / width
+    step_threshold = max(width * 0.012, volatility * 0.04)
+    changes = [closes[i] - closes[i-1] for i in range(1, len(closes))]
+    signs = [1 if d > step_threshold else -1 if d < -step_threshold else 0
+             for d in changes]
+    active = [x for x in signs if x]
+    reversals = sum(active[i] != active[i-1] for i in range(1, len(active)))
+    prior = rows[-min(100, len(rows)):]
+    highs = pivots(prior, "h", 2)
+    lows = pivots(prior, "l", 2)
+    swing = "UNRESOLVED"
+    if len(highs) >= 2 and len(lows) >= 2:
+        hh = highs[-1]["price"] > highs[-2]["price"]
+        hl = lows[-1]["price"] > lows[-2]["price"]
+        lh = highs[-1]["price"] < highs[-2]["price"]
+        ll = lows[-1]["price"] < lows[-2]["price"]
+        swing = "UP" if hh and hl else "DOWN" if lh and ll else "MIXED"
+    # Near-zero net progress despite substantial movement is an actual range
+    # (not an EMA-delayed trend). Use reversals as supporting evidence.
+    if abs(progress) <= 0.25 and (reversals >= 2 or abs(net) <= volatility * 0.10):
+        state = "RANGE"
+    elif progress >= 0.38 and net >= volatility * 0.5:
+        state = "UP"
+    elif progress <= -0.38 and -net >= volatility * 0.5:
+        state = "DOWN"
+    elif progress >= 0.25 and swing == "UP":
+        state = "UP"
+    elif progress <= -0.25 and swing == "DOWN":
+        state = "DOWN"
+    else:
+        state = "UNRESOLVED"
+    return {
+        "state": state,
+        "swing_structure": swing,
+        "recent_net_change": n(net),
+        "recent_net_change_pips": n(net * 100),
+        "recent_progress_fraction": n(progress),
+        "recent_direction_reversals": reversals,
+        "recent_observed_width": n(width),
+        "recent_width_in_atr": n(width / volatility),
+        "recent_window_bars": len(recent),
+        "atr14": n(volatility),
+        "bars": len(rows),
+        "last_complete_bar": rows[-1]["t"]
+    }
 
 def multi_timeframe_structure(daily, h4, h1, m15, m5, minute):
     # Output in descending timeframe order. Every classification stands
@@ -504,13 +523,21 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
         phase="UNAVAILABLE_STALE"
         bias="NO_CURRENT_DIRECTION"
     elif parent_direction=="UP":
-        phase=("UPTREND_WITH_LOCAL_REJECTION" if recent_fade else
-               "UPTREND_WITH_LOCAL_CONSOLIDATION" if pl else "UPTREND")
-        bias="UPTREND_PULLBACK_UNCONFIRMED" if recent_fade else "UP_CANDIDATE"
+        if timeframe_states["1h"]["state"]=="RANGE":
+            phase="PRIOR_UPTREND_WITH_1H_CONSOLIDATION"
+            bias="RANGE_WAIT_BREAK"
+        else:
+            phase=("UPTREND_WITH_LOCAL_REJECTION" if recent_fade else
+                   "UPTREND_WITH_LOCAL_CONSOLIDATION" if pl else "UPTREND")
+            bias="UPTREND_PULLBACK_UNCONFIRMED" if recent_fade else "UP_CANDIDATE"
     elif parent_direction=="DOWN":
-        phase=("DOWNTREND_WITH_LOCAL_REBOUND" if recovered else
-               "DOWNTREND_WITH_LOCAL_CONSOLIDATION" if pl else "DOWNTREND")
-        bias="DOWNTREND_REBOUND_UNCONFIRMED" if recovered else "DOWN_CANDIDATE"
+        if timeframe_states["1h"]["state"]=="RANGE":
+            phase="PRIOR_DOWNTREND_WITH_1H_CONSOLIDATION"
+            bias="RANGE_WAIT_BREAK"
+        else:
+            phase=("DOWNTREND_WITH_LOCAL_REBOUND" if recovered else
+                   "DOWNTREND_WITH_LOCAL_CONSOLIDATION" if pl else "DOWNTREND")
+            bias="DOWNTREND_REBOUND_UNCONFIRMED" if recovered else "DOWN_CANDIDATE"
     elif recent_fade and recovered:
         phase="FAILED_CEILING_WITH_SHOCK_REBOUND"
         bias="TRANSITION_NO_DIRECTIONAL_EDGE"

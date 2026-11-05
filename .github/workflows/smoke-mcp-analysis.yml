@@ -1,0 +1,31 @@
+name: Smoke-test production USDJPY analysis MCP
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'control/smoke_mcp_analysis_request.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify production MCP analysis tool
+        run: python tests/smoke_mcp_integration.py
+      - name: Publish smoke status
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/mcp_integration_smoke_status.json
+          git commit -m "Record production USDJPY analysis MCP smoke test"
+          git pull --rebase origin main
+          git push origin HEAD:main

@@ -1,7 +1,7 @@
 {
   "confirmation": "DEPLOY_USDJPY_CHART",
-  "expected_worker_blob_sha": "f74848263ca0a4feb9a18e454682718786cfe118",
+  "expected_worker_blob_sha": "ec69b592583b09c1d432cb070086e53927c39616",
   "requested_by": "chatgpt",
-  "purpose": "Verify inline Python worker regression tests after assertion fix",
-  "sequence": 4
+  "purpose": "Deploy inline 72h minute archive with revised integration tests",
+  "sequence": 5
 }

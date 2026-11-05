@@ -7,6 +7,7 @@ on:
       - 'cloudflare-python/**'
       - 'analyze_usdjpy.py'
       - 'tests/test_python_worker_bridge.py'
+      - 'tests/test_chart_geometry.py'
       - 'control/deploy_python_worker_request.json'
   workflow_dispatch:
 
@@ -28,7 +29,9 @@ jobs:
           python-version: "3.13"
 
       - name: Test the exact Python engine and bridge
-        run: python -m unittest discover -s tests -p 'test_python_worker_bridge.py' -v
+        run: |
+          python -m unittest discover -s tests -p 'test_python_worker_bridge.py' -v
+          python -m unittest discover -s tests -p 'test_chart_geometry.py' -v
 
       - name: Bundle canonical Python engine (same source, no duplicated logic)
         run: cp analyze_usdjpy.py cloudflare-python/analyze_usdjpy.py

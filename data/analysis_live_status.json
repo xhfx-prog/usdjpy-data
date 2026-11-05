@@ -1,10 +1,10 @@
 {
-  "recorded_at_utc": "2026-11-05T13:51:33.012246+00:00",
-  "request_id": "mcp-python-20261105224900",
+  "recorded_at_utc": "2026-11-05T13:56:12.072834+00:00",
+  "request_id": "mcp-python-20261105225400-20261105135557453",
   "event": "push",
-  "run_id": "42039488797",
-  "run_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/42039488797",
+  "run_id": "42040189636",
+  "run_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/42040189636",
   "analysis_outcome": "success",
   "matched_output": true,
-  "last_confirmed_1min_start_jst": "2026-11-05 22:49:00"
+  "last_confirmed_1min_start_jst": "2026-11-05 22:54:00"
 }

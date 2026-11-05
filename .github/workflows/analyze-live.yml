@@ -22,15 +22,53 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Validate and recompute using existing Python analyzer
+        id: analyze
         run: python analyze_live_request.py
-      - name: Publish request-bound Python analysis
+
+      - name: Record request-bound Python analysis status
+        if: always()
+        env:
+          ANALYSIS_OUTCOME: ${{ steps.analyze.outcome }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          request_file=Path("control/live_analysis_request.json")
+          request=json.loads(request_file.read_text()) if request_file.exists() else {}
+          output_file=Path("data/analysis_live_latest.json")
+          output=json.loads(output_file.read_text()) if output_file.exists() else {}
+          success=(os.environ["ANALYSIS_OUTCOME"]=="success"
+                   and output.get("request_id")==request.get("request_id")
+                   and output.get("recomputed_from_live_1min") is True)
+          result={
+            "recorded_at_utc":datetime.now(timezone.utc).isoformat(),
+            "request_id":request.get("request_id"),
+            "event":os.environ.get("GITHUB_EVENT_NAME"),
+            "run_id":os.environ.get("GITHUB_RUN_ID"),
+            "run_url":"https://github.com/"+os.environ.get("GITHUB_REPOSITORY","")+
+                      "/actions/runs/"+os.environ.get("GITHUB_RUN_ID",""),
+            "analysis_outcome":os.environ["ANALYSIS_OUTCOME"],
+            "matched_output":success,
+            "last_confirmed_1min_start_jst":output.get("last_confirmed_1min_start_jst") if success else None
+          }
+          Path("data/analysis_live_status.json").write_text(
+            json.dumps(result,indent=2)+"\n",encoding="utf-8")
+          PY
+
+      - name: Publish report and status
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/analysis_live_latest.json
+          git add data/analysis_live_status.json
+          if [ -f data/analysis_live_latest.json ]; then
+            git add data/analysis_live_latest.json
+          fi
           if ! git diff --cached --quiet; then
-            git commit -m "Publish on-demand USDJPY Python live re-evaluation"
+            git commit -m "Record on-demand USDJPY Python analysis outcome"
             git pull --rebase origin main
             git push origin HEAD:main
           fi

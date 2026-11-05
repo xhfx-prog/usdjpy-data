@@ -1,4 +1,4 @@
-name: Deploy USDJPY MCP Worker (manual, guarded)
+name: Deploy USDJPY MCP Worker (source change or guarded manual)
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'control/deploy_worker_request.json'
+      - 'cloudflare/worker.js'
   workflow_dispatch:
     inputs:
       confirmation:
@@ -29,8 +30,32 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Validate on-demand deployment request
+      - name: Classify push trigger
+        id: classify
         if: github.event_name == 'push'
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          python - <<'PY'
+          import os, subprocess
+          before=os.environ.get("BEFORE_SHA", "")
+          if not before or set(before)=={"0"}:
+              print("Cannot verify previous commit; refusing auto deploy")
+              raise SystemExit(1)
+          subprocess.run(["git","fetch","--no-tags","--depth=2","origin",before],check=True)
+          changed=subprocess.check_output(["git","diff","--name-only",before,"HEAD"],text=True).splitlines()
+          source="cloudflare/worker.js" in changed
+          request="control/deploy_worker_request.json" in changed
+          if not source and not request:
+              raise SystemExit("No Worker source or deploy request diff; refusing deployment")
+          with open(os.environ["GITHUB_OUTPUT"],"a") as output:
+              output.write("source_changed="+str(source).lower()+"\n")
+              output.write("request_changed="+str(request).lower()+"\n")
+          print("Source changed:",source,"Manual request:",request)
+          PY
+
+      - name: Validate on-demand deployment request
+        if: github.event_name == 'push' && steps.classify.outputs.source_changed != 'true'
         run: |
           python - <<'PY'
           import json, subprocess

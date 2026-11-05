@@ -863,6 +863,7 @@ async function handleMCP(request, env) {
 }
 
 
+// Security regression tests run before every production deployment.
 const MAX_RPC_BYTES = 16384;
 function validateMCPEnvelope(request, url) {
   if (url.pathname !== "/mcp") return null;

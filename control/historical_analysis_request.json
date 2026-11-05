@@ -1,5 +1,5 @@
 {
-  "as_of_jst": "2026-11-05T06:00:00+09:00",
-  "purpose": "Verify no-EMA structure detects 2026-11-05 06:00 high-price consolidation",
-  "sequence": 1
+  "as_of_jst": "2026-11-05T14:00:00+09:00",
+  "purpose": "Historical USDJPY 14:00 JST analysis; use only fully confirmed pre-cutoff candles",
+  "sequence": 2
 }

@@ -1,0 +1,57 @@
+name: Deploy USDJPY MCP Worker (manual, guarded)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: "Type DEPLOY_USDJPY_CHART to authorize deployment"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: usdjpy-cloudflare-worker-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ github.event.inputs.confirmation == 'DEPLOY_USDJPY_CHART' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check Worker source and credentials
+        working-directory: cloudflare
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -eu
+          test -s worker.js || { echo 'Worker source not yet imported; refusing to deploy.'; exit 1; }
+          test -n "$CF_API_TOKEN" || { echo 'Missing CLOUDFLARE_API_TOKEN'; exit 1; }
+          test -n "$CF_ACCOUNT_ID" || { echo 'Missing CLOUDFLARE_ACCOUNT_ID'; exit 1; }
+
+      - name: Check JavaScript syntax
+        run: node --check cloudflare/worker.js
+
+      - name: Deploy existing Worker
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: cloudflare
+          command: deploy
+
+      - name: Validate deployed MCP endpoint
+        run: |
+          set -eu
+          curl --fail --silent --show-error \
+            -H 'Content-Type: application/json' \
+            -H 'Accept: application/json, text/event-stream' \
+            --data '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' \
+            'https://usdjpy-chart.xxhappyfrenzyxx.workers.dev/mcp' \
+            | python -c 'import json,sys; r=json.load(sys.stdin); names={t["name"] for t in r["result"]["tools"]}; assert {"get_usdjpy_bundle","get_latest_usdjpy","get_usdjpy_history"} <= names, names; print("MCP tools verified:", ", ".join(sorted(names)))'

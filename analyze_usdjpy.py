@@ -19,7 +19,7 @@ NY = ZoneInfo("America/New_York")
 LONDON = ZoneInfo("Europe/London")
 UTC = timezone.utc
 DATA = Path("data")
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 
 def stamp(s):
@@ -482,15 +482,139 @@ def describe_timeframe(rows, name):
         "last_complete_bar": rows[-1]["t"]
     }
 
+
+def chart_geometry(rows, name):
+    """Structure of completed OHLC candles. Local direction is kept separate.
+
+    Prefer recent complete turning points and tolerate intrabar line overshoots.
+    A new trend needs a break followed by acceptance, not a single wick.
+    """
+    scale={"4h":(28,1),"1h":(64,2),"15min":(64,2),"5min":(48,2)}
+    if name not in scale or len(rows)<18:
+        return {"pattern":"NOT_EVALUATED","structure":"UNRESOLVED"}
+    span, radius=scale[name]
+    observed=rows[-span:]
+    vol=atr(observed) or 0.01
+    tolerance=max(vol*0.26, 0.018 if name in ("4h","1h") else 0.009)
+    hi=pivots(observed,"h",radius)
+    lo=pivots(observed,"l",radius)
+    # Keep both pivot age and price. Do not count unfinished swings.
+    highs=hi[-4:]
+    lows=lo[-4:]
+    candles=len(observed)
+    lookback=max(12,candles//2)
+    recent=observed[-lookback:]
+    ceiling=max(x["h"] for x in recent)
+    floor=min(x["l"] for x in recent)
+    price=observed[-1]["c"]
+    recent_width=ceiling-floor
+    # Independent high/low families: comparison uses a volatility-scaled
+    # neighborhood rather than requiring precise equality.
+    top2=highs[-2:] if len(highs)>=2 else []
+    bot2=lows[-2:] if len(lows)>=2 else []
+    descending=bool(top2 and top2[-1]["price"]<top2[0]["price"]+tolerance)
+    ascending=bool(bot2 and bot2[-1]["price"]>bot2[0]["price"]-tolerance)
+    top_step=(top2[-1]["price"]-top2[0]["price"]) if top2 else None
+    bottom_step=(bot2[-1]["price"]-bot2[0]["price"]) if bot2 else None
+    # Confirmed local squeeze requires confirmed pivots on both boundaries.
+    # The boundary may be overshot by a wick; close and later follow-through
+    # are more important than mathematically exact line contact.
+    is_compression=bool(top2 and bot2 and descending and ascending and
+        (top_step < -tolerance*0.5 or bottom_step > tolerance*0.5) and
+        top2[-1]["price"] > bot2[-1]["price"]+vol*0.55 and
+        max(top2[-1]["t"],bot2[-1]["t"])>=observed[max(0,candles-20)]["t"])
+    # A broad, repeatedly traversed region is not a directional trend just
+    # because its last 8 bars are falling. Count changes across recent closes.
+    slices=max(1,len(recent)//5)
+    checkpoints=[recent[k]["c"] for k in range(0,len(recent),slices)]
+    if checkpoints[-1]!=recent[-1]["c"]:
+        checkpoints.append(recent[-1]["c"])
+    steps=[checkpoints[k]-checkpoints[k-1] for k in range(1,len(checkpoints))]
+    turns=sum(steps[k]*steps[k-1]<0 for k in range(1,len(steps)) if
+              abs(steps[k])>vol*.10 and abs(steps[k-1])>vol*.10)
+    has_range=turns>=2 and recent_width>=vol*2
+    # Assess the latest price against the confirmed support *zone*, with an
+    # ATR tolerance. Require two finished bars closing beyond it for breakout.
+    # A confirmed pivot low need not line up to the nearest pip.
+    support=bot2[-1]["price"] if bot2 else floor
+    resistance=top2[-1]["price"] if top2 else ceiling
+    close_below=bool(len(observed)>=2 and
+                     all(x["c"]<support-tolerance for x in observed[-2:]))
+    close_above=bool(len(observed)>=2 and
+                     all(x["c"]>resistance+tolerance for x in observed[-2:]))
+    recent_wick_below=bool(any(x["l"]<support-tolerance for x in observed[-4:]))
+    recovered=recent_wick_below and not close_below and price>=support-tolerance
+    pattern=("CONVERGING_RANGE_CANDIDATE" if is_compression else
+             "BROAD_RANGE_CANDIDATE" if has_range else "NO_CONFIRMED_RANGE")
+    structure=("BREAKDOWN_CONFIRMED" if close_below and bot2 else
+               "BREAKOUT_CONFIRMED" if close_above and top2 else
+               "RANGE_WITH_LOWER_REJECTION" if recovered else
+               "CONSOLIDATION" if is_compression or has_range else
+               "UNRESOLVED")
+    return {"pattern":pattern,"structure":structure,
+            "local_direction_not_structural_trend":True,
+            "support_zone":{"center":n(support),"tolerance":n(tolerance)},
+            "resistance_zone":{"center":n(resistance),"tolerance":n(tolerance)},
+            "recovered_after_wick_below_support":recovered,
+            "last_two_confirmed_swing_highs":top2,
+            "last_two_confirmed_swing_lows":bot2,
+            "range_oscillations":turns,
+            "lookback_bars":len(recent),
+            "volatility_atr14":n(vol),
+            "boundary_confirmation":"TWO_CLOSED_CANDLES_OUTSIDE_ATR_ADJUSTED_ZONE"}
+
+def lower_timeframe_recovery(m5):
+    """Measure a sharp intraday low and subsequent rebound in completed 5m."""
+    bars=m5[-32:]
+    if len(bars)<12:
+        return {"status":"INSUFFICIENT_DATA"}
+    lowidx=min(range(len(bars)),key=lambda i:bars[i]["l"])
+    trough=bars[lowidx]["l"]
+    if lowidx<3 or lowidx>=len(bars)-1:
+        return {"status":"NO_CONFIRMED_POST_LOW_RECOVERY"}
+    peak=max(x["h"] for x in bars[max(0,lowidx-12):lowidx])
+    rebound=max(x["h"] for x in bars[lowidx+1:])
+    last=bars[-1]["c"]
+    prior_drop=peak-trough
+    if prior_drop<=0.06:
+        return {"status":"NO_SHARP_DROP"}
+    fraction=(last-trough)/prior_drop
+    return {"status":("REBOUND_IN_PROGRESS" if fraction>=0.25 else
+                      "WEAK_REBOUND_OR_RETEST"),
+            "trough_start_jst":bars[lowidx]["t"],
+            "trough":n(trough),"pre_trough_high":n(peak),
+            "last_complete_5m_close":n(last),
+            "recovery_fraction":n(fraction),
+            "post_trough_high":n(rebound),
+            "low_retested":any(x["l"]<trough-0.005 for x in bars[lowidx+1:])}
+
 def multi_timeframe_structure(daily, h4, h1, m15, m5, minute):
-    # Output in descending timeframe order. Every classification stands
-    # independently; the 1-minute result cannot replace the daily/1h view.
-    ordered = (("1day", daily), ("4h", h4), ("1h", h1),
-               ("15min", m15), ("5min", m5), ("1min", minute))
-    frames = {name: describe_timeframe(rows, name) for name,rows in ordered}
-    parent = next((frames[k]["state"] for k in ("4h","1h","1day")
-                   if frames[k]["state"] in ("UP","DOWN")), "UNRESOLVED")
-    return frames, parent
+    ordered=(("1day",daily),("4h",h4),("1h",h1),
+             ("15min",m15),("5min",m5),("1min",minute))
+    frames={name:describe_timeframe(rows,name) for name,rows in ordered}
+    # Preserve direction of recent candles as an observation, not a claim
+    # about the entire higher-timeframe market regime.
+    for name,bars in (("4h",h4),("1h",h1),("15min",m15),("5min",m5)):
+        recent_direction=frames[name]["state"]
+        shape=chart_geometry(bars,name)
+        frames[name]["recent_candle_direction"]=recent_direction
+        frames[name]["chart_geometry"]=shape
+        if name in ("4h","1h") and shape["structure"] in (
+                "CONSOLIDATION","RANGE_WITH_LOWER_REJECTION"):
+            frames[name]["state"]="RANGE"
+        elif name in ("4h","1h") and shape["structure"]=="BREAKDOWN_CONFIRMED":
+            frames[name]["state"]="DOWN"
+        elif name in ("4h","1h") and shape["structure"]=="BREAKOUT_CONFIRMED":
+            frames[name]["state"]="UP"
+    # A lower timeframe cannot override the 4h regime. If the 4h geometry
+    # establishes consolidation, directional bias is not extrapolated from
+    # the local last eight 4h closes.
+    if frames["4h"]["state"]=="RANGE":
+        parent="RANGE"
+    else:
+        parent=next((frames[k]["state"] for k in ("4h","1h","1day")
+                      if frames[k]["state"] in ("UP","DOWN")),"UNRESOLVED")
+    return frames,parent
 
 def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
     asof=asof.astimezone(JST)
@@ -518,10 +642,18 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
     recent_fade=bool(pl and pl["subsequent_drop_pips"]>=6 and
                      latest["c"]<pl["ceiling"]-0.06 and not pl["breakout_confirmed_after"])
     recovered=bool(shock and shock["recovery_fraction"]>=0.60)
+    five_rebound=lower_timeframe_recovery(h5)
+    shape4=timeframe_states["4h"].get("chart_geometry",{})
+    shape1=timeframe_states["1h"].get("chart_geometry",{})
     stale=age>10 or age<0
     if stale:
         phase="UNAVAILABLE_STALE"
         bias="NO_CURRENT_DIRECTION"
+    elif parent_direction=="RANGE":
+        phase=("HIGHER_TIMEFRAME_CONSOLIDATION_WITH_5M_REBOUND"
+               if five_rebound.get("status")=="REBOUND_IN_PROGRESS"
+               else "HIGHER_TIMEFRAME_CONSOLIDATION")
+        bias="WAIT_FOR_RANGE_BOUNDARY_CONFIRMATION"
     elif parent_direction=="UP":
         if timeframe_states["1h"]["state"]=="RANGE":
             phase="PRIOR_UPTREND_WITH_1H_CONSOLIDATION"
@@ -577,6 +709,9 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
              "last_complete_5min":h5[-1]["t"],"last_complete_1h":h1[-1]["t"]},
         "market_structure":{"timeframe_assessments":timeframe_states,
                             "parent_direction":parent_direction,
+                            "higher_timeframe_chart_context":{
+                                "4h":shape4,"1h":shape1},
+                            "five_minute_rebound":five_rebound,
                             "hourly_higher_high_higher_low_pairs_last5":ups,
                             "hourly_lower_high_lower_low_pairs_last5":downs,
                             "prior_hours_rising":past_up,

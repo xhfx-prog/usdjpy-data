@@ -492,6 +492,92 @@ async function analysisWithLiveBars(env, args = {}) {
   };
 }
 
+// Real-time full canonical Python evaluation, synchronous inside ONE MCP call.
+// The private Python Worker is only reachable over a Cloudflare Service Binding.
+// On any error, fail closed; never substitute a stale GitHub Python snapshot.
+async function analysisWithFreshPython(env, args = {}) {
+  if (!env.PYTHON_ANALYZER?.fetch) {
+    throw Error("PYTHON_ANALYZER_SERVICE_BINDING_MISSING");
+  }
+  const [live, archiveHours] = await Promise.all([
+    bundle(env, {
+      minute_bars: Math.max(500, count(args.minute_bars, 1200)),
+      five_minute_bars: Math.max(60, count(args.five_minute_bars, 60)),
+      fifteen_minute_bars: Math.max(24, count(args.fifteen_minute_bars, 24)),
+      hourly_bars: Math.max(200, count(args.hourly_bars, 200)),
+      four_hour_bars: Math.max(48, count(args.four_hour_bars, 48)),
+      daily_bars: Math.max(150, count(args.daily_bars, 150))
+    }),
+    history({interval: "1h", size: 1200})
+  ]);
+  if (!live.freshness_ok) throw Error("STALE_CURRENT_1MIN");
+  const current = live.series["1min"].values[0];
+  if (!current || current.datetime !== live.latest_confirmed_1min_bar) {
+    throw Error("LIVE_1MIN_MISMATCH");
+  }
+  const hours = merge(live.series["1h"].values, archiveHours.values);
+  const input = {
+    symbol: "USD/JPY",
+    source: "USDJPY_MCP_FRESH_BUNDLE",
+    fetched_at: live.fetched_at,
+    latest_confirmed_1min_bar: current.datetime,
+    "1min": live.series["1min"].values,
+    "1h": hours,
+    "1day": live.series["1day"].values
+  };
+  const request = new Request("https://usdjpy-python-engine.internal/analyze", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(input)
+  });
+  const response = await env.PYTHON_ANALYZER.fetch(request);
+  if (!response.ok) {
+    const detail = (await response.text()).slice(0, 900);
+    throw Error("PYTHON_INLINE_ANALYSIS_FAILED_" + response.status + ": " + detail);
+  }
+  const python = await response.json();
+  if (python.execution !== "CLOUDFLARE_PYTHON_WORKER_INLINE" ||
+      python.full_python_engine_recomputed !== true ||
+      python.analysis_input_latest_confirmed_1min_start_jst !== current.datetime ||
+      python.analysis?.data_quality?.last_confirmed_1min_start_jst !== current.datetime ||
+      Number(python.analysis.data_quality.last_close) !== Number(current.close)) {
+    throw Error("PYTHON_INLINE_RESULT_VALIDATION_FAILED");
+  }
+  return {
+    symbol: "USD/JPY",
+    fetched_at: live.fetched_at,
+    latest_confirmed_1min_bar: current.datetime,
+    freshness_ok: true,
+    twelve_data_requests: live.twelve_data_requests,
+    twelve_cache_hit: live.twelve_cache_hit,
+    archive_write_performed: false,
+    analysis_integration: {
+      python_engine: "analyze_usdjpy.py (Cloudflare Python Worker)",
+      python_snapshot_source: "PYTHON_WORKER_INLINE",
+      full_python_engine_recomputed_for_current_1min: true,
+      python_engine_was_run_on_live_request: true,
+      python_snapshot_matches_current_1min: true,
+      python_snapshot_lag_in_candles: 0,
+      requires_on_demand_python_refresh: false,
+      no_current_signal_from_stale_python_decision: false,
+      analysis_input_latest_confirmed_1min_start_jst: current.datetime,
+      python_computed_at_utc: python.analysis.generated_at_utc,
+      python_input_bar_counts: python.input_bar_counts,
+      single_mcp_call_completed: true
+    },
+    live_overlay: {
+      last_confirmed_1min_start_jst: current.datetime,
+      latest_open: Number(current.open),
+      latest_high: Number(current.high),
+      latest_low: Number(current.low),
+      latest_close: Number(current.close)
+    },
+    series: live.series,
+    analysis: python.analysis,
+    python_analysis_snapshot: python.analysis
+  };
+}
+
 // Historical OHLC exclusively from GitHub.
 // No Twelve Data API calls.
 async function history(args) {
@@ -570,14 +656,13 @@ const definitions = [
   {
     name: "get_usdjpy_analysis",
     description:
-      "MANDATORY FIRST tool for any user request analyzing CURRENT USD/JPY. " +
-      "Fetch the newest confirmed 1-minute OHLC with conditional one-call Twelve Data access, " +
-      "derive all six timeframes, and attach the deterministic Python analysis_latest.json " +
-      "with explicit as-of and lag checks. If snapshot is stale, submit confirmed " +
-      "1min bars and fetched_at to control/live_analysis_request.json through GitHub " +
-      "and verify data/analysis_live_latest.json, then check freshness again. DO NOT present " +
-      "its trend/SR/decision as recalculated or current. Includes observed live OHLC overlay. " +
-      "Never answer current USDJPY analysis from the Python snapshot alone.",
+      "MANDATORY FIRST tool for current USD/JPY market analysis. In ONE synchronous MCP " +
+      "call fetch current confirmed Twelve Data 1-minute OHLC, complete six timeframes, " +
+      "retrieve GitHub historical 1h/1day data, and RUN canonical analyze_usdjpy.py " +
+      "inside private Cloudflare Python Worker on the very same minute candle. " +
+      "Returns validated full Python market-structure report, S/R and freshness; " +
+      "fails if fresh price or Python recomputation is unavailable. No GitHub Actions " +
+      "trigger is required, and NEVER substitute an older Python snapshot.",
     inputSchema: {
       type: "object",
       properties: {
@@ -670,7 +755,7 @@ async function handleMCP(request, env) {
         let data;
 
         if (name === "get_usdjpy_analysis") {
-          data = await analysisWithLiveBars(env,args);
+          data = await analysisWithFreshPython(env,args);
         } else if (name === "get_usdjpy_bundle") {
           data = await bundle(env,args);
         } else if (name === "get_usdjpy_history") {

@@ -1,5 +1,20 @@
 # USD/JPY OHLC storage and analysis guide
 
+## Interactive analysis after MCP integration (primary path, 2026-11-05)
+
+For **every** request for a current USD/JPY market assessment:
+
+1. Call the connected `USDJPY Market Data.get_usdjpy_analysis` MCP tool **before** interpreting prices or any saved Python analysis. Confirm `fetched_at`, `latest_confirmed_1min_bar`, and `freshness_ok=true`. The Worker blocks old 1min bars. Do not use a stale report as the current quote.
+2. This call returns six OHLC timeframes **and** the most recent complete, deterministic Python analysis. Check `analysis_integration.python_snapshot_last_1min_start_jst`, `python_snapshot_source`, `python_snapshot_lag_in_candles` and `requires_on_demand_python_refresh`. The Worker **does not rerun Python**; it compares the separate Python analysis timestamp with live candles.
+3. If the Python analysis is behind and a current recomputation is necessary, use the **same fetched** 1min values from the MCP response. GitHub `fetch_file` `control/live_analysis_request.json` for SHA, then GitHub `update_file` with a new unique `request_id`, `source="USDJPY Market Data MCP"`, `symbol="USD/JPY"`, original MCP `fetched_at`, and `values` (confirmed 1min bars). Do **not** call Twelve Data again for this step.
+4. This push triggers `.github/workflows/analyze-live.yml`, which executes **the existing** `analyze_usdjpy.py` evaluation with the input minute bars, merges them with historical hourly and daily data, and writes `data/analysis_live_latest.json`. It makes **zero Twelve Data calls**. Re-read this result and match the exact `request_id`, latest confirmed candle start and close against the submitted payload. An accepted GitHub file update alone is not a completed analysis.
+5. Refresh the 1-minute MCP observation before final response if the job took long. If the newly fetched last confirmed candle differs from the Python report, the report must be identified as a **time-stamped earlier Python evaluation**; do not claim that its signals are recalculated as of the newer candle.
+6. Only once per user question send a live-analysis request unless there is a clearly new request. Do not create a loop trying to force per-minute freshness through GitHub Actions latency. State the actual timestamps and unavailable coverage clearly.
+7. If the MCP tool was not called, no present-tense current USDJPY analysis should be produced. GitHub data retrieval alone is not a substitute for the latest live quote unless it satisfies the same freshness gate.
+
+**Important limitation:** GitHub actions initiated from ChatGPT's authenticated GitHub connector still depend on the assistant invoking that connector. The public read-only Worker has no GitHub write credentials and cannot autonomously start the Python job; treating an on-demand GitHub action as automatic inside the MCP would be incorrect. This separation avoids putting a GitHub write token on an unauthenticated public endpoint.
+
+
 This repository separates **archival coverage** from **the minimum data needed for a normal analysis**.
 
 ## Acquisition

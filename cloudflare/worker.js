@@ -102,11 +102,16 @@ async function live(env, size) {
     const hit = await cache.match(key);
     if (hit) {
       const j = await hit.json();
-      return {
-        values: completed(j.values, 1),
-        calls: 0,
-        cacheHit: true
-      };
+      const cached = completed(j.values, 1);
+      const latest = cached[0];
+      // Do not return already-stale cached OHLC merely because cache TTL has not expired.
+      if (latest && Date.now() - timestamp(latest.datetime) - 60000 < STALE_MS) {
+        return {
+          values: cached,
+          calls: 0,
+          cacheHit: true
+        };
+      }
     }
   }
 

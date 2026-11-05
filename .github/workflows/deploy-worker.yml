@@ -99,7 +99,7 @@ jobs:
             -H 'Accept: application/json, text/event-stream' \
             --data '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' \
             'https://usdjpy-chart.xxhappyfrenzyxx.workers.dev/mcp' \
-            | python -c 'import json,sys; r=json.load(sys.stdin); names={t["name"] for t in r["result"]["tools"]}; assert {"get_usdjpy_bundle","get_latest_usdjpy","get_usdjpy_history"} <= names, names; print("MCP tools verified:", ", ".join(sorted(names)))'
+            | python -c 'import json,sys; r=json.load(sys.stdin); names={t["name"] for t in r["result"]["tools"]}; assert {"get_usdjpy_analysis","get_usdjpy_bundle","get_latest_usdjpy","get_usdjpy_history"} <= names, names; print("MCP tools verified:", ", ".join(sorted(names)))'
 
       - name: Publish deployment audit to GitHub
         if: always()

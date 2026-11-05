@@ -30,13 +30,20 @@ jobs:
           from datetime import datetime
           from pathlib import Path
           r=json.loads(Path("control/historical_analysis_request.json").read_text())
-          if r.get("as_of_jst")!="2026-11-05T06:00:00+09:00":
+          from datetime import datetime
+          asof=datetime.fromisoformat(r["as_of_jst"])
+          if asof.utcoffset().total_seconds()!=9*3600:
+              raise SystemExit("Replay requires JST ISO8601 offset +09:00")
+          if asof.isoformat() not in (
+              "2026-11-05T06:00:00+09:00",
+              "2026-11-05T14:00:00+09:00"):
               raise SystemExit("Unexpected replay date")
-          path="data/analysis_asof_20261105_0600.json"
+          suffix=asof.strftime("%Y%m%d_%H%M")
+          path=f"data/analysis_asof_{suffix}.json"
           subprocess.run([sys.executable,"analyze_usdjpy.py","--as-of",r["as_of_jst"],"--out",path],check=True)
           obj=json.loads(Path(path).read_text())
-          assert obj["analysis_asof_jst"]=="2026-11-05T06:00:00+09:00"
-          assert obj["data_quality"]["last_confirmed_1min_start_jst"]<"2026-11-05 06:00:00"
+          assert datetime.fromisoformat(obj["analysis_asof_jst"])==asof
+          assert obj["data_quality"]["last_confirmed_1min_start_jst"]<asof.strftime("%Y-%m-%d %H:%M:%S")
           print(json.dumps({"asof":obj["analysis_asof_jst"],
                             "last":obj["data_quality"]["last_confirmed_1min_start_jst"],
                             "phase":obj["market_structure"]["phase"]}))
@@ -53,15 +60,13 @@ jobs:
           o={"recorded_at_utc":datetime.now(timezone.utc).isoformat(),
              "run_id":os.environ["GITHUB_RUN_ID"],
              "outcome":os.environ["OUTCOME"],
-             "request":"2026-11-05T06:00:00+09:00"}
+             "request":json.loads(Path("control/historical_analysis_request.json").read_text())["as_of_jst"]}
           Path("data/historical_analysis_status.json").write_text(json.dumps(o,indent=2)+"\n")
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/historical_analysis_status.json
-          if [ -f data/analysis_asof_20261105_0600.json ]; then
-            git add data/analysis_asof_20261105_0600.json
-          fi
-          git commit -m "Record November 5 06:00 JST historical Python replay"
+          git add data/analysis_asof_20261105_*.json
+          git commit -m "Record November 5 historical Python as-of replay"
           git pull --rebase origin main
           git push origin HEAD:main

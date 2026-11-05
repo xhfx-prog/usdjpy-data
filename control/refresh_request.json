@@ -1,6 +1,6 @@
 {
-  "request_id": "chat-ondemand-20261105074311419",
+  "request_id": "chat-daily-refresh-fix-621a43a",
   "requested_by": "chatgpt",
-  "reason": "USDJPY 2026-11-05 16:00 JST move verification; fresh 1min OHLC requested",
-  "requested_at_utc": "2026-11-05T07:43:11.419Z"
+  "reason": "Verify daily OHLC refresh after JST-date schedule fix",
+  "requested_at_utc": "2026-11-05T12:35:00Z"
 }

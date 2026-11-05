@@ -861,9 +861,42 @@ async function handleMCP(request, env) {
   }
 }
 
+// Anonymous MCP access remains read-only. Bound rate limits reduce the cost
+// exposure while a proper OAuth login/connection is provisioned. Do not put
+// Cloudflare API or GitHub write tokens in this public resource server.
+async function protectExpensiveRequest(request, env, url) {
+  const isBundle = url.pathname === "/bundle";
+  if (!isBundle && url.pathname !== "/mcp") return null;
+  let isExpensive = isBundle;
+  if (url.pathname === "/mcp" && request.method === "POST") {
+    try {
+      const rpc = await request.clone().json();
+      isExpensive = rpc?.method === "tools/call";
+    } catch (_) { return null; } // Existing MCP parser returns parse error.
+  }
+  if (!isExpensive) return null;
+  if (!env.USDJPY_IP_LIMIT?.limit || !env.USDJPY_POP_LIMIT?.limit) {
+    return respond({error:"SERVER_RATE_LIMIT_CONFIGURATION_MISSING"},503);
+  }
+  const ip = request.headers.get("CF-Connecting-IP") || "unidentified";
+  const [perIp, pop] = await Promise.all([
+    env.USDJPY_IP_LIMIT.limit({key:ip}),
+    env.USDJPY_POP_LIMIT.limit({key:"usd-jpy-analysis"})
+  ]);
+  if (!perIp.success || !pop.success) {
+    return new Response(JSON.stringify({error:"RATE_LIMITED",retry_after_seconds:60}),{
+      status:429,
+      headers:{"Content-Type":"application/json","Retry-After":"60","Cache-Control":"no-store"}
+    });
+  }
+  return null;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const denied = await protectExpensiveRequest(request,env,url);
+    if (denied) return denied;
 
     if (url.pathname === "/mcp") {
       return handleMCP(request,env);

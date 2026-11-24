@@ -5,6 +5,8 @@ import re
 import subprocess
 import tempfile
 import urllib.request
+import time
+import hashlib
 
 URL = "https://www.cmegroup.com/daily_bulletin/current/Section01B_Summary_Volume_And_Open_Interest_FX_Futures_And_Options.pdf"
 OUT = pathlib.Path("data/cme_jpy_daily.json")
@@ -15,7 +17,7 @@ def parse(text):
         raise ValueError("Bulletin trade date missing")
     day = dt.datetime.strptime(dates[0], "%b %d, %Y").date().isoformat()
     head = text.split("FX FUTURES AND OPTIONS")[0]
-    status = re.search(r"\b(FINAL|PRELIMINARY)\b", text)
+    status = re.search(r"\b(FINAL|PRELIMINARY)\b", head)
     if not status:
         raise ValueError("Bulletin status missing")
     rows = re.findall(r"^\s*JY\s+JAPANESE YEN FUTURE[S]?\s+(.+)$", text, re.M)
@@ -35,6 +37,9 @@ def parse(text):
 def self_test():
     sample = "FINAL\n Fri, Nov 13, 2026 PG01B\nJY JAPANESE YEN FUTURE 182279 1981 184260 385761 - 1377 169305 320949\n"
     x = parse(sample)
+    preliminary = "PRELIMINARY\nMon, Nov 23, 2026\nJY JAPANESE YEN FUTURE 177370 56431 233801 459062 + 22413 108267 338744\n"
+    y = parse(preliminary)
+    assert (y["volume"], y["open_interest"], y["oi_change"], y["status"]) == (233801,459062,22413,"PRELIMINARY")
     assert (x["volume"],x["open_interest"],x["oi_change"]) == (184260,385761,-1377)
     try:
         parse(sample.replace("184260","184261"))
@@ -84,8 +89,18 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         pdf = pathlib.Path(tmp)/"bulletin.pdf"
         req = urllib.request.Request(URL, headers={"User-Agent":"Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=45) as r:
-            raw = r.read(20_000_000)
+        for attempt in range(3):
+            try:
+                with urllib.request.urlopen(req, timeout=45) as r:
+                    raw = r.read(20_000_001)
+                if len(raw) > 20_000_000 or not raw.startswith(b'%PDF'):
+                    raise ValueError('Unexpected CME response format or size')
+                break
+            except (OSError, ValueError) as e:
+                print(f'CME fetch attempt {attempt+1}: {type(e).__name__}: {e}', flush=True)
+                if attempt == 2:
+                    raise
+                time.sleep(5 * (attempt+1))
         if not raw.startswith(b"%PDF"):
             raise ValueError("Not a PDF")
         pdf.write_bytes(raw)
@@ -96,6 +111,7 @@ def main():
     if age < -1 or age > 7:
         raise ValueError("Stale or invalid bulletin date")
     item["retrieved_at_utc"] = now.isoformat()
+    item["pdf_sha256"] = hashlib.sha256(raw).hexdigest()
     old = json.loads(OUT.read_text()) if OUT.exists() else {"history":[]}
     records = {r["trade_date"]:r for r in old["history"]}
     prev = records.get(item["trade_date"])

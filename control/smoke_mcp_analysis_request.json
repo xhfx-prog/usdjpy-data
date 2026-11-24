@@ -1,5 +1,5 @@
 {
   "test": "first-end-to-end-production-smoke",
-  "purpose": "Audit live inline Python production smoke test",
-  "sequence": 4
+  "purpose": "Reverify production after November 24 deployment",
+  "sequence": 5
 }

@@ -82,6 +82,15 @@ def intraday_evidence(now, articles):
         evidence=[];move_status="ERROR: "+str(e)[:180]
     return {"status":"OBSERVED" if any(x["bars"] for x in series.values()) else "UNAVAILABLE","move_status":move_status,"series":{k:{a:b for a,b in v.items() if a!="bars"} for k,v in series.items()},"moves":evidence,"note":"Publication time is not event time; chart delay and exchange sessions may differ. No causal attribution."}
 
+def official_calendar_links():
+    # Source registry only: these links are not parsed event records.
+    return {"status":"REFERENCE_ONLY_NOT_PARSED","sources":{
+        "BEA":"https://www.bea.gov/news/schedule",
+        "Federal Reserve":"https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+        "Bank of Japan":"https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm",
+        "Japan Statistics Bureau":"https://www.stat.go.jp/english/info/guide/asu/index.html",
+        "Japan Cabinet Office":"https://www.esri.cao.go.jp/en/sna/kouhyou/kouhyou_top.html"}}
+
 def main():
     now=datetime.now(timezone.utc)
     result=collect(now,pre_minutes=90,post_minutes=0,now=now,sources=("google_rss","official_rss"))
@@ -126,7 +135,7 @@ def main():
     except Exception as e: calendar["error"]=str(e)[:200]
     obj={"generated_at_utc":now.isoformat(),"scan_from_utc":(now-timedelta(minutes=90)).isoformat(),
          "status":"OK" if all(x["status"]=="ok" for x in feeds) else "PARTIAL" if any(x["status"]=="ok" for x in feeds) else "FAILED",
-         "news_sources":feeds,"history_bootstrapped":True,"candidates":rows[:1200],"calendar":calendar,
+         "news_sources":feeds,"history_bootstrapped":True,"candidates":rows[:1200],"calendar":calendar,"additional_calendar_sources":official_calendar_links(),
          "cross_market": cross_market(now),"intraday_evidence":intraday_evidence(now,rows),"confirmed_catalyst":None}
     path.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n")
 if __name__=="__main__": main()

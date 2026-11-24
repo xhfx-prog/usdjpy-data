@@ -3,6 +3,12 @@ on:
   push:
     paths:
       - 'scripts/audit_data_quality.py'
+      - 'tests/**'
+      - 'scripts/merge_publish.py'
+      - 'scripts/collect_fx_intraday.py'
+      - 'economic_calendar.py'
+      - 'investigate_world_news.py'
+      - 'analyze_usdjpy.py'
       - '.github/workflows/data-quality-audit.yml'
   workflow_dispatch:
   schedule:
@@ -18,7 +24,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - name: Run offline analysis and data quality regression suite
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Validate saved datasets
+        if: always()
         run: python3 scripts/audit_data_quality.py
       - name: Upload detailed audit even on failure
         if: always()

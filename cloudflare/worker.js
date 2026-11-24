@@ -813,7 +813,11 @@ async function handleMCP(request, env) {
             const start=end-24*3600000;
             data.macro_evidence={status:Number.isFinite(age)&&age>=0&&age<=45?macro.status:"STALE",
               generated_at_utc:macro.generated_at_utc,age_minutes:age,news_sources:macro.news_sources,
-              calendar:macro.calendar,cross_market:macro.cross_market,
+              calendar:macro.calendar,cross_market:macro.cross_market,intraday_evidence:macro.intraday_evidence,
+              report_windows:(()=>{const day=new Date(end+32400000).toISOString().slice(0,10);
+                const six=timestamp(day+" 06:00:00"),nine=timestamp(day+" 09:00:00");
+                const select=(from,to)=>(macro.candidates||[]).filter(x=>Date.parse(x.source_timestamp_utc)>=from&&Date.parse(x.source_timestamp_utc)<to).sort((a,b)=>b.priority_score_not_causal_confidence-a.priority_score_not_causal_confidence).slice(0,8);
+                return {overnight:select(six-12*3600000,Math.min(six,end)),six_to_nine:end>=six?select(six,Math.min(nine,end)):[]};})(),
               candidates:(macro.candidates||[]).filter(x=>Date.parse(x.source_timestamp_utc)>=start&&Date.parse(x.source_timestamp_utc)<=end)
                 .sort((a,b)=>b.priority_score_not_causal_confidence-a.priority_score_not_causal_confidence).slice(0,12),
               confirmed_catalyst:null};

@@ -2,6 +2,7 @@
 """Smoke-test the production Cloudflare MCP without reading GitHub or Twelve Data credentials."""
 import json
 import urllib.request
+import urllib.error
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -20,8 +21,18 @@ list_req = urllib.request.Request(url, data=json.dumps(list_rpc).encode("utf-8")
     headers={"Content-Type":"application/json",
              "Accept":"application/json, text/event-stream"},
     method="POST")
-with urllib.request.urlopen(list_req, timeout=20) as response:
-    tool_list = json.load(response)
+def rpc_json(request, timeout):
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            return json.load(response)
+    except urllib.error.HTTPError as exc:
+        # Record the actual rejection response, without weakening MCP access controls.
+        body = exc.read(2048).decode("utf-8", errors="replace")
+        print(json.dumps({"http_status": exc.code, "server": exc.headers.get("Server"),
+                          "cf_ray": exc.headers.get("CF-Ray"), "response_excerpt": body[:500]}), flush=True)
+        raise
+
+tool_list = rpc_json(list_req, 20)
 names = {t["name"] for t in tool_list["result"]["tools"]}
 assert names == {"get_usdjpy_analysis", "get_usdjpy_history"}, names
 
@@ -30,8 +41,7 @@ req = urllib.request.Request(url, data=json.dumps(rpc).encode("utf-8"),
              "Accept": "application/json, text/event-stream",
              "User-Agent": "USDJPY-MCP-Live-Smoke/1"},
     method="POST")
-with urllib.request.urlopen(req, timeout=50) as response:
-    message = json.load(response)
+message = rpc_json(req, 50)
 assert message.get("jsonrpc") == "2.0" and message.get("id") == 37, message
 result = message.get("result", {})
 if result.get("isError") is True:

@@ -9,6 +9,8 @@ import json
 import shutil
 import sys
 from pathlib import Path
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 
 def load(path):
@@ -28,7 +30,7 @@ def freshness(obj):
         if obj.get(k)), ""))
 
 
-def combine_bars(old, new):
+def combine_bars(old, new, preserve_all=False):
     """Deduplicate OHLC by datetime, preferring the newer snapshot on overlap."""
     old_data = old.get("data", {})
     new_data = new.get("data", {})
@@ -45,7 +47,7 @@ def combine_bars(old, new):
     winner = new if new_is_later else old
     result = json.loads(json.dumps(winner))
     # Retain the larger source window without creating unlimited growth.
-    limit = max(len(old_rows), len(new_rows))
+    limit = len(merged) if preserve_all else max(len(old_rows), len(new_rows))
     result["data"]["values"] = [
         merged[k] for k in sorted(merged, reverse=True)[:limit]
     ]
@@ -83,7 +85,7 @@ def publish(snapshot, target):
         elif rel.as_posix() == "workflow_status.json":
             result = combine_status(old, new)
         else:
-            result = combine_bars(old, new)
+            result = combine_bars(old, new, preserve_all=rel.parts[0] in ('history_1min','history_1h','history_1day'))
             if result is None:
                 # For manifests and reports, keep the newest complete snapshot.
                 # If neither has a comparable timestamp, leave remote untouched.
@@ -94,5 +96,42 @@ def publish(snapshot, target):
             dest.write_text(encoded, encoding="utf-8")
 
 
+
+def reconcile_archives(target):
+    """Rebuild indexes from merged partitions without resurrecting expired bars."""
+    for interval, days, field in (("1min",10,"date_jst"),("1h",370,"month_jst"),("1day",3653,"year_exchange")):
+        root=target/("history_"+interval)
+        index=target/("history_"+interval+"_index.json")
+        if not root.exists() or not index.exists():
+            continue
+        prior=load(index)
+        if not isinstance(prior,dict) or not prior.get("updated_at"):
+            raise ValueError("Missing archive index timestamp: "+str(index))
+        asof=datetime.fromisoformat(prior["updated_at"].replace("Z","+00:00"))
+        cutoff=(asof.astimezone(ZoneInfo("Asia/Tokyo")).date()-timedelta(days=days)).isoformat()
+        entries=[]
+        for path in sorted(root.glob("*.json"),reverse=True):
+            obj=load(path)
+            if not isinstance(obj,dict) or not isinstance(obj.get("data",{}).get("values"),list):
+                raise ValueError("Invalid archive partition "+str(path))
+            rows=obj["data"]["values"]
+            kept=[b for b in rows if b["datetime"][:10]>=cutoff]
+            if not kept:
+                path.unlink()
+                continue
+            if kept!=rows:
+                obj["data"]["values"]=kept
+                path.write_text(json.dumps(obj,ensure_ascii=False,separators=(",",":"))+"\n")
+            entries.append({field:path.stem,"path":"data/"+str(path.relative_to(target)),"count":len(kept),"first":kept[-1]["datetime"],"last":kept[0]["datetime"]})
+        prior.update({"sessions" if interval=="1min" else "partitions":entries,
+                      "actual_oldest":entries[-1]["first"] if entries else None,
+                      "actual_newest":entries[0]["last"] if entries else None,
+                      "total_bars":sum(e["count"] for e in entries)})
+        index.write_text(json.dumps(prior,ensure_ascii=False,separators=(",",":"))+"\n")
+
+
 if __name__ == "__main__":
-    publish(Path(sys.argv[1]), Path(sys.argv[2]))
+    snapshot,target=Path(sys.argv[1]),Path(sys.argv[2])
+    publish(snapshot,target)
+    if any((snapshot/("history_"+i+"_index.json")).exists() for i in ("1min","1h","1day")):
+        reconcile_archives(target)

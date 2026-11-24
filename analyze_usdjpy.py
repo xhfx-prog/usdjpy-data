@@ -658,6 +658,46 @@ def multi_timeframe_structure(daily, h4, h1, m15, m5, minute):
                       if frames[k]["state"] in ("UP","DOWN")),"UNRESOLVED")
     return frames,parent
 
+def conditional_outlook(hourly, levels, close, direction):
+    """Historical rolling excursions, not calibrated forecasts or probabilities."""
+    result={}
+    for horizon in (24,72):
+        samples=[]
+        for i in range(0,len(hourly)-horizon,horizon):
+            base=hourly[i]["c"]
+            window=hourly[i+1:i+horizon+1]
+            if (stamp(window[-1]["t"])-stamp(hourly[i]["t"])).total_seconds()!=horizon*3600:
+                continue
+            samples.append((max(0,max(b["h"] for b in window)-base),
+                            max(0,base-min(b["l"] for b in window))))
+        if len(samples)<5:
+            result[str(horizon)+"h"]={"status":"INSUFFICIENT_CONTIGUOUS_SAMPLES","samples":len(samples)}
+            continue
+        up=statistics.median(x[0] for x in samples)
+        down=statistics.median(x[1] for x in samples)
+        result[str(horizon)+"h"]={"status":"HISTORICAL_MEDIAN_EXCURSION_NOT_FORECAST",
+            "samples":len(samples),"lower":n(close-down),"upper":n(close+up),
+            "direction":direction,"support":levels["support"],"resistance":levels["resistance"]}
+    return result
+
+
+def long_candidates(levels, direction, close):
+    if direction=="DOWN":
+        return {"status":"WAIT_DOWNTREND","candidates":[]}
+    candidates=[]
+    for support in levels["support"]:
+        if support["high"]>close: continue
+        entry=support["center"]
+        above=[r for r in levels["resistance"] if r["low"]>support["high"]]
+        if not above: continue
+        resistance=min(above,key=lambda r:r["low"])
+        candidates.append({"support":support,"reference_entry":entry,
+            "first_resistance":resistance,"gross_room_pips":n((resistance["low"]-entry)*100),
+            "structural_invalidation_below":support["low"],
+            "status":"CONDITIONAL_NOT_ORDER","macro_check_required":True})
+    return {"status":"OBSERVATION_ONLY","candidates":candidates}
+
+
 def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
     asof=asof.astimezone(JST)
     if not minute:
@@ -774,6 +814,8 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
            "long":"NO_AUTOMATIC_ENTRY",
            "first_verified_resistance":first_res if price_usable else None,
            "first_verified_support":first_sup if price_usable else None,
+           "conditional_outlook":conditional_outlook(h1,ls,latest["c"],parent_direction) if price_usable else {},
+           "long_candidates":long_candidates(ls,parent_direction,latest["c"]) if price_usable else {},
            "prediction_24h":"NOT_CALIBRATED",
            "prediction_72h":"NOT_CALIBRATED",
            "note":"Observed price structure only. No probabilities or catalyst claims without validated inputs."}

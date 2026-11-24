@@ -728,6 +728,28 @@ const definitions = [
   }
 ];
 
+// Report-first text projection; retain full raw data in structuredContent.
+function reportProjection(data) {
+  const a=data.analysis, m=a.market_structure;
+  const rows=data.series["1min"].values;
+  const latest=timestamp(data.latest_confirmed_1min_bar)+60000;
+  const day=new Date(latest+32400000).toISOString().slice(0,10);
+  const six=timestamp(day+" 06:00:00"), nine=timestamp(day+" 09:00:00");
+  function stats(start,end) {
+    const bars=rows.filter(b=>timestamp(b.datetime)>=start&&timestamp(b.datetime)<end).sort((x,y)=>timestamp(x.datetime)-timestamp(y.datetime));
+    const base=rows.find(b=>timestamp(b.datetime)===start-60000);
+    if(!base||bars.length!==(end-start)/60000||bars.some((b,i)=>timestamp(b.datetime)!==start+i*60000)) return {status:"INCOMPLETE_WINDOW"};
+    const hi=bars.reduce((x,y)=>Number(x.high)>=Number(y.high)?x:y);
+    const lo=bars.reduce((x,y)=>Number(x.low)<=Number(y.low)?x:y);
+    const last=bars[bars.length-1];
+    return {status:"COMPLETE",start_close:Number(base.close),end_close:Number(last.close),change_pips:Number(((Number(last.close)-Number(base.close))*100).toFixed(3)),high:Number(hi.high),high_at:hi.datetime,low:Number(lo.low),low_at:lo.datetime,range_pips:Number(((Number(hi.high)-Number(lo.low))*100).toFixed(3))};
+  }
+  return {symbol:data.symbol,fetched_at:data.fetched_at,latest_confirmed_1min_bar:data.latest_confirmed_1min_bar,freshness_ok:data.freshness_ok,analysis_integration:data.analysis_integration,live_overlay:data.live_overlay,data_quality:a.data_quality,timeframes:a.timeframes,
+    timeframe_assessments:Object.fromEntries(Object.entries(m.timeframe_assessments||{}).map(([k,v])=>[k,{state:v.state,atr14:v.atr14,last_complete_bar:v.last_complete_bar,swing_structure:v.swing_structure}])),
+    parent_direction:m.parent_direction,phase:m.phase,directional_bias:m.directional_bias,support_resistance:m.support_resistance,upper_stall:m.upper_stall,sharp_decline_recovery:m.sharp_decline_recovery,five_minute_rebound:m.five_minute_rebound,
+    six_to_nine:latest>=nine?stats(six,nine):{status:"NOT_YET_09_JST"},fundamentals:a.fundamentals,decision:a.decision,full_analysis_location:"structuredContent.analysis"};
+}
+
 async function handleMCP(request, env) {
   if (request.method !== "POST") {
     return new Response(null, {status:405});
@@ -826,7 +848,7 @@ async function handleMCP(request, env) {
 
         result = {
           content:[
-            {type:"text",text:JSON.stringify(data)}
+            {type:"text",text:JSON.stringify(name === "get_usdjpy_analysis" ? reportProjection(data) : data)}
           ],
           structuredContent:data,
           isError:false

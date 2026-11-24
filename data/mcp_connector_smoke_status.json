@@ -1,16 +1,1 @@
-{
-  "tested_at_utc": "2026-11-24T15:06:05.358Z",
-  "source": "connected MCP production call (not GitHub Actions)",
-  "status": "PASS",
-  "latest_confirmed_1min_bar": "2026-11-25 00:04:00",
-  "checks": {
-    "freshness": true,
-    "all_six_timeframes": true,
-    "python_inline": true,
-    "recomputed": true,
-    "lag_zero": true,
-    "single_call": true,
-    "api_limit": true,
-    "aligned": true
-  }
-}
+{"tested_at_utc":"2026-11-24T15:06:05.358Z","source":"connected MCP production call (not GitHub Actions)","status":"PASS","latest_confirmed_1min_bar":"2026-11-25 00:04:00","checks":{"freshness":true,"all_six_timeframes":true,"python_inline":true,"recomputed":true,"lag_zero":true,"single_call":true,"api_limit":true,"aligned":true}}

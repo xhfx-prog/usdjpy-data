@@ -25,9 +25,32 @@ jobs:
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/macro_latest.json
-          if ! git diff --cached --quiet; then
+          cp data/macro_latest.json /tmp/macro-generated.json
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git reset --hard origin/main
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          from investigate_world_news import deduplicate
+          from datetime import datetime, timedelta
+          p = Path("data/macro_latest.json")
+          new = json.loads(Path("/tmp/macro-generated.json").read_text())
+          old = json.loads(p.read_text()) if p.exists() else {}
+          if old.get("generated_at_utc", "") > new["generated_at_utc"]:
+              new, old = old, new
+          cutoff = datetime.fromisoformat(new["generated_at_utc"]) - timedelta(hours=24)
+          rows = deduplicate(new.get("candidates", []) + old.get("candidates", []))
+          rows = [r for r in rows if r.get("source_timestamp_utc") and datetime.fromisoformat(r["source_timestamp_utc"]) >= cutoff]
+          rows.sort(key=lambda r: r["source_timestamp_utc"], reverse=True)
+          new["candidates"] = rows
+          new["candidate_count"] = len(rows)
+          p.write_text(json.dumps(new, ensure_ascii=False, indent=2) + "\n")
+          PY
+            git add data/macro_latest.json
+            if git diff --cached --quiet; then exit 0; fi
             git commit -m "Publish scheduled macro evidence"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 2
+          done
+          exit 1

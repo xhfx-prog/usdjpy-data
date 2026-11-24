@@ -32,7 +32,7 @@ def intraday_evidence(now, articles):
     """Public delayed chart data, no paid API calls; timestamp-aligned observations only."""
     from concurrent.futures import ThreadPoolExecutor
     import urllib.parse
-    symbols={"usd_jpy":"JPY=X","dxy":"DX-Y.NYB","wti_futures":"CL=F","sp500_futures":"ES=F","us_10y_yield_index":"^TNX"}
+    symbols={"usd_jpy":"JPY=X","dxy":"DX-Y.NYB","wti_futures":"CL=F","sp500_futures":"ES=F","us_10y_yield_index":"^TNX","us_10y_treasury_futures":"ZN=F","us_2y_treasury_futures":"ZT=F"}
     def fetch(item):
         name,symbol=item
         url="https://query1.finance.yahoo.com/v8/finance/chart/"+urllib.parse.quote(symbol,safe="")+"?interval=5m&range=2d"
@@ -43,7 +43,7 @@ def intraday_evidence(now, articles):
             if not bars: raise ValueError("no completed bars")
             return name,{"status":"OBSERVED_PROVIDER_DELAY_UNVERIFIED","source":url,"last_bar_utc":datetime.fromtimestamp(max(bars),timezone.utc).isoformat(),"bars":bars}
         except Exception as e: return name,{"status":"ERROR","source":url,"error":str(e)[:200],"bars":{}}
-    with ThreadPoolExecutor(max_workers=5) as pool:
+    with ThreadPoolExecutor(max_workers=7) as pool:
         series=dict(pool.map(fetch,symbols.items()))
     # Use saved canonical USDJPY candles for move detection, not Yahoo FX.
     moves=[]
@@ -78,9 +78,14 @@ def intraday_evidence(now, articles):
                 before=(start//300)*300-300
                 after=((t+60+299)//300)*300-300
                 if before in bars and after in bars and after>before and after+300<=now.timestamp():
-                    aligned[name]={"from_bar_utc":datetime.fromtimestamp(before,timezone.utc).isoformat(),"to_bar_utc":datetime.fromtimestamp(after,timezone.utc).isoformat(),"change":round(bars[after]-bars[before],6)}
+                    aligned[name]={"from_bar_utc":datetime.fromtimestamp(before,timezone.utc).isoformat(),"to_bar_utc":datetime.fromtimestamp(after,timezone.utc).isoformat(),"change":round(bars[after]-bars[before],6),"change_pct":round((bars[after]/bars[before]-1)*100,6) if bars[before] else None,"direction":"UP" if bars[after]>bars[before] else "DOWN" if bars[after]<bars[before] else "FLAT"}
                 else: aligned[name]={"status":"NO_ALIGNED_BARS"}
-            evidence.append({"window_start_utc":datetime.fromtimestamp(start,timezone.utc).isoformat(),"window_end_utc":datetime.fromtimestamp(t+60,timezone.utc).isoformat(),"usd_jpy_change_pips":round(pips,3),"preceding_publications":sorted(leads,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:5],"during_move_publications":sorted(during,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:8],"post_move_publications_not_initial_triggers":sorted(followups,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:5],"cross_market":aligned,"causality":"UNCONFIRMED"})
+            fx_direction=1 if pips>0 else -1
+            checks={}
+            for name,expected in (("dxy",fx_direction),("us_10y_yield_index",fx_direction),("us_10y_treasury_futures",-fx_direction),("us_2y_treasury_futures",-fx_direction)):
+                change=aligned.get(name,{}).get("change")
+                checks[name]="UNAVAILABLE" if change is None else "FLAT" if change==0 else "ALIGNED" if change*expected>0 else "OPPOSED"
+            evidence.append({"directional_crosschecks_not_causality":checks,"window_start_utc":datetime.fromtimestamp(start,timezone.utc).isoformat(),"window_end_utc":datetime.fromtimestamp(t+60,timezone.utc).isoformat(),"usd_jpy_change_pips":round(pips,3),"preceding_publications":sorted(leads,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:5],"during_move_publications":sorted(during,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:8],"post_move_publications_not_initial_triggers":sorted(followups,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:5],"cross_market":aligned,"causality":"UNCONFIRMED"})
         move_status="OBSERVED"
     except Exception as e:
         evidence=[];move_status="ERROR: "+str(e)[:180]

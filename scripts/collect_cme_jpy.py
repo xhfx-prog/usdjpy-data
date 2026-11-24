@@ -90,7 +90,7 @@ def main():
     test_metrics()
     with tempfile.TemporaryDirectory() as tmp:
         pdf = pathlib.Path(tmp)/"bulletin.pdf"
-        source = os.environ.get('CME_BULLETIN_AUTHORIZED_URL', URL)
+        source = os.environ.get('CME_BULLETIN_AUTHORIZED_URL') or URL
         req = urllib.request.Request(source, headers={"User-Agent":"Mozilla/5.0"})
         for attempt in range(3):
             try:

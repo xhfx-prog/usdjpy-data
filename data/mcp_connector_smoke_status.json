@@ -1,16 +1,1 @@
-{
-  "tested_at_utc": "2026-11-24T21:00:59Z",
-  "latest_confirmed_1min_start_jst": "2026-11-25 05:59:00",
-  "source": "CONNECTED_MCP",
-  "checks": {
-    "freshness": true,
-    "six_timeframes": true,
-    "inline_python": true,
-    "recomputed": true,
-    "lag_zero": true,
-    "single_call": true,
-    "api_at_most_one": null,
-    "overlay_matches": true
-  },
-  "status": "INCOMPLETE"
-}
+{"tested_at_utc":"2026-11-24T21:00:59Z","latest_confirmed_1min_start_jst":"2026-11-25 05:59:00","source":"CONNECTED_MCP","checks":{"freshness":true,"six_timeframes":true,"inline_python":true,"recomputed":true,"lag_zero":true,"single_call":true,"api_at_most_one":null,"overlay_matches":true},"status":"INCOMPLETE"}

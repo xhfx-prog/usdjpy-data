@@ -1,6 +1,6 @@
 {
-  "request_id": "repair-merge-tests-20261106-0350",
+  "request_id": "archive-reconcile-validation-20261125",
   "requested_by": "chatgpt",
-  "reason": "Verify chart geometry regression suite and conflict-safe publication after fixes",
-  "requested_at_utc": "2026-11-05T18:50:00Z"
+  "reason": "Verify retention reconciliation and manifest consistency after publication",
+  "requested_at_utc": "2026-11-24T15:56:20.559Z"
 }

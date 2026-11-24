@@ -235,7 +235,7 @@ def deduplicate(rows):
     return list(unique.values())
 
 def collect(move,pre_minutes=45,post_minutes=10,hints=None,
-            fetcher=request_bytes,sources=("gdelt","google_rss","official_rss"),now=None):
+            fetcher=request_bytes,sources=("gdelt","google_rss","official_rss"),now=None, candidate_limit=80):
     now=now or datetime.now(UTC)
     move=move.astimezone(UTC)
     start=move-timedelta(minutes=pre_minutes)
@@ -310,7 +310,7 @@ def collect(move,pre_minutes=45,post_minutes=10,hints=None,
         "discovery_status":"NEWS_CANDIDATES_FOUND" if candidates else "NO_VERIFIED_NEWS_CANDIDATES",
         "chronology_note":"Index/publication timestamps do not prove underlying EVENT time; post-move publication is not evidence of an initial trigger.",
         "interpretation_rule":"Verify event timestamps, competing events, novelty versus earlier official statements, action versus rhetoric, and oil/yield/equity reactions before assigning a cause. Do NOT infer irrelevance from a quiet net move: opposing catalysts may offset.",
-        "candidates":candidates[:80],
+        "candidates":candidates[:candidate_limit],
         "totals":{"raw_results":len(articles),"in_window_unique":len(candidates),
            "timestamp_before_move":sum(c["chronology"].startswith("SOURCE_TIMESTAMP_BEFORE") for c in candidates),
            "timestamp_after_move":sum(c["chronology"].startswith("POST_MOVE") for c in candidates)},

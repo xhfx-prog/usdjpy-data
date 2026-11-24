@@ -1,8 +1,10 @@
 import json
 import unittest
+import tempfile
+from pathlib import Path
 from datetime import datetime, timezone
 from scripts.audit_data_quality import audit_bars
-from scripts.merge_publish import freshness
+from scripts.merge_publish import freshness, combine_bars, reconcile_archives
 from scripts.collect_fx_intraday import analyze
 from economic_calendar import collect_calendar
 from investigate_world_news import deduplicate
@@ -19,6 +21,30 @@ class QualityTests(unittest.TestCase):
     def test_new_timestamp_fields(self):
         for k in ("retrieved_at_utc","checked_at_utc","tested_at_utc","at_utc"):
             self.assertEqual(freshness({k:"2026-11-24T12:00:00+00:00"}),"2026-11-24T12:00:00+00:00")
+
+    def test_archive_union_and_manifest(self):
+        def row(t):
+            return {"datetime":t,"open":159,"high":160,"low":158,"close":159}
+        def obj(stamps):
+            return {"interval":"1min","fetched_at":"2026-11-24T12:00:00+00:00","data":{"values":[row(t) for t in stamps]}}
+        a=obj(["2026-11-24 12:01:00"])
+        b=obj(["2026-11-24 12:02:00"])
+        merged=combine_bars(a,b,preserve_all=True)
+        self.assertEqual(len(merged["data"]["values"]),2)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            history=root/"history_1min"
+            history.mkdir()
+            (history/"2026-11-24.json").write_text(json.dumps(merged))
+            expired=history/"2026-11-01.json"
+            expired.write_text(json.dumps(obj(["2026-11-01 12:00:00"])))
+            index=root/"history_1min_index.json"
+            index.write_text(json.dumps({"updated_at":"2026-11-24T12:00:00+00:00"}))
+            reconcile_archives(root)
+            self.assertFalse(expired.exists())
+            out=json.loads(index.read_text())
+            self.assertEqual(out["total_bars"],2)
+            self.assertEqual(out["actual_newest"],"2026-11-24 12:02:00")
 
     def test_distinct_news_ids_and_unicode(self):
         def article(title,url):

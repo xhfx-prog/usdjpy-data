@@ -747,7 +747,7 @@ function reportProjection(data) {
   return {symbol:data.symbol,fetched_at:data.fetched_at,latest_confirmed_1min_bar:data.latest_confirmed_1min_bar,freshness_ok:data.freshness_ok,analysis_integration:data.analysis_integration,live_overlay:data.live_overlay,data_quality:a.data_quality,timeframes:a.timeframes,
     timeframe_assessments:Object.fromEntries(Object.entries(m.timeframe_assessments||{}).map(([k,v])=>[k,{state:v.state,atr14:v.atr14,last_complete_bar:v.last_complete_bar,swing_structure:v.swing_structure}])),
     parent_direction:m.parent_direction,phase:m.phase,directional_bias:m.directional_bias,support_resistance:m.support_resistance,upper_stall:m.upper_stall,sharp_decline_recovery:m.sharp_decline_recovery,five_minute_rebound:m.five_minute_rebound,
-    six_to_nine:latest>=nine?stats(six,nine):{status:"NOT_YET_09_JST"},fundamentals:a.fundamentals,decision:a.decision,full_analysis_location:"structuredContent.analysis"};
+    six_to_nine:latest>=nine?stats(six,nine):{status:"NOT_YET_09_JST"},fundamentals:a.fundamentals,macro_evidence:data.macro_evidence,decision:a.decision,full_analysis_location:"structuredContent.analysis"};
 }
 
 async function handleMCP(request, env) {
@@ -806,6 +806,18 @@ async function handleMCP(request, env) {
 
         if (name === "get_usdjpy_analysis") {
           data = await analysisWithFreshPython(env,args);
+          try {
+            const macro=await github("macro_latest.json");
+            const age=(Date.now()-Date.parse(macro.generated_at_utc))/60000;
+            const end=timestamp(data.latest_confirmed_1min_bar)+60000;
+            const start=end-24*3600000;
+            data.macro_evidence={status:Number.isFinite(age)&&age>=0&&age<=45?macro.status:"STALE",
+              generated_at_utc:macro.generated_at_utc,age_minutes:age,news_sources:macro.news_sources,
+              calendar:macro.calendar,cross_market:macro.cross_market,
+              candidates:(macro.candidates||[]).filter(x=>Date.parse(x.source_timestamp_utc)>=start&&Date.parse(x.source_timestamp_utc)<=end)
+                .sort((a,b)=>b.priority_score_not_causal_confidence-a.priority_score_not_causal_confidence).slice(0,12),
+              confirmed_catalyst:null};
+          } catch(e) {data.macro_evidence={status:"UNAVAILABLE",error:String(e.message).slice(0,180)};}
         } else if (name === "get_usdjpy_bundle") {
           data = await bundle(env,args);
         } else if (name === "get_usdjpy_history") {

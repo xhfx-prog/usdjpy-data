@@ -26,6 +26,8 @@ GOOGLE="https://news.google.com/rss/search"
 OFFICIAL={
     "fed_release":"https://www.federalreserve.gov/feeds/press_all.xml",
     "fed_speech":"https://www.federalreserve.gov/feeds/speeches.xml",
+    "bls_release":"https://www.bls.gov/feed/bls_latest.rss",
+    "bea_release":"https://www.bea.gov/rss/rss.xml",
 }
 TOPICS={
     "geopolitics":'(Iran OR Israel OR Qatar OR Ukraine OR Russia OR ceasefire OR negotiations OR sanctions OR military OR war)',
@@ -263,7 +265,7 @@ def collect(move,pre_minutes=45,post_minutes=10,hints=None,
                 jobs.append(("GOOGLE_RSS","context_hints",google_url("geopolitics",age,hints)))
     if "official_rss" in sources:
         for topic,url in OFFICIAL.items():
-            jobs.append(("OFFICIAL_RSS","official_fed",url))
+            jobs.append(("OFFICIAL_RSS","official_fed" if topic.startswith("fed_") else "us_data",url))
     articles=[]
     diagnostics=[]
     def do(job):
@@ -272,9 +274,9 @@ def collect(move,pre_minutes=45,post_minutes=10,hints=None,
             raw=fetcher(url)
             found=(parse_gdelt(raw,topic,now) if provider=="GDELT_DOC"
                    else parse_rss(raw,topic,now,provider))
-            return found,{"source":provider,"topic":topic,"status":"ok","returned":len(found)}
+            return found,{"source":provider,"topic":topic,"url":url,"status":"ok","returned":len(found)}
         except Exception as exc:
-            return [],{"source":provider,"topic":topic,"status":"error","error":str(exc)[:220]}
+            return [],{"source":provider,"topic":topic,"url":url,"status":"error","error":str(exc)[:220]}
     with ThreadPoolExecutor(max_workers=5) as pool:
         for found,status in pool.map(do,jobs):
             articles.extend(found)

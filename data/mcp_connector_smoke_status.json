@@ -1,8 +1,8 @@
 {
-  "tested_at_utc": "2026-11-24T15:04:01.444Z",
+  "tested_at_utc": "2026-11-24T15:06:05.358Z",
   "source": "connected MCP production call (not GitHub Actions)",
   "status": "PASS",
-  "latest_confirmed_1min_bar": "2026-11-25 00:02:00",
+  "latest_confirmed_1min_bar": "2026-11-25 00:04:00",
   "checks": {
     "freshness": true,
     "all_six_timeframes": true,

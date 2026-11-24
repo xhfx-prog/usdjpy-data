@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'control/smoke_mcp_analysis_request.json'
+      - 'tests/smoke_mcp_integration.py'
+      - '.github/workflows/smoke-mcp-analysis.yml'
   workflow_dispatch:
 
 permissions:
@@ -37,7 +39,23 @@ jobs:
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/mcp_integration_smoke_status.json
-          git commit -m "Record production USDJPY analysis MCP smoke test"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          cp data/mcp_integration_smoke_status.json /tmp/mcp-smoke.json
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git reset --hard origin/main
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("data/mcp_integration_smoke_status.json")
+          new=json.loads(Path("/tmp/mcp-smoke.json").read_text())
+          old=json.loads(p.read_text()) if p.exists() else {}
+          if new.get("tested_at_utc","") >= old.get("tested_at_utc",""):
+              p.write_text(json.dumps(new,indent=2)+"\n")
+          PY
+            git add data/mcp_integration_smoke_status.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m "Record production USDJPY analysis MCP smoke test"
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 2
+          done
+          exit 1

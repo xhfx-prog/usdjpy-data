@@ -28,6 +28,60 @@ def cross_market(now):
         series=dict(pool.map(fetch,ids.items()))
     return {"status":"DAILY_CONTEXT_ONLY","series":series,"intraday_correlation":"NOT_AVAILABLE","dxy":"NOT_CONNECTED","sp500_futures":"NOT_CONNECTED"}
 
+def intraday_evidence(now, articles):
+    """Public delayed chart data, no paid API calls; timestamp-aligned observations only."""
+    from concurrent.futures import ThreadPoolExecutor
+    import urllib.parse
+    symbols={"usd_jpy":"JPY=X","dxy":"DX-Y.NYB","wti_futures":"CL=F","sp500_futures":"ES=F","us_10y_yield_index":"^TNX"}
+    def fetch(item):
+        name,symbol=item
+        url="https://query1.finance.yahoo.com/v8/finance/chart/"+urllib.parse.quote(symbol,safe="")+"?interval=5m&range=2d"
+        try:
+            obj=json.loads(request_bytes(url))["chart"]["result"][0]
+            q=obj["indicators"]["quote"][0]["close"]
+            bars={int(t):float(v) for t,v in zip(obj["timestamp"],q) if v is not None and int(t)+300<=now.timestamp()}
+            if not bars: raise ValueError("no completed bars")
+            return name,{"status":"OBSERVED_PROVIDER_DELAY_UNVERIFIED","source":url,"last_bar_utc":datetime.fromtimestamp(max(bars),timezone.utc).isoformat(),"bars":bars}
+        except Exception as e: return name,{"status":"ERROR","source":url,"error":str(e)[:200],"bars":{}}
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        series=dict(pool.map(fetch,symbols.items()))
+    # Use saved canonical USDJPY candles for move detection, not Yahoo FX.
+    moves=[]
+    try:
+        from zoneinfo import ZoneInfo
+        raw=json.loads(Path("data/usdjpy_1min.json").read_text())["data"]["values"]
+        fx={int(datetime.strptime(b["datetime"],"%Y-%m-%d %H:%M:%S").replace(tzinfo=ZoneInfo("Asia/Tokyo")).timestamp()):float(b["close"]) for b in raw}
+        for t in sorted(fx):
+            if t<now.timestamp()-24*3600 or t+60>now.timestamp() or any(t-i*60 not in fx for i in range(6)): continue
+            pips=(fx[t]-fx[t-300])*100
+            if abs(pips)>=10: moves.append((t,pips))
+        selected=[]
+        for t,pips in sorted(moves,key=lambda x:abs(x[1]),reverse=True):
+            if all(abs(t-u)>900 for u,_ in selected): selected.append((t,pips))
+            if len(selected)>=8: break
+        evidence=[]
+        for t,pips in sorted(selected,reverse=True):
+            start=t-300
+            leads=[]
+            for a in articles:
+                try: ts=datetime.fromisoformat(a["source_timestamp_utc"]).timestamp()
+                except (ValueError,TypeError,KeyError): continue
+                if start-1800<=ts<start: leads.append(a)
+            aligned={}
+            for name,info in series.items():
+                bars=info["bars"]
+                # Exact completed 5m boundaries enclosing the FX move; no nearest stale quote.
+                before=(start//300)*300-300
+                after=((t+60+299)//300)*300-300
+                if before in bars and after in bars and after>before and after+300<=now.timestamp():
+                    aligned[name]={"from_bar_utc":datetime.fromtimestamp(before,timezone.utc).isoformat(),"to_bar_utc":datetime.fromtimestamp(after,timezone.utc).isoformat(),"change":round(bars[after]-bars[before],6)}
+                else: aligned[name]={"status":"NO_ALIGNED_BARS"}
+            evidence.append({"window_start_utc":datetime.fromtimestamp(start,timezone.utc).isoformat(),"window_end_utc":datetime.fromtimestamp(t+60,timezone.utc).isoformat(),"usd_jpy_change_pips":round(pips,3),"preceding_publications":sorted(leads,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:5],"cross_market":aligned,"causality":"UNCONFIRMED"})
+        move_status="OBSERVED"
+    except Exception as e:
+        evidence=[];move_status="ERROR: "+str(e)[:180]
+    return {"status":"OBSERVED" if any(x["bars"] for x in series.values()) else "UNAVAILABLE","move_status":move_status,"series":{k:{a:b for a,b in v.items() if a!="bars"} for k,v in series.items()},"moves":evidence,"note":"Publication time is not event time; chart delay and exchange sessions may differ. No causal attribution."}
+
 def main():
     now=datetime.now(timezone.utc)
     result=collect(now,pre_minutes=90,post_minutes=0,now=now,sources=("google_rss","official_rss"))
@@ -66,6 +120,6 @@ def main():
     obj={"generated_at_utc":now.isoformat(),"scan_from_utc":(now-timedelta(minutes=90)).isoformat(),
          "status":"OK" if all(x["status"]=="ok" for x in feeds) else "PARTIAL" if any(x["status"]=="ok" for x in feeds) else "FAILED",
          "news_sources":feeds,"candidates":rows[:200],"calendar":calendar,
-         "cross_market": cross_market(now),"confirmed_catalyst":None}
+         "cross_market": cross_market(now),"intraday_evidence":intraday_evidence(now,rows),"confirmed_catalyst":None}
     path.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n")
 if __name__=="__main__": main()

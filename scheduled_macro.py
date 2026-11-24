@@ -39,7 +39,7 @@ def intraday_evidence(now, articles):
         try:
             obj=json.loads(request_bytes(url))["chart"]["result"][0]
             q=obj["indicators"]["quote"][0]["close"]
-            bars={int(t):float(v) for t,v in zip(obj["timestamp"],q) if v is not None and int(t)+300<=now.timestamp()}
+            bars={int(t):float(v) for t,v in zip(obj["timestamp"],q) if v is not None and int(t)%300==0 and int(t)+300<=now.timestamp()}
             if not bars: raise ValueError("no completed bars")
             return name,{"status":"OBSERVED_PROVIDER_DELAY_UNVERIFIED","source":url,"last_bar_utc":datetime.fromtimestamp(max(bars),timezone.utc).isoformat(),"bars":bars}
         except Exception as e: return name,{"status":"ERROR","source":url,"error":str(e)[:200],"bars":{}}
@@ -89,7 +89,14 @@ def main():
     try: old=json.loads(path.read_text())
     except (OSError,ValueError): old={}
     cutoff=(now-timedelta(hours=24)).isoformat()
-    rows=deduplicate(result["candidates"]+old.get("candidates",[]))
+    # Bootstrap missing history in bounded windows using the existing scanner.
+    backfill=[]
+    if not old.get("history_bootstrapped"):
+        for hours in (3,6,9,12,15,18,21):
+            anchor=now-timedelta(hours=hours)
+            scan=collect(anchor,pre_minutes=180,post_minutes=0,now=now,sources=("google_rss","official_rss"))
+            backfill.extend(scan["candidates"])
+    rows=deduplicate(result["candidates"]+old.get("candidates",[])+backfill)
     rows=[x for x in rows if x.get("source_timestamp_utc") and x["source_timestamp_utc"]>=cutoff]
     rows.sort(key=lambda x:x["source_timestamp_utc"],reverse=True)
     feeds=result["news_sources"]
@@ -119,7 +126,7 @@ def main():
     except Exception as e: calendar["error"]=str(e)[:200]
     obj={"generated_at_utc":now.isoformat(),"scan_from_utc":(now-timedelta(minutes=90)).isoformat(),
          "status":"OK" if all(x["status"]=="ok" for x in feeds) else "PARTIAL" if any(x["status"]=="ok" for x in feeds) else "FAILED",
-         "news_sources":feeds,"candidates":rows[:200],"calendar":calendar,
+         "news_sources":feeds,"history_bootstrapped":True,"candidates":rows[:1200],"calendar":calendar,
          "cross_market": cross_market(now),"intraday_evidence":intraday_evidence(now,rows),"confirmed_catalyst":None}
     path.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n")
 if __name__=="__main__": main()

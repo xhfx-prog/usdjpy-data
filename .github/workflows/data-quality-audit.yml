@@ -11,6 +11,10 @@ on:
       - 'analyze_usdjpy.py'
       - '.github/workflows/data-quality-audit.yml'
   workflow_dispatch:
+  workflow_run:
+    workflows: ['Update USDJPY Data']
+    types: [completed]
+    branches: [main]
   schedule:
     - cron: '50 20,23 * * *'
 permissions:
@@ -20,10 +24,13 @@ concurrency:
   cancel-in-progress: false
 jobs:
   audit:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - name: Run offline analysis and data quality regression suite
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Validate saved datasets

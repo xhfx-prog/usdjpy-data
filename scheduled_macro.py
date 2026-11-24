@@ -63,10 +63,14 @@ def intraday_evidence(now, articles):
         for t,pips in sorted(selected,reverse=True):
             start=t-300
             leads=[]
+            during=[]
+            followups=[]
             for a in articles:
                 try: ts=datetime.fromisoformat(a["source_timestamp_utc"]).timestamp()
                 except (ValueError,TypeError,KeyError): continue
                 if start-1800<=ts<start: leads.append(a)
+                elif start<=ts<t+60: during.append(a)
+                elif t+60<=ts<t+960: followups.append(a)
             aligned={}
             for name,info in series.items():
                 bars=info["bars"]
@@ -76,7 +80,7 @@ def intraday_evidence(now, articles):
                 if before in bars and after in bars and after>before and after+300<=now.timestamp():
                     aligned[name]={"from_bar_utc":datetime.fromtimestamp(before,timezone.utc).isoformat(),"to_bar_utc":datetime.fromtimestamp(after,timezone.utc).isoformat(),"change":round(bars[after]-bars[before],6)}
                 else: aligned[name]={"status":"NO_ALIGNED_BARS"}
-            evidence.append({"window_start_utc":datetime.fromtimestamp(start,timezone.utc).isoformat(),"window_end_utc":datetime.fromtimestamp(t+60,timezone.utc).isoformat(),"usd_jpy_change_pips":round(pips,3),"preceding_publications":sorted(leads,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:5],"cross_market":aligned,"causality":"UNCONFIRMED"})
+            evidence.append({"window_start_utc":datetime.fromtimestamp(start,timezone.utc).isoformat(),"window_end_utc":datetime.fromtimestamp(t+60,timezone.utc).isoformat(),"usd_jpy_change_pips":round(pips,3),"preceding_publications":sorted(leads,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:5],"during_move_publications":sorted(during,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:8],"post_move_publications_not_initial_triggers":sorted(followups,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:5],"cross_market":aligned,"causality":"UNCONFIRMED"})
         move_status="OBSERVED"
     except Exception as e:
         evidence=[];move_status="ERROR: "+str(e)[:180]
@@ -93,7 +97,7 @@ def official_calendar_links():
 
 def main():
     now=datetime.now(timezone.utc)
-    result=collect(now,pre_minutes=90,post_minutes=0,now=now,sources=("google_rss","official_rss"))
+    result=collect(now,pre_minutes=360,post_minutes=0,now=now,sources=("google_rss","official_rss"),candidate_limit=600)
     path=Path("data/macro_latest.json")
     try: old=json.loads(path.read_text())
     except (OSError,ValueError): old={}
@@ -103,7 +107,7 @@ def main():
     if not old.get("history_bootstrapped"):
         for hours in (3,6,9,12,15,18,21):
             anchor=now-timedelta(hours=hours)
-            scan=collect(anchor,pre_minutes=180,post_minutes=0,now=now,sources=("google_rss","official_rss"))
+            scan=collect(anchor,pre_minutes=180,post_minutes=0,now=now,sources=("google_rss","official_rss"),candidate_limit=600)
             backfill.extend(scan["candidates"])
     rows=deduplicate(result["candidates"]+old.get("candidates",[])+backfill)
     rows=[x for x in rows if x.get("source_timestamp_utc") and x["source_timestamp_utc"]>=cutoff]
@@ -133,9 +137,9 @@ def main():
                     except ValueError: continue
         calendar.update(status="OK",events=sorted(events,key=lambda x:x["at_jst"]),coverage="BLS_ONLY")
     except Exception as e: calendar["error"]=str(e)[:200]
-    obj={"generated_at_utc":now.isoformat(),"scan_from_utc":(now-timedelta(minutes=90)).isoformat(),
+    obj={"generated_at_utc":now.isoformat(),"scan_from_utc":(now-timedelta(minutes=360)).isoformat(),
          "status":"OK" if all(x["status"]=="ok" for x in feeds) else "PARTIAL" if any(x["status"]=="ok" for x in feeds) else "FAILED",
-         "news_sources":feeds,"history_bootstrapped":True,"candidates":rows[:1200],"calendar":calendar,"additional_calendar_sources":official_calendar_links(),
+         "news_sources":feeds,"history_bootstrapped":True,"candidates":rows,"candidate_count":len(rows),"calendar":calendar,"additional_calendar_sources":official_calendar_links(),
          "cross_market": cross_market(now),"intraday_evidence":intraday_evidence(now,rows),"confirmed_catalyst":None}
     path.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n")
 if __name__=="__main__": main()

@@ -32,6 +32,8 @@ TOPICS={
     "us_government":'(Trump OR tariffs OR Treasury OR "White House" OR "State Department" OR Congress)',
     "energy":'(OPEC OR crude OR petroleum OR Hormuz OR pipeline OR LNG OR refinery OR embargo)',
     "monetary_economy":'("Federal Reserve" OR "Bank of Japan" OR "interest rates" OR inflation OR payrolls OR employment OR recession)',
+    "us_data":'(CPI OR PCE OR "nonfarm payrolls" OR "jobless claims" OR "retail sales" OR "ISM" OR "GDP")',
+    "us_policy":'("Treasury auction" OR "Treasury Secretary" OR "Fed governor" OR "FOMC" OR "White House" OR "export controls")',
     "global_risks":'(China OR Taiwan OR "trade agreement" OR "debt crisis" OR "bank failure" OR bond OR financial)',
 }
 CHANNEL_EFFECTS={
@@ -40,6 +42,8 @@ CHANNEL_EFFECTS={
     "energy":["crude_oil","inflation_expectations","rates_if_verified"],
     "monetary_economy":["us_jp_rate_differential","treasury_yields","policy_expectations"],
     "global_risks":["risk_appetite","capital_flows","us_jp_yields"],
+    "us_data":["us_rate_expectations","us_jp_rate_differential"],
+    "us_policy":["us_rate_expectations","trade_growth_inflation","risk_appetite"],
     "official_fed":["us_rate_expectations","us_treasury_yields"],
 }
 RECAP_PAT=re.compile(r'\b(?:USD/JPY|USDJPY|forex|FX market|yen (?:gains|falls|weakens|strengthens)|dollar (?:gains|falls) (?:against|versus) yen)\b',re.I)

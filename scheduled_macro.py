@@ -86,10 +86,30 @@ def intraday_evidence(now, articles):
                 change=aligned.get(name,{}).get("change")
                 checks[name]="UNAVAILABLE" if change is None else "FLAT" if change==0 else "ALIGNED" if change*expected>0 else "OPPOSED"
             evidence.append({"directional_crosschecks_not_causality":checks,"window_start_utc":datetime.fromtimestamp(start,timezone.utc).isoformat(),"window_end_utc":datetime.fromtimestamp(t+60,timezone.utc).isoformat(),"usd_jpy_change_pips":round(pips,3),"preceding_publications":sorted(leads,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:5],"during_move_publications":sorted(during,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:8],"post_move_publications_not_initial_triggers":sorted(followups,key=lambda a:a["priority_score_not_causal_confidence"],reverse=True)[:5],"cross_market":aligned,"causality":"UNCONFIRMED"})
+        publication_reactions=[]
+        for a in sorted(articles,key=lambda x:x.get("priority_score_not_causal_confidence",0),reverse=True)[:100]:
+            try: ts=datetime.fromisoformat(a["source_timestamp_utc"]).timestamp()
+            except (ValueError,TypeError,KeyError): continue
+            base=int(ts//60)*60-60
+            reactions={}
+            for horizon in (5,15,30):
+                end=int(ts//60)*60+(horizon-1)*60
+                if end+60<=now.timestamp() and all(k in fx for k in range(base,end+1,60)):
+                    reactions[str(horizon)]=round((fx[end]-fx[base])*100,3)
+                else: reactions[str(horizon)]=None
+            market={}
+            before=int(ts//300)*300-300
+            after=int(ts//300)*300+600
+            for name,info in series.items():
+                bars=info["bars"]
+                if after+300<=now.timestamp() and all(k in bars for k in range(before,after+1,300)):
+                    market[name]=round(bars[after]-bars[before],6)
+                else: market[name]=None
+            publication_reactions.append({"title":a["title"],"url":a["url"],"source_timestamp_utc":a["source_timestamp_utc"],"source_timestamp_kind":a.get("source_timestamp_kind"),"usd_jpy_change_pips_by_minutes":reactions,"cross_market_approximately_15min_change":market,"causality":"UNCONFIRMED"})
         move_status="OBSERVED"
     except Exception as e:
-        evidence=[];move_status="ERROR: "+str(e)[:180]
-    return {"status":"OBSERVED" if any(x["bars"] for x in series.values()) else "UNAVAILABLE","move_status":move_status,"series":{k:{a:b for a,b in v.items() if a!="bars"} for k,v in series.items()},"moves":evidence,"note":"Publication time is not event time; chart delay and exchange sessions may differ. No causal attribution."}
+        evidence=[];publication_reactions=[];move_status="ERROR: "+str(e)[:180]
+    return {"status":"OBSERVED" if any(x["bars"] for x in series.values()) else "UNAVAILABLE","move_status":move_status,"series":{k:{a:b for a,b in v.items() if a!="bars"} for k,v in series.items()},"moves":evidence,"publication_reactions":publication_reactions,"note":"Publication time is not event time; chart delay and exchange sessions may differ. No causal attribution."}
 
 def official_calendar_links():
     # Source registry only: these links are not parsed event records.

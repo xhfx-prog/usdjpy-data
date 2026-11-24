@@ -30,7 +30,7 @@ def cross_market(now):
 
 def main():
     now=datetime.now(timezone.utc)
-    result=collect(now,pre_minutes=90,post_minutes=0,now=now)
+    result=collect(now,pre_minutes=90,post_minutes=0,now=now,sources=("google_rss","official_rss"))
     path=Path("data/macro_latest.json")
     try: old=json.loads(path.read_text())
     except (OSError,ValueError): old={}

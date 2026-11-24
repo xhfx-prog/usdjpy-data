@@ -4,6 +4,7 @@ from datetime import datetime,timedelta,timezone
 from pathlib import Path
 from investigate_world_news import collect, deduplicate, request_bytes
 import xml.etree.ElementTree as ET
+from economic_calendar import collect_calendar
 
 def cross_market(now):
     """Public daily observations; never label these as intraday reactions."""
@@ -164,7 +165,7 @@ def main():
     except Exception as e: calendar["error"]=str(e)[:200]
     obj={"generated_at_utc":now.isoformat(),"scan_from_utc":(now-timedelta(minutes=360)).isoformat(),
          "status":"OK" if all(x["status"]=="ok" for x in feeds) else "PARTIAL" if any(x["status"]=="ok" for x in feeds) else "FAILED",
-         "news_sources":feeds,"history_bootstrapped":True,"candidates":rows,"candidate_count":len(rows),"calendar":calendar,"additional_calendar_sources":official_calendar_links(),
+         "news_sources":feeds,"history_bootstrapped":True,"candidates":rows,"candidate_count":len(rows),"calendar":calendar,"additional_calendar_sources":official_calendar_links(),"economic_calendar":collect_calendar(now,old.get("economic_calendar")),
          "cross_market": cross_market(now),"intraday_evidence":intraday_evidence(now,rows),"confirmed_catalyst":None}
     path.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n")
 if __name__=="__main__": main()

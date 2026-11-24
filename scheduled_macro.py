@@ -122,8 +122,11 @@ def official_calendar_links():
         "Japan Cabinet Office":"https://www.esri.cao.go.jp/en/sna/kouhyou/kouhyou_top.html"}}
 
 def main():
+    from functools import lru_cache
+    # Reuse identical successful feed responses within this run only.
+    cached_fetch=lru_cache(maxsize=128)(request_bytes)
     now=datetime.now(timezone.utc)
-    result=collect(now,pre_minutes=360,post_minutes=0,now=now,sources=("google_rss","official_rss"),candidate_limit=600)
+    result=collect(now,pre_minutes=360,post_minutes=0,now=now,sources=("google_rss","official_rss"),candidate_limit=600,fetcher=cached_fetch)
     path=Path("data/macro_latest.json")
     try: old=json.loads(path.read_text())
     except (OSError,ValueError): old={}
@@ -133,7 +136,7 @@ def main():
     if not old.get("history_bootstrapped"):
         for hours in (3,6,9,12,15,18,21):
             anchor=now-timedelta(hours=hours)
-            scan=collect(anchor,pre_minutes=180,post_minutes=0,now=now,sources=("google_rss","official_rss"),candidate_limit=600)
+            scan=collect(anchor,pre_minutes=180,post_minutes=0,now=now,sources=("google_rss","official_rss"),candidate_limit=600,fetcher=cached_fetch)
             backfill.extend(scan["candidates"])
     rows=deduplicate(result["candidates"]+old.get("candidates",[])+backfill)
     rows=[x for x in rows if x.get("source_timestamp_utc") and x["source_timestamp_utc"]>=cutoff]

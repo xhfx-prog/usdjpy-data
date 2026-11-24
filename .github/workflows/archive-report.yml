@@ -1,0 +1,29 @@
+name: Archive morning USDJPY reports
+on:
+  schedule:
+    - cron: '0 21 * * 0-4'
+    - cron: '0 0 * * 1-5'
+permissions:
+  contents: write
+concurrency:
+  group: morning-report-archive
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python archive_report.py
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/report_snapshots/
+          git commit -m "Archive morning USDJPY report"
+          git pull --rebase origin main
+          git push origin HEAD:main

@@ -23,7 +23,8 @@ def freshness(obj):
         return ""
     return str(next((obj[k] for k in
         ("fetched_at", "updated_at", "audited_at_utc",
-         "last_run_utc", "generated_at_utc", "recorded_at_utc")
+         "last_run_utc", "generated_at_utc", "recorded_at_utc",
+         "retrieved_at_utc", "checked_at_utc", "tested_at_utc", "at_utc")
         if obj.get(k)), ""))
 
 

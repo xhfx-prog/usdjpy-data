@@ -5,6 +5,8 @@ import re
 import subprocess
 import tempfile
 import urllib.request
+import urllib.error
+import os
 import time
 import hashlib
 
@@ -88,7 +90,8 @@ def main():
     test_metrics()
     with tempfile.TemporaryDirectory() as tmp:
         pdf = pathlib.Path(tmp)/"bulletin.pdf"
-        req = urllib.request.Request(URL, headers={"User-Agent":"Mozilla/5.0"})
+        source = os.environ.get('CME_BULLETIN_AUTHORIZED_URL', URL)
+        req = urllib.request.Request(source, headers={"User-Agent":"Mozilla/5.0"})
         for attempt in range(3):
             try:
                 with urllib.request.urlopen(req, timeout=45) as r:
@@ -98,6 +101,8 @@ def main():
                 break
             except (OSError, ValueError) as e:
                 print(f'CME fetch attempt {attempt+1}: {type(e).__name__}: {e}', flush=True)
+                if isinstance(e, urllib.error.HTTPError) and e.code in (401, 403):
+                    raise RuntimeError('CME access denied; authorized data feed required; existing data retained') from e
                 if attempt == 2:
                     raise
                 time.sleep(5 * (attempt+1))
@@ -106,6 +111,7 @@ def main():
         pdf.write_bytes(raw)
         text = subprocess.check_output(["pdftotext","-f","1","-l","1","-layout",str(pdf),"-"],text=True)
     item = parse(text)
+    item["source"] = URL if source == URL else "configured authorized CME bulletin feed"
     now = dt.datetime.now(dt.timezone.utc)
     age = (now.date()-dt.date.fromisoformat(item["trade_date"])).days
     if age < -1 or age > 7:

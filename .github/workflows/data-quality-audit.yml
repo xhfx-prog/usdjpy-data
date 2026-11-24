@@ -1,0 +1,29 @@
+name: Offline data quality audit
+on:
+  push:
+    paths:
+      - 'scripts/audit_data_quality.py'
+      - '.github/workflows/data-quality-audit.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '50 20,23 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: offline-data-quality
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate saved datasets
+        run: python3 scripts/audit_data_quality.py
+      - name: Upload detailed audit even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-quality-audit
+          path: /tmp/usdjpy_quality_audit.json
+          if-no-files-found: error

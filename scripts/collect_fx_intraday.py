@@ -5,6 +5,7 @@ import pathlib
 import urllib.request
 import urllib.parse
 import statistics
+from concurrent.futures import ThreadPoolExecutor
 
 OUT=pathlib.Path("data/fx_intraday.json")
 SYMBOLS={"usd_jpy":"USDJPY=X","eur_jpy":"EURJPY=X","gbp_jpy":"GBPJPY=X","eur_usd":"EURUSD=X","gbp_usd":"GBPUSD=X","yen_future":"6J=F","dxy":"DX-Y.NYB","us10y":"^TNX"}
@@ -55,7 +56,9 @@ def analyze(series):
         prior=[vol(t-j*86400) for j in range(1,5)]
         prior=[v for v in prior if v is not None and v>0]
         ratio=current/statistics.mean(prior) if current is not None and len(prior)>=3 else None
-        item={"end_bar_start_utc":dt.datetime.fromtimestamp(t,dt.timezone.utc).isoformat(),"window_minutes":30,"usd_jpy_pips":round(pips,2),"returns":moves,"classification":label,"yen_futures_volume":current,"same_utc_time_baseline_days":len(prior),"volume_ratio":ratio}
+        expected={"dxy":-1,"us10y":-1,"yen_future":1}
+        crosschecks={k:("UNAVAILABLE" if moves.get(k) is None else "FLAT" if moves[k]==0 else "ALIGNED" if moves[k]*direction>0 else "OPPOSED") for k,direction in expected.items()}
+        item={"directional_crosschecks_not_causality":crosschecks,"end_bar_start_utc":dt.datetime.fromtimestamp(t,dt.timezone.utc).isoformat(),"window_minutes":30,"usd_jpy_pips":round(pips,2),"returns":moves,"classification":label,"yen_futures_volume":current,"same_utc_time_baseline_days":len(prior),"volume_ratio":ratio}
         if events and t-events[-1][0]<=1800:
             if pips<events[-1][1]["usd_jpy_pips"]: events[-1]=(t,item)
         else: events.append((t,item))
@@ -63,9 +66,14 @@ def analyze(series):
 def main():
     now=int(dt.datetime.now(dt.timezone.utc).timestamp())
     series={};errors={}
-    for name,symbol in SYMBOLS.items():
-        try: series[name]=fetch(symbol,now)
-        except Exception as e: errors[name]=str(e)
+    def collect(item):
+        name,symbol=item
+        try: return name,fetch(symbol,now),None
+        except Exception as e: return name,None,str(e)
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        for name,result,error in pool.map(collect,SYMBOLS.items()):
+            if error is not None: errors[name]=error
+            else: series[name]=result
     if not series: raise RuntimeError(str(errors))
     payload={"retrieved_at_utc":dt.datetime.fromtimestamp(now,dt.timezone.utc).isoformat(),"provider":"Yahoo Finance unofficial chart endpoint; delayed; not official CME or EBS; futures active contract only","series":series,"errors":errors,"events":analyze(series),"limitations":"30-minute returns are descriptive not causal. Futures volume is not spot volume or all-contract volume. Baseline uses same UTC time, not holiday/DST adjusted."}
     OUT.parent.mkdir(exist_ok=True)

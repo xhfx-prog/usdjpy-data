@@ -7,14 +7,14 @@ import urllib.parse
 import statistics
 
 OUT=pathlib.Path("data/fx_intraday.json")
-SYMBOLS={"usd_jpy":"JPY=X","eur_jpy":"EURJPY=X","gbp_jpy":"GBPJPY=X","eur_usd":"EURUSD=X","gbp_usd":"GBPUSD=X","yen_future":"6J=F","dxy":"DX-Y.NYB","us10y":"^TNX"}
+SYMBOLS={"usd_jpy":"USDJPY=X","eur_jpy":"EURJPY=X","gbp_jpy":"GBPJPY=X","eur_usd":"EURUSD=X","gbp_usd":"GBPUSD=X","yen_future":"6J=F","dxy":"DX-Y.NYB","us10y":"^TNX"}
 def fetch(symbol,now):
     url="https://query1.finance.yahoo.com/v8/finance/chart/"+urllib.parse.quote(symbol,safe="")+"?interval=5m&range=5d"
     req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0"})
     with urllib.request.urlopen(req,timeout=25) as r:
         x=json.load(r)["chart"]["result"][0]
-    if x["meta"]["symbol"]!=symbol or x["meta"].get("dataGranularity")!="5m":
-        raise ValueError("Symbol or granularity mismatch")
+    if x["meta"]["symbol"] not in ({symbol,"JPY=X","USDJPY=X"} if symbol in ("JPY=X","USDJPY=X") else {symbol}) or x["meta"].get("dataGranularity")!="5m":
+        raise ValueError("Symbol or granularity mismatch: "+str((symbol,x["meta"].get("symbol"),x["meta"].get("dataGranularity"))))
     q=x["indicators"]["quote"][0]
     bars={}
     # Exclude last 20 minutes conservatively because source quotes can be delayed.

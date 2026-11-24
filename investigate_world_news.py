@@ -232,9 +232,9 @@ def deduplicate(rows):
             continue
         p=urllib.parse.urlparse(article["url"])
         host=p.hostname or ""
-        key=host+p.path.rstrip("/")
+        key=(host,p.path.rstrip("/"),tuple(sorted((k,v) for k,v in urllib.parse.parse_qsl(p.query,keep_blank_values=True) if not k.lower().startswith("utm_") and k.lower() not in ("fbclid","gclid"))))
         if host.endswith("news.google.com"):
-            key="google-"+re.sub("[^a-z0-9]","",article["title"].lower())[:100]
+            key=("google",re.sub(r"[^\w]","",article["title"].casefold()),str(article.get("publisher") or "").casefold())
         old=unique.get(key)
         if old is None or (not old["source_timestamp_utc"] and article["source_timestamp_utc"]):
             unique[key]=article

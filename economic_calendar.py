@@ -37,18 +37,18 @@ def collect_calendar(now, previous=None, fetcher=request_bytes):
             if not title: continue
             key=row["country"]+"|"+title+"|"+dt.astimezone(UTC).isoformat()
             event=saved.get(key,{"id":key,"title":title,"currency":row["country"],"at_utc":dt.astimezone(UTC).isoformat(),"at_jst":dt.astimezone(JST).isoformat(),"at_et":dt.astimezone(NY).isoformat()})
-            event.update(impact=row.get("impact"),vendor_forecast=row.get("forecast") or None,vendor_previous=row.get("previous") or None,last_seen_utc=now.isoformat())
-            if now<dt and row.get("forecast"):
+            event.update(impact=row.get("impact"),vendor_forecast=row.get("forecast") if row.get("forecast") not in (None,"") else None,vendor_previous=row.get("previous") if row.get("previous") not in (None,"") else None,last_seen_utc=now.isoformat())
+            if now<dt and row.get("forecast") not in (None,""):
                 event["pre_release_forecast"]=row["forecast"]
                 event["forecast_observed_at_utc"]=now.isoformat()
-            if now<dt and row.get("previous"):
+            if now<dt and row.get("previous") not in (None,""):
                 event["pre_release_previous"]=row["previous"]
-            if now>=dt and row.get("actual"):
+            if now>=dt and row.get("actual") not in (None,""):
                 event["vendor_actual"]=row["actual"]
                 event["actual_observed_at_utc"]=now.isoformat()
             event["surprise"]=surprise(event.get("vendor_actual"),event.get("pre_release_forecast"))
             event["official_actual_verified"]=False
-            event["result_status"]="VENDOR_ACTUAL" if event.get("vendor_actual") else "AWAITING_ACTUAL" if now>=dt else "SCHEDULED"
+            event["result_status"]="VENDOR_ACTUAL" if event.get("vendor_actual") not in (None,"") else "AWAITING_ACTUAL" if now>=dt else "SCHEDULED"
             saved[key]=event
             count+=1
         status="OK" if count else "NO_MATCHING_EVENTS"

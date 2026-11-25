@@ -7,6 +7,7 @@ on:
     paths:
       - 'control/deploy_worker_request.json'
       - 'cloudflare/worker.js'
+      - '.github/workflows/deploy-worker.yml'
   workflow_dispatch:
     inputs:
       confirmation:
@@ -44,7 +45,7 @@ jobs:
               raise SystemExit(1)
           subprocess.run(["git","fetch","--no-tags","--depth=2","origin",before],check=True)
           changed=subprocess.check_output(["git","diff","--name-only",before,"HEAD"],text=True).splitlines()
-          source="cloudflare/worker.js" in changed
+          source=any(f in changed for f in ("cloudflare/worker.js", ".github/workflows/deploy-worker.yml"))
           request="control/deploy_worker_request.json" in changed
           if not source and not request:
               raise SystemExit("No Worker source or deploy request diff; refusing deployment")
@@ -139,6 +140,10 @@ jobs:
           git add data/deploy_worker_status.json
           if ! git diff --cached --quiet; then
             git commit -m "Record Cloudflare Worker deployment status"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            for attempt in 1 2 3 4 5; do
+              git pull --rebase origin main
+              if git push origin HEAD:main; then exit 0; fi
+              sleep "$((2 * attempt))"
+            done
+            exit 1
           fi

@@ -6,6 +6,31 @@ from investigate_world_news import collect, deduplicate, request_bytes
 import xml.etree.ElementTree as ET
 from economic_calendar import collect_calendar
 
+def economic_release_snapshot(previous, now):
+    url = "https://usdjpy-chart.xxhappyfrenzyxx.workers.dev/economic-releases"
+    try:
+        latest = json.loads(request_bytes(url, timeout=14))
+        if not isinstance(latest.get("sources"), list) or not latest["sources"]:
+            raise ValueError("Missing release sources")
+        if not isinstance(latest.get("checked_at_utc"), str):
+            raise ValueError("Missing release check timestamp")
+        saved = {item["url"]: item for item in previous.get("sources", [])}
+        sources = []
+        cutoff = now - timedelta(hours=36)
+        for item in latest["sources"]:
+            if not isinstance(item.get("url"), str) or not isinstance(item.get("events"), list):
+                raise ValueError("Invalid release source")
+            if item.get("status") == "UNAVAILABLE" and item["url"] in saved:
+                older = saved[item["url"]]
+                events = [event for event in older["events"] if datetime.fromisoformat(event["at_utc"]) >= cutoff]
+                if events:
+                    item = {**older, "events": events, "status": "SCHEDULED_FALLBACK", "live_error": item.get("error")}
+            sources.append(item)
+    except (OSError, ValueError, TypeError, AttributeError, KeyError) as error:
+        return {**previous, "last_attempt_utc": now.isoformat(), "error": str(error)[:200]}
+    return {**latest, "sources": sources, "last_attempt_utc": now.isoformat()}
+
+
 def cross_market(now):
     """Public daily observations; never label these as intraday reactions."""
     from concurrent.futures import ThreadPoolExecutor
@@ -169,6 +194,7 @@ def main():
     obj={"generated_at_utc":now.isoformat(),"scan_from_utc":(now-timedelta(minutes=360)).isoformat(),
          "status":"OK" if all(x["status"]=="ok" for x in feeds) else "PARTIAL" if any(x["status"]=="ok" for x in feeds) else "FAILED",
          "news_sources":feeds,"history_bootstrapped":True,"candidates":rows,"candidate_count":len(rows),"calendar":calendar,"additional_calendar_sources":official_calendar_links(),"economic_calendar":collect_calendar(now,old.get("economic_calendar")),
+         "economic_release_snapshot": economic_release_snapshot(old.get("economic_release_snapshot") or {}, now),
          "cross_market": cross_market(now),"intraday_evidence":intraday_evidence(now,rows),"confirmed_catalyst":None}
     path.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n")
 if __name__=="__main__": main()

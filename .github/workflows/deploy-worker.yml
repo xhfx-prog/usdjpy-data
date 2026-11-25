@@ -7,6 +7,7 @@ on:
     paths:
       - 'control/deploy_worker_request.json'
       - 'cloudflare/worker.js'
+      - 'cloudflare/wrangler.toml'
       - '.github/workflows/deploy-worker.yml'
   workflow_dispatch:
     inputs:
@@ -45,7 +46,7 @@ jobs:
               raise SystemExit(1)
           subprocess.run(["git","fetch","--no-tags","--depth=2","origin",before],check=True)
           changed=subprocess.check_output(["git","diff","--name-only",before,"HEAD"],text=True).splitlines()
-          source=any(f in changed for f in ("cloudflare/worker.js", ".github/workflows/deploy-worker.yml"))
+          source=any(f in changed for f in ("cloudflare/worker.js", "cloudflare/wrangler.toml", ".github/workflows/deploy-worker.yml"))
           request="control/deploy_worker_request.json" in changed
           if not source and not request:
               raise SystemExit("No Worker source or deploy request diff; refusing deployment")

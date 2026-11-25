@@ -46,8 +46,19 @@ jobs:
           new["candidates"] = rows
           new["candidate_count"] = len(rows)
           p.write_text(json.dumps(new, ensure_ascii=False, indent=2) + "\n")
+          # Keep leading candidates in each hour so both report windows retain coverage.
+          top = sorted(rows, key=lambda r: r.get("priority_score_not_causal_confidence") or 0, reverse=True)
+          buckets = {}
+          brief = []
+          for candidate in top:
+              hour = candidate["source_timestamp_utc"][:13]
+              if buckets.get(hour, 0) < 12:
+                  brief.append(candidate)
+                  buckets[hour] = buckets.get(hour, 0) + 1
+          view = {**new, "candidates": brief, "candidate_count": len(brief)}
+          Path("data/macro_brief_latest.json").write_text(json.dumps(view, ensure_ascii=False, separators=(",",":"))+"\n")
           PY
-            git add data/macro_latest.json
+            git add data/macro_latest.json data/macro_brief_latest.json
             if git diff --cached --quiet; then exit 0; fi
             git commit -m "Publish scheduled macro evidence"
             if git push origin HEAD:main; then exit 0; fi

@@ -61,9 +61,31 @@ def run(root):
     macro=parsed.get("macro_latest.json",{}); fx=parsed.get("fx_intraday.json",{})
     news=macro.get("candidates",[]); calendar=macro.get("economic_calendar",{})
     coverage={"macro_status":macro.get("status"),"news_count":len(news),"news_count_matches":len(news)==macro.get("candidate_count"),"news_missing_timestamp":sum(not x.get("source_timestamp_utc") for x in news),"calendar_status":calendar.get("status"),"calendar_events":len(calendar.get("events",[])),"calendar_actuals":sum(bool(x.get("vendor_actual")) for x in calendar.get("events",[])),"fx_series":{k:{"bars":len(v.get("bars",{})),"latest_epoch":v.get("latest_epoch")} for k,v in fx.get("series",{}).items()},"fx_errors":fx.get("errors",{}),"fx_events":len(fx.get("events",[]))}
+    releases=macro.get("economic_release_snapshot", {})
+    sources=releases.get("sources", [])
+    release_errors=[]
+    coverage["release_sources"]={}
+    for source in sources:
+        name=source.get("name")
+        events=source.get("events", [])
+        if not name or name in coverage["release_sources"]:
+            release_errors.append("missing or duplicate economic source name")
+            continue
+        coverage["release_sources"][name]={"status":source.get("status"),"actuals":len(events)}
+        for event in events:
+            try:
+                issued=datetime.fromisoformat(event["at_utc"].replace("Z","+00:00"))
+                observed=datetime.fromisoformat(source["observed_at_utc"].replace("Z","+00:00"))
+                if issued > observed or not (event.get("vendor_actual") or event.get("official_actual")):
+                    raise ValueError("invalid figure or timestamp")
+            except (TypeError, ValueError, KeyError) as error:
+                release_errors.append(f"{name}: {error}")
+    if macro and (not coverage["news_count_matches"] or coverage["news_missing_timestamp"]):
+        release_errors.append("macro news count or timestamp mismatch")
+    coverage["macro_integrity_errors"]=release_errors
     required=["macro_latest.json","fx_intraday.json","usdjpy_1min.json","usdjpy_1h.json","usdjpy_1day.json","mof_securities_weekly.json"]
     missing=[k for k in required if k not in parsed]
-    return {"checked_at_utc":datetime.now(timezone.utc).isoformat(),"status":"FAIL" if missing or any(v["status"]=="FAIL" for v in list(results.values())+list(manifests.values())) else "PASS","missing_required":missing,"files":results,"manifests":manifests,"coverage":coverage,"note":"PASS denotes file integrity, not market freshness or complete external coverage. Gap intervals include market closures."}
+    return {"checked_at_utc":datetime.now(timezone.utc).isoformat(),"status":"FAIL" if missing or release_errors or any(v["status"]=="FAIL" for v in list(results.values())+list(manifests.values())) else "PASS","missing_required":missing,"files":results,"manifests":manifests,"coverage":coverage,"note":"PASS denotes file integrity, not market freshness or complete external coverage. Gap intervals include market closures."}
 
 if __name__=="__main__":
     import sys

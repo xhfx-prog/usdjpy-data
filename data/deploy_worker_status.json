@@ -1,12 +1,12 @@
 {
-  "recorded_at_utc": "2026-11-25T13:53:22.509564+00:00",
-  "run_id": "45628099125",
-  "run_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/45628099125",
+  "recorded_at_utc": "2026-11-25T13:55:22.295559+00:00",
+  "run_id": "45628431138",
+  "run_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/45628431138",
   "event": "push",
   "request_sequence": 5,
   "expected_worker_blob_sha": "ec69b592583b09c1d432cb070086e53927c39616",
-  "actual_worker_blob_sha": "7594de27f488efd12c5f8fc10efa684aa3735c2d",
-  "github_sha": "b9931f0e6d1bbde7ee2280619943d251a06e5729",
+  "actual_worker_blob_sha": "6d28db291c964723b396e1c603ea3da013337015",
+  "github_sha": "736c41c02f1382016d1dcda9dc3666a8eb81bf7a",
   "deploy_outcome": "success",
   "mcp_verification_outcome": "success",
   "job_state_before_audit": "success"

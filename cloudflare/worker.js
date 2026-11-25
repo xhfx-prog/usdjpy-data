@@ -815,12 +815,14 @@ async function beaReleases(index, through) {
     const response = await releasePage(url);
     let title = "";
     let body = "";
+    let releaseDate = "";
     await new HTMLRewriter()
-      .on("h1", { text(chunk) { title += chunk.text; } })
-      .on("main", { text(chunk) { body += chunk.text; } })
+      .on("#home h1", { text(chunk) { title += chunk.text; } })
+      .on(".field--name-field-release-date", { text(chunk) { releaseDate += chunk.text; } })
+      .on(".release-body", { text(chunk) { body += chunk.text; } })
       .transform(response).arrayBuffer();
     body = body.replace(/&nbsp;|&#160;/gi, " ").replace(/\s+/g, " ");
-    const stamp = body.match(/EMBARGOED UNTIL RELEASE AT (\d{1,2}):(\d{2}) ([ap])\.?m\.? (EST|EDT),? \w+, ([A-Za-z]+ \d{1,2}, 20\d{2})/i);
+    const stamp = releaseDate.replace(/&nbsp;|&#160;/gi, " ").replace(/\s+/g, " ").match(/EMBARGOED UNTIL RELEASE AT (\d{1,2}):(\d{2}) ([ap])\.?m\.? (EST|EDT),? \w+, ([A-Za-z]+ \d{1,2}, 20\d{2})/i);
     if (!stamp) throw Error("BEA release timestamp not found");
     const hour = Number(stamp[1]) % 12 + (stamp[3].toLowerCase() === "p" ? 12 : 0);
     const offset = stamp[4].toUpperCase() === "EST" ? 5 : 4;
@@ -945,9 +947,12 @@ async function handleMCP(request, env) {
 
         if (name === "get_usdjpy_analysis") {
           data = await analysisWithFreshPython(env,args);
-          const releaseLookup = liveEconomicReleases(timestamp(data.latest_confirmed_1min_bar) + 60000);
+          const releaseCutoff = timestamp(data.latest_confirmed_1min_bar) + 60000;
+          const releaseLookup = liveEconomicReleases(releaseCutoff);
+          let scheduledReleases = [];
           try {
             const macro=await github("macro_latest.json");
+            scheduledReleases = macro.economic_release_snapshot?.sources || [];
             const age=(Date.now()-Date.parse(macro.generated_at_utc))/60000;
             const end=timestamp(data.latest_confirmed_1min_bar)+60000;
             const start=end-24*3600000;
@@ -965,7 +970,15 @@ async function handleMCP(request, env) {
                 .sort((a,b)=>b.priority_score_not_causal_confidence-a.priority_score_not_causal_confidence).slice(0,12),
               confirmed_catalyst:null};
           } catch(e) {data.macro_evidence={status:"UNAVAILABLE",error:String(e.message).slice(0,180)};}
-          data.macro_evidence.economic_releases = await releaseLookup;
+          data.macro_evidence.economic_releases = (await releaseLookup).map(source => {
+            if (source.status !== "UNAVAILABLE") return source;
+            const saved = scheduledReleases.find(item => item.url === source.url);
+            const events = (saved?.events || []).filter(event => {
+              const at = Date.parse(event.at_utc);
+              return at <= releaseCutoff && at >= releaseCutoff - 36 * 3600000;
+            });
+            return events.length ? { ...saved, events, status: "SCHEDULED_FALLBACK", live_error: source.error } : source;
+          });
         } else if (name === "get_usdjpy_bundle") {
           data = await bundle(env,args);
         } else if (name === "get_usdjpy_history") {
@@ -1129,8 +1142,9 @@ function validateToolArgs(name, args) {
 // Cloudflare API or GitHub write tokens in this public resource server.
 async function protectExpensiveRequest(request, env, url) {
   const isBundle = url.pathname === "/bundle";
-  if (!isBundle && url.pathname !== "/mcp") return null;
-  let isExpensive = isBundle;
+  const isCalendar = url.pathname === "/economic-releases" && request.method === "GET";
+  if (!isBundle && !isCalendar && url.pathname !== "/mcp") return null;
+  let isExpensive = isBundle || isCalendar;
   if (url.pathname === "/mcp" && request.method === "POST") {
     try {
       const rpc = await checkedRPC(request.clone());
@@ -1158,7 +1172,12 @@ async function protectExpensiveRequest(request, env, url) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if(url.pathname!=="/mcp" && url.pathname!=="/") return respond({error:"NOT_FOUND"},404);
+    if(url.pathname!=="/mcp" && url.pathname!=="/" && url.pathname!=="/economic-releases") {
+      return respond({error:"NOT_FOUND"},404);
+    }
+    if (url.pathname === "/economic-releases" && request.method !== "GET") {
+      return new Response(null,{status:405,headers:{Allow:"GET","Cache-Control":"no-store"}});
+    }
     const invalid=validateMCPEnvelope(request,url);
     if(invalid) return invalid;
     const denied = await protectExpensiveRequest(request,env,url);
@@ -1166,6 +1185,11 @@ export default {
 
     if (url.pathname === "/mcp") {
       return handleMCP(request,env);
+    }
+
+    if (url.pathname === "/economic-releases") {
+      const now = Date.now();
+      return respond({ checked_at_utc: new Date(now).toISOString(), sources: await liveEconomicReleases(now) });
     }
 
     return respond({

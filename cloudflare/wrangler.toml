@@ -3,6 +3,10 @@ main = "worker.js"
 compatibility_date = "2026-11-05"
 workers_dev = true
 
+[observability.logs]
+enabled = true
+invocation_logs = false
+
 [[services]]
 binding = "PYTHON_ANALYZER"
 service = "usdjpy-python-engine"

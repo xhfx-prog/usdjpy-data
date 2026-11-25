@@ -62,7 +62,7 @@ function merge(preferred, old) {
 // Index paths already include "data/".
 async function github(path) {
   const normalized = path.replace(/^data\//, "");
-  const url = normalized === "macro_latest.json"
+  const url = normalized.startsWith("macro_")
     ? ROOT + normalized + "?minute=" + Math.floor(Date.now() / 60000)
     : ROOT + normalized;
   const res = await fetch(url, {
@@ -979,7 +979,7 @@ async function handleMCP(request, env) {
           const releaseLookup = liveEconomicReleases(releaseCutoff);
           let scheduledReleases = [];
           try {
-            const macro=await github("macro_latest.json");
+            const macro=await github("macro_brief_latest.json");
             scheduledReleases = Array.isArray(macro.economic_release_snapshot?.sources)
               ? macro.economic_release_snapshot.sources : [];
             if (!Array.isArray(macro.candidates) || macro.candidate_count !== macro.candidates.length ||

@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['scheduled_macro.py', '.github/workflows/scheduled-macro.yml']
+    paths: ['scheduled_macro.py', 'investigate_world_news.py', '.github/workflows/scheduled-macro.yml']
 permissions:
   contents: write
 concurrency:

@@ -14,12 +14,32 @@ def economic_release_snapshot(previous, now):
             raise ValueError("Missing release sources")
         if not isinstance(latest.get("checked_at_utc"), str):
             raise ValueError("Missing release check timestamp")
+        checked = datetime.fromisoformat(latest["checked_at_utc"])
         saved = {item["url"]: item for item in previous.get("sources", [])}
+        seen_urls = set()
         sources = []
         cutoff = now - timedelta(hours=36)
         for item in latest["sources"]:
             if not isinstance(item.get("url"), str) or not isinstance(item.get("events"), list):
                 raise ValueError("Invalid release source")
+            if item["url"] in seen_urls:
+                raise ValueError("Duplicate release source")
+            seen_urls.add(item["url"])
+            if item.get("status") in ("VENDOR_ACTUALS", "OFFICIAL_ACTUALS"):
+                observed = datetime.fromisoformat(item["observed_at_utc"])
+                older = saved.get(item["url"], {})
+                def identity(event):
+                    return event["currency"], event["title"], event["at_utc"]
+                first_seen = {identity(event): event.get("first_scheduled_observed_at_utc")
+                              for event in older.get("events", [])}
+                for event in item["events"]:
+                    released = datetime.fromisoformat(event["at_utc"])
+                    if not (released <= checked <= observed) or not (event.get("vendor_actual") or event.get("official_actual")):
+                        raise ValueError("Invalid economic release figure or timestamp")
+                    first = first_seen.get(identity(event)) or observed.isoformat()
+                    event["first_scheduled_observed_at_utc"] = first
+                    event["first_scheduled_observed_after_release_seconds"] = int(
+                        (datetime.fromisoformat(first) - released).total_seconds())
             if item.get("status") == "UNAVAILABLE" and item["url"] in saved:
                 older = saved[item["url"]]
                 events = [event for event in older["events"] if datetime.fromisoformat(event["at_utc"]) >= cutoff]
@@ -196,5 +216,12 @@ def main():
          "news_sources":feeds,"history_bootstrapped":True,"candidates":rows,"candidate_count":len(rows),"calendar":calendar,"additional_calendar_sources":official_calendar_links(),"economic_calendar":collect_calendar(now,old.get("economic_calendar")),
          "economic_release_snapshot": economic_release_snapshot(old.get("economic_release_snapshot") or {}, now),
          "cross_market": cross_market(now),"intraday_evidence":intraday_evidence(now,rows),"confirmed_catalyst":None}
+    releases = obj["economic_release_snapshot"]
+    print(json.dumps({"economic_snapshot_error": releases.get("error"),
+                      "sources": [{"name": item.get("name"), "status": item.get("status"),
+                                   "events": len(item.get("events", [])), "error": item.get("error")}
+                                  for item in releases.get("sources", [])]}, ensure_ascii=False))
+    if obj["candidate_count"] != len(obj["candidates"]):
+        raise ValueError("Macro candidate count mismatch")
     path.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n")
 if __name__=="__main__": main()

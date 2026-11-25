@@ -731,7 +731,7 @@ const definitions = [
 // Report-first text projection; retain full raw data in structuredContent.
 const RELEASE_SOURCES = [
   { name: "GMO外貨", url: "https://www.gaikaex.com/gaikaex/mark/calendar/", format: "gmo" },
-  { name: "Forex Factory", url: "https://www.forexfactory.com/calendar/", format: "ff" }
+  { name: "Myfxbook", url: "https://www.myfxbook.com/forex-economic-calendar", format: "myfxbook" }
 ];
 
 function calendarDate(month, day, printedAt, offsetMinutes) {
@@ -749,19 +749,23 @@ function vendorNumber(value) {
 
 async function parseReleasePage(response, format, observedAt, through) {
   const rows = [];
-  let row, cell, zoneText = "";
+  const gmo = format === "gmo";
+  const rowSelector = gmo ? "table tr" : "tr.economicCalendarRow[data-row-id]";
+  let row, cell;
   const rewriter = new HTMLRewriter()
-    .on(format === "gmo" ? "table tr" : "tr.calendar__row[data-event-id]", {
+    .on(rowSelector, {
       element(element) {
-        row = { id: element.getAttribute("data-event-id"), cells: [] };
+        row = { id: element.getAttribute("data-row-id"), cells: [] };
         rows.push(row);
         element.onEndTag(() => { row = null; });
       }
     })
-    .on(format === "gmo" ? "table tr > td" : "tr.calendar__row[data-event-id] > td", {
+    .on(rowSelector + " > td", {
       element(element) {
         if (!row) return;
-        cell = { classes: (element.getAttribute("class") || "").split(/\s+/), text: "" };
+        const fields = ["actual", "concensus", "previous"];
+        const field = fields.find(name => element.hasAttribute("data-" + name));
+        cell = { isDate: (element.getAttribute("class") || "").split(/\s+/).includes("date"), field, text: "" };
         row.cells.push(cell);
         element.onEndTag(() => { cell = null; });
       },
@@ -769,45 +773,37 @@ async function parseReleasePage(response, format, observedAt, through) {
         if (cell) cell.text += chunk.text;
       }
     })
-    .on("body", { text(chunk) { if (format === "ff" && !row) zoneText += chunk.text; } });
+    .on(rowSelector + ' span[name="calendarLeft"][time]', {
+      element(element) {
+        if (row) row.at = Number(element.getAttribute("time"));
+      }
+    });
   await rewriter.transform(response).arrayBuffer();
 
-  const zone = zoneText.match(/Calendar Time Zone:\s*[^()]+\(GMT\s*([+-])(\d{1,2})(?::(\d{2}))?\)/i);
-  if (format === "ff" && !zone) throw Error("Calendar timezone unavailable");
-  const offset = format === "gmo" ? 540 : (zone[1] === "-" ? -1 : 1) * (Number(zone[2]) * 60 + Number(zone[3] || 0));
-  const months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
   const events = [];
-  let date, minutes;
+  let date;
   let parsed = 0;
-  for (const { id, cells } of rows) {
-    const byClass = key => cells.find(x => x.classes.includes("calendar__" + key))?.text.trim() || "";
-    const values = cells.map(x => x.text.replace(/\s+/g, " ").trim());
-    const dateText = format === "gmo" ? (cells[0]?.classes.includes("date") ? values.shift() : "") : byClass("date");
-    if (dateText) {
-      const parts = dateText.match(format === "gmo" ? /^(\d{1,2})\/(\d{1,2})/ : /([A-Z][a-z]{2})\s*(\d{1,2})$/);
-      date = parts ? calendarDate(format === "gmo" ? Number(parts[1]) : months.indexOf(parts[1]) + 1,
-        Number(parts[2]), observedAt, offset) : undefined;
-      minutes = undefined;
+  for (const { id, cells, at: epoch } of rows) {
+    const values = cells.map(x => x.text.replace(/&nbsp;|&#160;/gi, " ").replace(/\s+/g, " ").trim());
+    if (gmo && cells[0]?.isDate) {
+      const parts = values.shift().match(/^(\d{1,2})\/(\d{1,2})/);
+      date = parts ? calendarDate(Number(parts[1]), Number(parts[2]), observedAt, 540) : undefined;
     }
-    if (!Number.isFinite(date) || (format === "gmo" && values.length !== 7)) continue;
-    const time = format === "gmo" ? values[0] : byClass("time");
-    if (time) {
-      const parts = time.match(format === "gmo" ? /^(\d{1,2}):(\d{2})$/ : /^(\d{1,2}):(\d{2})\s*([ap]m)$/i);
-      minutes = parts ? (format === "gmo" ? Number(parts[1]) : Number(parts[1]) % 12 + (parts[3].toLowerCase() === "pm" ? 12 : 0)) * 60 + Number(parts[2]) : undefined;
-    }
-    if (!Number.isFinite(minutes)) continue;
-    const currency = format === "gmo" ? ({ "米国": "USD", "日本": "JPY" })[values[1]] : byClass("currency");
-    const title = format === "gmo" ? values[2] : byClass("event");
-    if (!["USD", "JPY"].includes(currency) || !title) continue;
-    const at = date + (minutes - offset) * 60000;
+    if (gmo && values.length !== 7) continue;
+    const time = gmo ? values[0].match(/^(\d{1,2}):([0-5]\d)$/) : null;
+    const at = gmo && time ? date + (Number(time[1]) * 60 + Number(time[2]) - 540) * 60000 : epoch;
+    const currency = gmo ? ({ "米国": "USD", "日本": "JPY" })[values[1]] : values[3];
+    const title = gmo ? values[2] : values[4];
+    if (!["USD", "JPY"].includes(currency) || !title || !Number.isFinite(at)) continue;
     if (Math.abs(at - observedAt) > 8 * 86400000) continue;
     parsed++;
-    const actual = vendorNumber(format === "gmo" ? values[5] : byClass("actual"));
+    const byField = field => values[cells.findIndex(x => x.field === field)];
+    const actual = vendorNumber(gmo ? values[5] : byField("actual"));
     if (!actual || at > Math.min(through, observedAt) || at < through - 36 * 3600000) continue;
     events.push({
       ...(id ? { source_event_id: id } : {}), currency, title, at_utc: new Date(at).toISOString(),
-      vendor_actual: actual, vendor_forecast: vendorNumber(format === "gmo" ? values[4] : byClass("forecast")),
-      vendor_previous: (format === "gmo" ? values[6] : byClass("previous")) || null
+      vendor_actual: actual, vendor_forecast: vendorNumber(gmo ? values[4] : byField("concensus")),
+      vendor_previous: (gmo ? values[6] : byField("previous")) || null
     });
   }
   if (!parsed) throw Error("No current USD/JPY calendar rows parsed");

@@ -731,7 +731,7 @@ const definitions = [
 // Report-first text projection; retain full raw data in structuredContent.
 const RELEASE_SOURCES = [
   { name: "GMO外貨", url: "https://www.gaikaex.com/gaikaex/mark/calendar/", format: "gmo" },
-  { name: "Myfxbook", url: "https://www.myfxbook.com/forex-economic-calendar", format: "myfxbook" }
+  { name: "米商務省BEA", url: "https://www.bea.gov/news/current-releases", format: "bea" }
 ];
 
 function calendarDate(month, day, printedAt, offsetMinutes) {
@@ -747,78 +747,120 @@ function vendorNumber(value) {
     && /\d/.test(value) ? value : null;
 }
 
-async function parseReleasePage(response, format, observedAt, through) {
+async function parseGmoReleases(response, observedAt, through) {
   const rows = [];
-  const gmo = format === "gmo";
-  const rowSelector = gmo ? "table tr" : "tr.economicCalendarRow[data-row-id]";
   let row, cell;
-  const rewriter = new HTMLRewriter()
-    .on(rowSelector, {
+  await new HTMLRewriter()
+    .on("table tr", {
       element(element) {
-        row = { id: element.getAttribute("data-row-id"), cells: [] };
+        row = [];
         rows.push(row);
         element.onEndTag(() => { row = null; });
       }
     })
-    .on(rowSelector + " > td", {
+    .on("table tr > td", {
       element(element) {
         if (!row) return;
-        const fields = ["actual", "concensus", "previous"];
-        const field = fields.find(name => element.hasAttribute("data-" + name));
-        cell = { isDate: (element.getAttribute("class") || "").split(/\s+/).includes("date"), field, text: "" };
-        row.cells.push(cell);
+        cell = { isDate: (element.getAttribute("class") || "").split(/\s+/).includes("date"), text: "" };
+        row.push(cell);
         element.onEndTag(() => { cell = null; });
       },
-      text(chunk) {
-        if (cell) cell.text += chunk.text;
-      }
-    })
-    .on(rowSelector + ' span[name="calendarLeft"][time]', {
-      element(element) {
-        if (row) row.at = Number(element.getAttribute("time"));
-      }
-    });
-  await rewriter.transform(response).arrayBuffer();
+      text(chunk) { if (cell) cell.text += chunk.text; }
+    }).transform(response).arrayBuffer();
 
   const events = [];
   let date;
   let parsed = 0;
-  for (const { id, cells, at: epoch } of rows) {
+  for (const cells of rows) {
     const values = cells.map(x => x.text.replace(/&nbsp;|&#160;/gi, " ").replace(/\s+/g, " ").trim());
-    if (gmo && cells[0]?.isDate) {
+    if (cells[0]?.isDate) {
       const parts = values.shift().match(/^(\d{1,2})\/(\d{1,2})/);
       date = parts ? calendarDate(Number(parts[1]), Number(parts[2]), observedAt, 540) : undefined;
     }
-    if (gmo && values.length !== 7) continue;
-    const time = gmo ? values[0].match(/^(\d{1,2}):([0-5]\d)$/) : null;
-    const at = gmo && time ? date + (Number(time[1]) * 60 + Number(time[2]) - 540) * 60000 : epoch;
-    const currency = gmo ? ({ "米国": "USD", "日本": "JPY" })[values[1]] : values[3];
-    const title = gmo ? values[2] : values[4];
-    if (!["USD", "JPY"].includes(currency) || !title || !Number.isFinite(at)) continue;
-    if (Math.abs(at - observedAt) > 8 * 86400000) continue;
+    if (values.length !== 7) continue;
+    const time = values[0].match(/^(\d{1,2}):([0-5]\d)$/);
+    const at = time ? date + (Number(time[1]) * 60 + Number(time[2]) - 540) * 60000 : NaN;
+    const currency = ({ "米国": "USD", "日本": "JPY" })[values[1]];
+    if (!currency || !values[2] || !Number.isFinite(at) || Math.abs(at - observedAt) > 8 * 86400000) continue;
     parsed++;
-    const byField = field => values[cells.findIndex(x => x.field === field)];
-    const actual = vendorNumber(gmo ? values[5] : byField("actual"));
+    const actual = vendorNumber(values[5]);
     if (!actual || at > Math.min(through, observedAt) || at < through - 36 * 3600000) continue;
     events.push({
-      ...(id ? { source_event_id: id } : {}), currency, title, at_utc: new Date(at).toISOString(),
-      vendor_actual: actual, vendor_forecast: vendorNumber(gmo ? values[4] : byField("concensus")),
-      vendor_previous: (gmo ? values[6] : byField("previous")) || null
+      currency, title: values[2], at_utc: new Date(at).toISOString(),
+      vendor_actual: actual, vendor_forecast: vendorNumber(values[4]), vendor_previous: values[6] || null
     });
   }
   if (!parsed) throw Error("No current USD/JPY calendar rows parsed");
   return events.sort((a, b) => b.at_utc.localeCompare(a.at_utc)).slice(0, 25);
 }
 
+async function releasePage(url) {
+  const response = await fetch(url, { cf: { cacheTtl: 0 }, signal: AbortSignal.timeout(4500) });
+  if (!response.ok) throw Error("HTTP " + response.status);
+  return response;
+}
+
+async function beaReleases(index, through) {
+  const links = new Set();
+  await new HTMLRewriter().on("a[href]", {
+    element(element) {
+      const href = element.getAttribute("href");
+      if (/^\/news\/20\d{2}\/(?:personal-income-and-outlays-|(?:gdp|gross-domestic-product)-)[a-z0-9-]+$/.test(href)) {
+        links.add(new URL(href, "https://www.bea.gov").href);
+      }
+    }
+  }).transform(index).arrayBuffer();
+  if (!links.size) throw Error("No BEA release links parsed");
+  const settled = await Promise.allSettled([...links].slice(0, 4).map(async url => {
+    const response = await releasePage(url);
+    let title = "";
+    let body = "";
+    await new HTMLRewriter()
+      .on("h1", { text(chunk) { title += chunk.text; } })
+      .on("main", { text(chunk) { body += chunk.text; } })
+      .transform(response).arrayBuffer();
+    body = body.replace(/&nbsp;|&#160;/gi, " ").replace(/\s+/g, " ");
+    const stamp = body.match(/EMBARGOED UNTIL RELEASE AT (\d{1,2}):(\d{2}) ([ap])\.?m\.? (EST|EDT),? \w+, ([A-Za-z]+ \d{1,2}, 20\d{2})/i);
+    if (!stamp) throw Error("BEA release timestamp not found");
+    const hour = Number(stamp[1]) % 12 + (stamp[3].toLowerCase() === "p" ? 12 : 0);
+    const offset = stamp[4].toUpperCase() === "EST" ? 5 : 4;
+    const at = Date.parse(stamp[5] + " 00:00:00 UTC") + ((hour + offset) * 60 + Number(stamp[2])) * 60000;
+    if (!Number.isFinite(at)) throw Error("Invalid BEA timestamp");
+    if (at > Math.min(through, Date.now()) || at < through - 36 * 3600000) return [];
+    const metrics = url.includes("/personal-income-and-outlays-") ? [
+      ["PCE価格指数 前月比", /From the preceding month, the PCE price index[^.]*? (increased|decreased) (\d+(?:\.\d+)?) percent/i],
+      ["コアPCE価格指数 前月比", /From the preceding month, the PCE price index[^.]*? (?:increased|decreased) \d+(?:\.\d+)? percent\.\s+Excluding food and energy, the PCE price index (?:also )?(increased|decreased) (\d+(?:\.\d+)?) percent/i],
+      ["PCE価格指数 前年比", /From the same month one year ago, the PCE price index[^.]*? (increased|decreased) (\d+(?:\.\d+)?) percent/i],
+      ["コアPCE価格指数 前年比", /From the same month one year ago, the PCE price index[^.]*? (?:increased|decreased) \d+(?:\.\d+)? percent\.\s+Excluding food and energy, the PCE price index (?:also )?(increased|decreased) (\d+(?:\.\d+)?) percent/i]
+    ] : [
+      ["実質GDP 前期比年率", /Real gross domestic product \(GDP\) (increased|decreased) at an annual rate of (\d+(?:\.\d+)?) percent/i]
+    ];
+    const events = metrics.flatMap(([name, pattern]) => {
+      const match = body.match(pattern);
+      return match ? [{
+        currency: "USD", title: name + " (" + title.trim() + ")", at_utc: new Date(at).toISOString(),
+        official_actual: (match[1].toLowerCase() === "decreased" ? "-" : "") + match[2] + "%", source_url: url
+      }] : [];
+    });
+    if (!events.length) throw Error("No BEA release figures parsed");
+    return events;
+  }));
+  const events = settled.flatMap(item => item.status === "fulfilled" ? item.value : []);
+  const errors = settled.flatMap(item => item.status === "rejected" ? [String(item.reason.message).slice(0, 160)] : []);
+  if (!events.length && errors.length) throw Error(errors.join("; "));
+  return { events, errors };
+}
+
 async function liveEconomicReleases(through) {
   return Promise.all(RELEASE_SOURCES.map(async ({name, url, format}) => {
     try {
-      const response = await fetch(url, { cf: { cacheTtl: 0 }, signal: AbortSignal.timeout(4500) });
-      if (!response.ok) throw Error("HTTP " + response.status);
+      const response = await releasePage(url);
       const observedAt = Date.now();
-      const events = await parseReleasePage(response, format, observedAt, through);
-      return { name, url, status: events.length ? "VENDOR_ACTUALS" : "NO_RECENT_ACTUALS",
-        observed_at_utc: new Date(observedAt).toISOString(), upstream_age_seconds: response.headers.get("Age"),
+      const { events, errors } = format === "bea" ? await beaReleases(response, through)
+        : { events: await parseGmoReleases(response, observedAt, through), errors: [] };
+      const status = events.length ? (format === "bea" ? "OFFICIAL_ACTUALS" : "VENDOR_ACTUALS") : "NO_RECENT_ACTUALS";
+      return { name, url, status, ...(errors.length ? { errors } : {}),
+        observed_at_utc: new Date().toISOString(), upstream_age_seconds: response.headers.get("Age"),
         events };
     } catch (error) {
       return { name, url, status: "UNAVAILABLE", error: String(error.message).slice(0, 160), events: [] };

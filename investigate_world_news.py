@@ -276,7 +276,17 @@ def collect(move,pre_minutes=45,post_minutes=10,hints=None,
                    else parse_rss(raw,topic,now,provider))
             return found,{"source":provider,"topic":topic,"url":url,"status":"ok","returned":len(found)}
         except Exception as exc:
-            return [],{"source":provider,"topic":topic,"url":url,"status":"error","error":str(exc)[:220]}
+            failure = {"source":provider,"topic":topic,"url":url,"status":"error","error":str(exc)[:220]}
+            if (provider != "GOOGLE_RSS" or getattr(exc, "code", None) != 429
+                    or "gdelt" in sources or topic not in TOPICS):
+                return [], failure
+            alternate = gdelt_url(topic, start, end)
+            try:
+                found = parse_gdelt(fetcher(alternate), topic, now)
+            except Exception as fallback_error:
+                return [], {**failure, "fallback_url":alternate, "fallback_error":str(fallback_error)[:220]}
+            return found, {"source":"GDELT_DOC","topic":topic,"url":alternate,"status":"ok",
+                           "returned":len(found),"fallback_from":failure}
     with ThreadPoolExecutor(max_workers=5) as pool:
         for found,status in pool.map(do,jobs):
             articles.extend(found)

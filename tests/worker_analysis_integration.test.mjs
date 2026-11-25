@@ -78,3 +78,24 @@ test("newer scheduled result supersedes older on-demand report",async()=>{
   const result=await analyzer(requested,analysis("2026-11-05 22:37:00",158.42))();
   assert.equal(result.analysis_integration.python_snapshot_source,"PYTHON_SCHEDULED");
 });
+
+test("release fallback excludes future and expired records and preserves live sources", () => {
+  const start = code.indexOf("function releaseEvidence(");
+  const end = code.indexOf("async function liveEconomicReleases", start);
+  assert.ok(start >= 0 && end > start);
+  const reconcile = new Function(code.slice(start, end) + "return releaseEvidence;")();
+  const cutoff = Date.parse("2026-11-25T14:00:00Z");
+  const available = {url:"gmo", status:"VENDOR_ACTUALS", events:[]};
+  const failed = {url:"bea", status:"UNAVAILABLE", error:"HTTP 503"};
+  const valid = {at_utc:"2026-11-25T13:30:00Z", official_actual:"3.3%"};
+  const saved = [{url:"bea", events:[valid, {at_utc:"2026-11-25T15:00:00Z"},
+    {at_utc:"2026-11-23T00:00:00Z"}]}];
+  const result = reconcile([available, failed], saved, cutoff, cutoff);
+  assert.equal(result.status, "PARTIAL");
+  assert.deepEqual(result.sources[0], available);
+  assert.equal(result.sources[1].status, "SCHEDULED_FALLBACK");
+  assert.equal(result.sources[1].live_error, "HTTP 503");
+  assert.deepEqual(result.sources[1].events, [valid]);
+  assert.equal(reconcile([failed], saved, cutoff, cutoff).status, "SCHEDULED_FALLBACK");
+  assert.equal(reconcile([failed], [], cutoff, cutoff).status, "UNAVAILABLE");
+});

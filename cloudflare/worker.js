@@ -729,6 +729,107 @@ const definitions = [
 ];
 
 // Report-first text projection; retain full raw data in structuredContent.
+const RELEASE_SOURCES = [
+  { name: "GMO外貨", url: "https://www.gaikaex.com/gaikaex/mark/calendar/", format: "gmo" },
+  { name: "Forex Factory", url: "https://www.forexfactory.com/calendar/", format: "ff" }
+];
+
+function calendarDate(month, day, printedAt, offsetMinutes) {
+  const local = printedAt + offsetMinutes * 60000;
+  const year = new Date(local).getUTCFullYear();
+  const dates = [year - 1, year, year + 1].map(y => Date.UTC(y, month - 1, day))
+    .filter(t => new Date(t).getUTCMonth() === month - 1);
+  return dates.sort((a, b) => Math.abs(a - local) - Math.abs(b - local))[0];
+}
+
+function vendorNumber(value) {
+  return /^[+\-−]?[\d,.]+(?:\s*[%KMBT]|[兆億万千\d,.]*[件人戸円ドルポンドユーロ]+)?$/iu.test(value)
+    && /\d/.test(value) ? value : null;
+}
+
+async function parseReleasePage(response, format, observedAt, through) {
+  const rows = [];
+  let row, cell, zoneText = "";
+  const rewriter = new HTMLRewriter()
+    .on(format === "gmo" ? "table tr" : "tr.calendar__row[data-event-id]", {
+      element(element) {
+        row = { id: element.getAttribute("data-event-id"), cells: [] };
+        rows.push(row);
+        element.onEndTag(() => { row = null; });
+      }
+    })
+    .on(format === "gmo" ? "table tr > td" : "tr.calendar__row[data-event-id] > td", {
+      element(element) {
+        if (!row) return;
+        cell = { classes: (element.getAttribute("class") || "").split(/\s+/), text: "" };
+        row.cells.push(cell);
+        element.onEndTag(() => { cell = null; });
+      },
+      text(chunk) {
+        if (cell) cell.text += chunk.text;
+      }
+    })
+    .on("body", { text(chunk) { if (format === "ff" && !row) zoneText += chunk.text; } });
+  await rewriter.transform(response).arrayBuffer();
+
+  const zone = zoneText.match(/Calendar Time Zone:\s*[^()]+\(GMT\s*([+-])(\d{1,2})(?::(\d{2}))?\)/i);
+  if (format === "ff" && !zone) throw Error("Calendar timezone unavailable");
+  const offset = format === "gmo" ? 540 : (zone[1] === "-" ? -1 : 1) * (Number(zone[2]) * 60 + Number(zone[3] || 0));
+  const months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
+  const events = [];
+  let date, minutes;
+  let parsed = 0;
+  for (const { id, cells } of rows) {
+    const byClass = key => cells.find(x => x.classes.includes("calendar__" + key))?.text.trim() || "";
+    const values = cells.map(x => x.text.replace(/\s+/g, " ").trim());
+    const dateText = format === "gmo" ? (cells[0]?.classes.includes("date") ? values.shift() : "") : byClass("date");
+    if (dateText) {
+      const parts = dateText.match(format === "gmo" ? /^(\d{1,2})\/(\d{1,2})/ : /([A-Z][a-z]{2})\s*(\d{1,2})$/);
+      date = parts ? calendarDate(format === "gmo" ? Number(parts[1]) : months.indexOf(parts[1]) + 1,
+        Number(parts[2]), observedAt, offset) : undefined;
+      minutes = undefined;
+    }
+    if (!Number.isFinite(date) || (format === "gmo" && values.length !== 7)) continue;
+    const time = format === "gmo" ? values[0] : byClass("time");
+    if (time) {
+      const parts = time.match(format === "gmo" ? /^(\d{1,2}):(\d{2})$/ : /^(\d{1,2}):(\d{2})\s*([ap]m)$/i);
+      minutes = parts ? (format === "gmo" ? Number(parts[1]) : Number(parts[1]) % 12 + (parts[3].toLowerCase() === "pm" ? 12 : 0)) * 60 + Number(parts[2]) : undefined;
+    }
+    if (!Number.isFinite(minutes)) continue;
+    const currency = format === "gmo" ? ({ "米国": "USD", "日本": "JPY" })[values[1]] : byClass("currency");
+    const title = format === "gmo" ? values[2] : byClass("event");
+    if (!["USD", "JPY"].includes(currency) || !title) continue;
+    const at = date + (minutes - offset) * 60000;
+    if (Math.abs(at - observedAt) > 8 * 86400000) continue;
+    parsed++;
+    const actual = vendorNumber(format === "gmo" ? values[5] : byClass("actual"));
+    if (!actual || at > Math.min(through, observedAt) || at < through - 36 * 3600000) continue;
+    events.push({
+      ...(id ? { source_event_id: id } : {}), currency, title, at_utc: new Date(at).toISOString(),
+      vendor_actual: actual, vendor_forecast: vendorNumber(format === "gmo" ? values[4] : byClass("forecast")),
+      vendor_previous: (format === "gmo" ? values[6] : byClass("previous")) || null
+    });
+  }
+  if (!parsed) throw Error("No current USD/JPY calendar rows parsed");
+  return events.sort((a, b) => b.at_utc.localeCompare(a.at_utc)).slice(0, 25);
+}
+
+async function liveEconomicReleases(through) {
+  return Promise.all(RELEASE_SOURCES.map(async ({name, url, format}) => {
+    try {
+      const response = await fetch(url, { cf: { cacheTtl: 0 }, signal: AbortSignal.timeout(4500) });
+      if (!response.ok) throw Error("HTTP " + response.status);
+      const observedAt = Date.now();
+      const events = await parseReleasePage(response, format, observedAt, through);
+      return { name, url, status: events.length ? "VENDOR_ACTUALS" : "NO_RECENT_ACTUALS",
+        observed_at_utc: new Date(observedAt).toISOString(), upstream_age_seconds: response.headers.get("Age"),
+        events };
+    } catch (error) {
+      return { name, url, status: "UNAVAILABLE", error: String(error.message).slice(0, 160), events: [] };
+    }
+  }));
+}
+
 function reportProjection(data) {
   const a=data.analysis, m=a.market_structure;
   const rows=data.series["1min"].values;
@@ -806,6 +907,7 @@ async function handleMCP(request, env) {
 
         if (name === "get_usdjpy_analysis") {
           data = await analysisWithFreshPython(env,args);
+          const releaseLookup = liveEconomicReleases(timestamp(data.latest_confirmed_1min_bar) + 60000);
           try {
             const macro=await github("macro_latest.json");
             const age=(Date.now()-Date.parse(macro.generated_at_utc))/60000;
@@ -813,7 +915,10 @@ async function handleMCP(request, env) {
             const start=end-24*3600000;
             data.macro_evidence={status:Number.isFinite(age)&&age>=0&&age<=45?macro.status:"STALE",
               generated_at_utc:macro.generated_at_utc,age_minutes:age,news_sources:macro.news_sources,
-              calendar:macro.calendar,cross_market:macro.cross_market,intraday_evidence:macro.intraday_evidence,
+              calendar:macro.calendar,economic_calendar:macro.economic_calendar ? {
+                status:macro.economic_calendar.status,source:macro.economic_calendar.source,
+                checked_at_utc:macro.economic_calendar.checked_at_utc
+              } : null,cross_market:macro.cross_market,intraday_evidence:macro.intraday_evidence,
               report_windows:(()=>{const day=new Date(end+32400000).toISOString().slice(0,10);
                 const six=timestamp(day+" 06:00:00"),nine=timestamp(day+" 09:00:00");
                 const select=(from,to)=>(macro.candidates||[]).filter(x=>Date.parse(x.source_timestamp_utc)>=from&&Date.parse(x.source_timestamp_utc)<to).sort((a,b)=>b.priority_score_not_causal_confidence-a.priority_score_not_causal_confidence).slice(0,8);
@@ -822,6 +927,7 @@ async function handleMCP(request, env) {
                 .sort((a,b)=>b.priority_score_not_causal_confidence-a.priority_score_not_causal_confidence).slice(0,12),
               confirmed_catalyst:null};
           } catch(e) {data.macro_evidence={status:"UNAVAILABLE",error:String(e.message).slice(0,180)};}
+          data.macro_evidence.economic_releases = await releaseLookup;
         } else if (name === "get_usdjpy_bundle") {
           data = await bundle(env,args);
         } else if (name === "get_usdjpy_history") {

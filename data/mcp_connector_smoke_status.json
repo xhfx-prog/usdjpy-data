@@ -1,1 +1,22 @@
-{"tested_at_utc":"2026-11-24T21:00:59Z","latest_confirmed_1min_start_jst":"2026-11-25 05:59:00","source":"CONNECTED_MCP","checks":{"freshness":true,"six_timeframes":true,"inline_python":true,"recomputed":true,"lag_zero":true,"single_call":true,"api_at_most_one":null,"overlay_matches":true},"status":"INCOMPLETE"}
+{
+  "tested_at_utc": "2026-11-25T02:52:06.334Z",
+  "latest_confirmed_1min_start_jst": "2026-11-25 11:50:00",
+  "source": "CONNECTED_MCP",
+  "checks": {
+    "freshness": true,
+    "inline_python": true,
+    "recomputed": true,
+    "lag_zero": true,
+    "single_call": true,
+    "api_at_most_one": true,
+    "six_timeframes": null,
+    "overlay_matches": null
+  },
+  "status": "PARTIAL_RETEST",
+  "previous_test": {
+    "tested_at_utc": "2026-11-24T21:00:59Z",
+    "status": "INCOMPLETE"
+  },
+  "twelve_data_requests": 1,
+  "note": "Live response confirmed six listed checks; series and overlay comparison not independently repeated in this retest."
+}

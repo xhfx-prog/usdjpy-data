@@ -1,12 +1,7 @@
 name: CME yen futures daily
+# Quarantined: CME returns HTTP 403; manual authorized-feed validation only.
 on:
-  push:
-    paths:
-      - '.github/workflows/cme-jpy-daily.yml'
-      - 'scripts/collect_cme_jpy.py'
   workflow_dispatch:
-  schedule:
-    - cron: '20 10,15,20,23 * * 1-6'
 permissions:
   contents: write
 concurrency:

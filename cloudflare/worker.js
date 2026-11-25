@@ -62,7 +62,10 @@ function merge(preferred, old) {
 // Index paths already include "data/".
 async function github(path) {
   const normalized = path.replace(/^data\//, "");
-  const res = await fetch(ROOT + normalized, {
+  const url = normalized === "macro_latest.json"
+    ? ROOT + normalized + "?minute=" + Math.floor(Date.now() / 60000)
+    : ROOT + normalized;
+  const res = await fetch(url, {
     cf: { cacheTtl: 0 }
   });
   if (!res.ok) {
@@ -853,19 +856,44 @@ async function beaReleases(index, through) {
   return { events, errors };
 }
 
+function releaseEvidence(live, saved, cutoff, now) {
+  const sources = live.map(source => {
+    if (source.status !== "UNAVAILABLE") return source;
+    const previous = saved.find(item => item.url === source.url);
+    const events = (previous?.events || []).filter(event => {
+      const at = Date.parse(event.at_utc);
+      return at <= cutoff && at >= cutoff - 36 * 3600000;
+    });
+    return events.length ? {...previous, events, status:"SCHEDULED_FALLBACK", live_error:source.error} : source;
+  });
+  const liveCount = sources.filter(s => ["VENDOR_ACTUALS","OFFICIAL_ACTUALS","NO_RECENT_ACTUALS"].includes(s.status)).length;
+  const fallbackCount = sources.filter(s => s.status === "SCHEDULED_FALLBACK").length;
+  const status = liveCount === sources.length && liveCount ? "LIVE" : liveCount ? "PARTIAL"
+    : fallbackCount ? "SCHEDULED_FALLBACK" : "UNAVAILABLE";
+  return {status, checked_at_utc:new Date(now).toISOString(), live_sources:liveCount,
+    fallback_sources:fallbackCount, sources};
+}
+
 async function liveEconomicReleases(through) {
   return Promise.all(RELEASE_SOURCES.map(async ({name, url, format}) => {
+    const started = Date.now();
     try {
       const response = await releasePage(url);
       const observedAt = Date.now();
       const { events, errors } = format === "bea" ? await beaReleases(response, through)
         : { events: await parseGmoReleases(response, observedAt, through), errors: [] };
       const status = events.length ? (format === "bea" ? "OFFICIAL_ACTUALS" : "VENDOR_ACTUALS") : "NO_RECENT_ACTUALS";
+      const finished = Date.now();
+      if (errors.length) console.warn("economic_release_partial", {name, errors});
       return { name, url, status, ...(errors.length ? { errors } : {}),
-        observed_at_utc: new Date().toISOString(), upstream_age_seconds: response.headers.get("Age"),
-        events };
+        observed_at_utc: new Date(finished).toISOString(), upstream_age_seconds: response.headers.get("Age"),
+        fetch_duration_ms: finished - started,
+        events: events.map(event => ({...event, observed_after_release_seconds:
+          Math.floor((finished - Date.parse(event.at_utc)) / 1000)})) };
     } catch (error) {
-      return { name, url, status: "UNAVAILABLE", error: String(error.message).slice(0, 160), events: [] };
+      const message = String(error.message).slice(0, 160);
+      console.warn("economic_release_unavailable", {name, error:message});
+      return { name, url, status: "UNAVAILABLE", error: message, events: [] };
     }
   }));
 }
@@ -952,11 +980,17 @@ async function handleMCP(request, env) {
           let scheduledReleases = [];
           try {
             const macro=await github("macro_latest.json");
-            scheduledReleases = macro.economic_release_snapshot?.sources || [];
+            scheduledReleases = Array.isArray(macro.economic_release_snapshot?.sources)
+              ? macro.economic_release_snapshot.sources : [];
+            if (!Array.isArray(macro.candidates) || macro.candidate_count !== macro.candidates.length ||
+                !Number.isFinite(Date.parse(macro.generated_at_utc))) throw Error("Invalid macro snapshot");
             const age=(Date.now()-Date.parse(macro.generated_at_utc))/60000;
             const end=timestamp(data.latest_confirmed_1min_bar)+60000;
             const start=end-24*3600000;
-            data.macro_evidence={status:Number.isFinite(age)&&age>=0&&age<=45?macro.status:"STALE",
+            const newsStatus = age >= 0 && age <= 45 ? macro.status : "STALE";
+            if (newsStatus === "STALE") console.warn("macro_news_stale", {age_minutes:age, generated_at_utc:macro.generated_at_utc});
+            data.macro_evidence={status:"AVAILABLE", news:{status:newsStatus, age_minutes:age,
+              generated_at_utc:macro.generated_at_utc},
               generated_at_utc:macro.generated_at_utc,age_minutes:age,news_sources:macro.news_sources,
               calendar:macro.calendar,economic_calendar:macro.economic_calendar ? {
                 status:macro.economic_calendar.status,source:macro.economic_calendar.source,
@@ -969,16 +1003,22 @@ async function handleMCP(request, env) {
               candidates:(macro.candidates||[]).filter(x=>Date.parse(x.source_timestamp_utc)>=start&&Date.parse(x.source_timestamp_utc)<=end)
                 .sort((a,b)=>b.priority_score_not_causal_confidence-a.priority_score_not_causal_confidence).slice(0,12),
               confirmed_catalyst:null};
-          } catch(e) {data.macro_evidence={status:"UNAVAILABLE",error:String(e.message).slice(0,180)};}
-          data.macro_evidence.economic_releases = (await releaseLookup).map(source => {
-            if (source.status !== "UNAVAILABLE") return source;
-            const saved = scheduledReleases.find(item => item.url === source.url);
-            const events = (saved?.events || []).filter(event => {
-              const at = Date.parse(event.at_utc);
-              return at <= releaseCutoff && at >= releaseCutoff - 36 * 3600000;
-            });
-            return events.length ? { ...saved, events, status: "SCHEDULED_FALLBACK", live_error: source.error } : source;
-          });
+          } catch(e) {
+            const error=String(e.message).slice(0,180);
+            console.warn("macro_snapshot_unavailable", {error});
+            data.macro_evidence={status:"UNAVAILABLE",news:{status:"UNAVAILABLE",error}};
+          }
+          const {sources, ...freshness} = releaseEvidence(await releaseLookup, scheduledReleases, releaseCutoff, Date.now());
+          data.macro_evidence.economic_releases = sources;
+          data.macro_evidence.economic_release_freshness = freshness;
+          data.macro_evidence.economic_calendar = {
+            ...(data.macro_evidence.economic_calendar || {}),
+            schedule_feed_status:data.macro_evidence.economic_calendar?.status || "UNAVAILABLE",
+            status:freshness.status,
+            actuals_connected:freshness.status !== "UNAVAILABLE"
+          };
+          if (freshness.status !== "UNAVAILABLE") data.macro_evidence.status = "AVAILABLE";
+          data.analysis.fundamentals = {...data.analysis.fundamentals,event_calendar:freshness.status};
         } else if (name === "get_usdjpy_bundle") {
           data = await bundle(env,args);
         } else if (name === "get_usdjpy_history") {

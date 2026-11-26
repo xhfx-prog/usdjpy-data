@@ -660,25 +660,56 @@ def multi_timeframe_structure(daily, h4, h1, m15, m5, minute):
 
 def conditional_outlook(hourly, levels, close, direction):
     """Historical rolling excursions, not calibrated forecasts or probabilities."""
+    runs=[]
+    for bar in hourly:
+        if not runs or stamp(bar["t"])-stamp(runs[-1][-1]["t"]) != timedelta(hours=1):
+            runs.append([])
+        runs[-1].append(bar)
     result={}
     for horizon in (24,72):
         samples=[]
-        for i in range(0,len(hourly)-horizon,horizon):
-            base=hourly[i]["c"]
-            window=hourly[i+1:i+horizon+1]
-            if (stamp(window[-1]["t"])-stamp(hourly[i]["t"])).total_seconds()!=horizon*3600:
-                continue
-            samples.append((max(0,max(b["h"] for b in window)-base),
-                            max(0,base-min(b["l"] for b in window))))
+        for run in runs:
+            for start in range(0,len(run)-horizon,horizon):
+                base=run[start]["c"]
+                window=run[start+1:start+horizon+1]
+                high=max(b["h"] for b in window)
+                low=min(b["l"] for b in window)
+                samples.append((max(0,high-base),max(0,base-low),high-low))
         if len(samples)<5:
             result[str(horizon)+"h"]={"status":"INSUFFICIENT_CONTIGUOUS_SAMPLES","samples":len(samples)}
             continue
-        up=statistics.median(x[0] for x in samples)
-        down=statistics.median(x[1] for x in samples)
+        up,down,width=(statistics.median(values) for values in zip(*samples))
         result[str(horizon)+"h"]={"status":"HISTORICAL_MEDIAN_EXCURSION_NOT_FORECAST",
+            "method":"NON_OVERLAPPING_CONTIGUOUS_HOURLY_WINDOWS",
             "samples":len(samples),"lower":n(close-down),"upper":n(close+up),
+            "median_up_pips":n(up*100),"median_down_pips":n(down*100),
+            "median_realized_range_pips":n(width*100),"hourly_atr14":atr(hourly),
+            "source_first_hour_jst":hourly[0]["t"],"source_last_hour_jst":hourly[-1]["t"],
             "direction":direction,"support":levels["support"],"resistance":levels["resistance"]}
     return result
+
+
+def add_level_dwell(levels, five_minute):
+    """Count completed five-minute closes inside each level in the latest 72 hours."""
+    cutoff=stamp(five_minute[-1]["t"])-timedelta(hours=72)
+    bars=[bar for bar in five_minute if stamp(bar["t"])>cutoff]
+    for side in levels.values():
+        for level in side:
+            longest=current=0
+            previous=None
+            count=0
+            for bar in bars:
+                at=stamp(bar["t"])
+                if level["low"]<=bar["c"]<=level["high"]:
+                    current=current+1 if previous and at-previous==timedelta(minutes=5) else 1
+                    count+=1
+                    longest=max(longest,current)
+                    previous=at
+                else:
+                    current=0
+                    previous=None
+            level["five_minute_dwell"]={"total_minutes":count*5,"longest_run_minutes":longest*5,
+                                        "observed_bars":len(bars),"lookback_hours":72}
 
 
 def long_candidates(levels, direction, close):
@@ -714,6 +745,7 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
     pl=upper_plateau(minute,asof)
     shock=shock_and_recovery(minute)
     ls=levels(h5,h15,h1,h4,daily,latest["c"])
+    add_level_dwell(ls,h5)
     timeframe_states, parent_direction = multi_timeframe_structure(daily,h4,h1,h15,h5,minute)
     hour6=h1[-6:]
     ups=sum(hour6[i]["h"]>hour6[i-1]["h"] and hour6[i]["l"]>hour6[i-1]["l"]

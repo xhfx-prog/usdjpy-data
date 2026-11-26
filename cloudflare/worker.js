@@ -516,6 +516,16 @@ async function recentMinuteArchive() {
   return merge([], parts.flat()).slice(0, 6500);
 }
 
+function confirmedDaily(rows, now = Date.now()) {
+  const today = label(now).slice(0, 10);
+  return rows.filter(row => {
+    const day = row.datetime;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || day >= today) return false;
+    const weekday = new Date(day + "T00:00:00Z").getUTCDay();
+    return weekday > 0 && weekday < 6;
+  });
+}
+
 // Real-time full canonical Python evaluation, synchronous inside ONE MCP call.
 // The private Python Worker is only reachable over a Cloudflare Service Binding.
 // On any error, fail closed; never substitute a stale GitHub Python snapshot.
@@ -523,24 +533,27 @@ async function analysisWithFreshPython(env, args = {}) {
   if (!env.PYTHON_ANALYZER?.fetch) {
     throw Error("PYTHON_ANALYZER_SERVICE_BINDING_MISSING");
   }
-  const [live, archiveHours, archiveMinutes] = await Promise.all([
+  const [live, archiveHours, archiveMinutes, archiveDays] = await Promise.all([
     bundle(env, {
-      minute_bars: Math.max(500, count(args.minute_bars, 1200)),
+      minute_bars: Math.max(1200, count(args.minute_bars, 1)),
       five_minute_bars: Math.max(60, count(args.five_minute_bars, 60)),
       fifteen_minute_bars: Math.max(24, count(args.fifteen_minute_bars, 24)),
       hourly_bars: Math.max(200, count(args.hourly_bars, 200)),
       four_hour_bars: Math.max(48, count(args.four_hour_bars, 48)),
-      daily_bars: Math.max(150, count(args.daily_bars, 150))
+      daily_bars: Math.max(200, count(args.daily_bars, 1))
     }),
     history({interval: "1h", size: 1200}),
-    recentMinuteArchive()
+    recentMinuteArchive(),
+    history({interval: "1day", size: Math.min(MAX, Math.max(220, count(args.daily_bars, 1)))})
+      .catch(error => ({values: [], error: String(error.message).slice(0, 160)}))
   ]);
   if (!live.freshness_ok) throw Error("STALE_CURRENT_1MIN");
   const current = live.series["1min"].values[0];
   if (!current || current.datetime !== live.latest_confirmed_1min_bar) {
     throw Error("LIVE_1MIN_MISMATCH");
   }
-  const hours = merge(live.series["1h"].values, archiveHours.values);
+  const hours = merge(live.series["1h"].values, archiveHours.values).slice(0, MAX);
+  const days = confirmedDaily(merge(live.series["1day"].values, archiveDays.values)).slice(0, MAX);
   const fullMinutes = merge(live.series["1min"].values, archiveMinutes)
     .slice(0, 6500);
   if (!fullMinutes.length || fullMinutes[0].datetime !== current.datetime) {
@@ -553,7 +566,7 @@ async function analysisWithFreshPython(env, args = {}) {
     latest_confirmed_1min_bar: current.datetime,
     "1min": fullMinutes,
     "1h": hours,
-    "1day": live.series["1day"].values
+    "1day": days
   };
   const request = new Request("https://usdjpy-python-engine.internal/analyze", {
     method: "POST",
@@ -573,6 +586,25 @@ async function analysisWithFreshPython(env, args = {}) {
       Number(python.analysis.data_quality.last_close) !== Number(current.close)) {
     throw Error("PYTHON_INLINE_RESULT_VALIDATION_FAILED");
   }
+  const historyNotes = {
+    daily_archive_error: archiveDays.error ?? null,
+    daily_input_oldest: days.at(-1)?.datetime ?? null,
+    daily_input_latest: days[0]?.datetime ?? null,
+    daily_saved_bars: archiveDays.total_saved_bars ?? null,
+    daily_saved_oldest: archiveDays.available_oldest ?? null,
+    daily_saved_latest: archiveDays.available_newest ?? null
+  };
+  const bars = {
+    "1min": ["minute_bars", fullMinutes],
+    "5min": ["five_minute_bars", aggregate(fullMinutes, 5)],
+    "15min": ["fifteen_minute_bars", aggregate(fullMinutes, 15)],
+    "1h": ["hourly_bars", hours],
+    "4h": ["four_hour_bars", aggregate(hours, 240, 60)],
+    "1day": ["daily_bars", days]
+  };
+  const series = Object.fromEntries(Object.entries(bars).map(([key, [arg, rows]]) =>
+    [key, pack(key, rows, count(args[arg], args.detail === "legacy" ? live.series[key].returned_bars : 1),
+      live.series[key].source)]));
   return {
     symbol: "USD/JPY",
     fetched_at: live.fetched_at,
@@ -593,6 +625,7 @@ async function analysisWithFreshPython(env, args = {}) {
       analysis_input_latest_confirmed_1min_start_jst: current.datetime,
       python_computed_at_utc: python.analysis.generated_at_utc,
       python_input_bar_counts: python.input_bar_counts,
+      history: historyNotes,
       single_mcp_call_completed: true
     },
     live_overlay: {
@@ -602,9 +635,9 @@ async function analysisWithFreshPython(env, args = {}) {
       latest_low: Number(current.low),
       latest_close: Number(current.close)
     },
-    series: live.series,
+    series,
     analysis: python.analysis,
-    python_analysis_snapshot: python.analysis
+    report_minutes: fullMinutes
   };
 }
 
@@ -638,8 +671,8 @@ async function history(args) {
     chosen.push(p);
     estimated += p.count || 0;
 
-    if (!args.start_date && !args.end_date &&
-        estimated >= required) break;
+    const countIsEnough = native === "1day" ? estimated >= Math.ceil(required * 7 / 5) + 7 : estimated >= required;
+    if (!args.start_date && !args.end_date && countIsEnough) break;
   }
 
   if (chosen.length > 24) {
@@ -653,6 +686,7 @@ async function history(args) {
   );
 
   let rows = merge([], batches.flat());
+  if (native === "1day") rows = confirmedDaily(rows);
 
   if (args.start_date) {
     rows = rows.filter(x =>
@@ -690,12 +724,14 @@ const definitions = [
       "call fetch current confirmed Twelve Data 1-minute OHLC, complete six timeframes, " +
       "retrieve GitHub historical 1h/1day data, and RUN canonical analyze_usdjpy.py " +
       "inside private Cloudflare Python Worker on the very same minute candle. " +
-      "Returns validated full Python market-structure report, S/R and freshness; " +
-      "fails if fresh price or Python recomputation is unavailable. No GitHub Actions " +
-      "trigger is required, and NEVER substitute an older Python snapshot.",
+      "Returns a compact report with market structure, S/R, freshness, audit and macro data. " +
+      "Each requested OHLC count controls only returned bars (default one per timeframe). " +
+      "Use detail=legacy for the old full structured shape. GitHub Actions stores history; " +
+      "the live request never starts a workflow or reuses a stale Python analysis.",
     inputSchema: {
       type: "object",
       properties: {
+        detail: { type:"string",enum:["report","legacy"],default:"report" },
         minute_bars: { type:"integer",minimum:1,maximum:2000 },
         five_minute_bars: { type:"integer",minimum:1,maximum:2000 },
         fifteen_minute_bars: { type:"integer",minimum:1,maximum:2000 },
@@ -898,9 +934,59 @@ async function liveEconomicReleases(through) {
   }));
 }
 
+async function savedMarketEvidence(cutoff) {
+  const files = ["fx_intraday.json", "fx_flow_sources.json", "mof_securities_weekly.json"];
+  const entries = await Promise.all(files.map(async file => {
+    try {
+      const data = await github(file);
+      const retrieved = data.retrieved_at_utc ?? data.checked_at_utc;
+      if (!Number.isFinite(Date.parse(retrieved))) throw Error("INVALID_RETRIEVAL_TIME");
+      const ageMinutes = Math.round((Date.now() - Date.parse(retrieved)) / 60000);
+      if (file === "fx_intraday.json") {
+        if (!data.series || !Array.isArray(data.events)) throw Error("INVALID_INTRADAY_SCHEMA");
+        const series = Object.fromEntries(Object.entries(data.series).map(([key, item]) => {
+          const start = Math.floor(cutoff / 300000) * 300;
+          const epoch = item.latest_epoch < start ? item.latest_epoch :
+            Object.keys(item.bars || {}).map(Number).filter(key => key < start).reduce(
+              (max, key) => Math.max(max, key), 0);
+          const latest = item.bars?.[epoch];
+          const prior = item.bars?.[epoch - 1800];
+          const contiguous = Array.from({length: 7}, (_, index) =>
+            item.bars?.[epoch - index * 300]).every(Boolean);
+          if (!latest) return [key, {status: "NO_CONFIRMED_VALUE", source: item.url}];
+          const lag = Math.round((cutoff / 1000 - epoch - 300) / 60);
+          return [key, {status: lag <= 60 ? "OBSERVED_DELAYED" : "OLD_OBSERVATION",
+            source: item.url, symbol: item.symbol, bar_start_utc: new Date(epoch * 1000).toISOString(),
+            age_minutes: lag, close: latest.close, volume: latest.volume,
+            change_30m: contiguous ? latest.close - prior.close : null}];
+        }));
+        return [file, {retrieved_at_utc: retrieved, age_minutes: ageMinutes, provider: data.provider,
+          series, errors: data.errors, events: data.events.filter(event => {
+            const end = Date.parse(event.end_bar_start_utc) + 300000;
+            return end <= cutoff && end > cutoff - 24 * 3600000;
+          }).slice(-5)}];
+      }
+      if (file === "mof_securities_weekly.json") {
+        const {normalized} = data;
+        if (data.schema_status !== "validated_v1" || !Array.isArray(normalized?.history))
+          throw Error("INVALID_MOF_SCHEMA");
+        return [file, {retrieved_at_utc: retrieved, age_minutes: ageMinutes, source: data.source,
+          unit: normalized.unit, latest: normalized.latest, recent_weeks: normalized.history.slice(-4)}];
+      }
+      if (!data.bny || !data.ebs || !data.options) throw Error("INVALID_FLOW_SCHEMA");
+      return [file, {checked_at_utc: retrieved, age_minutes: ageMinutes,
+        bny: {...data.bny, reports: (data.bny.reports || []).slice(0, 3)},
+        ebs: data.ebs, options: data.options, tfx: data.tfx}];
+    } catch (error) {
+      return [file, {status: "UNAVAILABLE", error: String(error.message).slice(0, 160)}];
+    }
+  }));
+  return Object.fromEntries(entries);
+}
+
 function reportProjection(data) {
   const a=data.analysis, m=a.market_structure;
-  const rows=data.series["1min"].values;
+  const rows=data.report_minutes;
   const latest=timestamp(data.latest_confirmed_1min_bar)+60000;
   const day=new Date(latest+32400000).toISOString().slice(0,10);
   const six=timestamp(day+" 06:00:00"), nine=timestamp(day+" 09:00:00");
@@ -911,12 +997,45 @@ function reportProjection(data) {
     const hi=bars.reduce((x,y)=>Number(x.high)>=Number(y.high)?x:y);
     const lo=bars.reduce((x,y)=>Number(x.low)<=Number(y.low)?x:y);
     const last=bars[bars.length-1];
-    return {status:"COMPLETE",start_close:Number(base.close),end_close:Number(last.close),change_pips:Number(((Number(last.close)-Number(base.close))*100).toFixed(3)),high:Number(hi.high),high_at:hi.datetime,low:Number(lo.low),low_at:lo.datetime,range_pips:Number(((Number(hi.high)-Number(lo.low))*100).toFixed(3))};
+    return {status:"COMPLETE",base_bar:base.datetime,end_bar:last.datetime,bars:bars.length,start_close:Number(base.close),end_close:Number(last.close),change_pips:Number(((Number(last.close)-Number(base.close))*100).toFixed(3)),high:Number(hi.high),high_at:hi.datetime,low:Number(lo.low),low_at:lo.datetime,range_pips:Number(((Number(hi.high)-Number(lo.low))*100).toFixed(3))};
   }
-  return {symbol:data.symbol,fetched_at:data.fetched_at,latest_confirmed_1min_bar:data.latest_confirmed_1min_bar,freshness_ok:data.freshness_ok,analysis_integration:data.analysis_integration,live_overlay:data.live_overlay,data_quality:a.data_quality,timeframes:a.timeframes,
-    timeframe_assessments:Object.fromEntries(Object.entries(m.timeframe_assessments||{}).map(([k,v])=>[k,{state:v.state,atr14:v.atr14,last_complete_bar:v.last_complete_bar,swing_structure:v.swing_structure}])),
-    parent_direction:m.parent_direction,phase:m.phase,directional_bias:m.directional_bias,support_resistance:m.support_resistance,upper_stall:m.upper_stall,sharp_decline_recovery:m.sharp_decline_recovery,five_minute_rebound:m.five_minute_rebound,
-    six_to_nine:latest>=nine?stats(six,nine):{status:"NOT_YET_09_JST"},fundamentals:a.fundamentals,macro_evidence:data.macro_evidence,decision:a.decision,full_analysis_location:"structuredContent.analysis"};
+  const macro = data.macro_evidence;
+  const projection = {
+    symbol: data.symbol, fetched_at: data.fetched_at,
+    latest_confirmed_1min_bar: data.latest_confirmed_1min_bar,
+    freshness_ok: data.freshness_ok, twelve_data_requests: data.twelve_data_requests,
+    analysis_integration: data.analysis_integration, live_overlay: data.live_overlay,
+    data_quality: a.data_quality, timeframes: a.timeframes,
+    timeframe_assessments: Object.fromEntries(Object.entries(m.timeframe_assessments || {}).map(
+      ([key, frame]) => [key, {state: frame.state, atr14: frame.atr14,
+        last_complete_bar: frame.last_complete_bar, swing_structure: frame.swing_structure,
+        recent_progress_fraction: frame.recent_progress_fraction,
+        recent_observed_width: frame.recent_observed_width}])),
+    parent_direction: m.parent_direction, phase: m.phase, directional_bias: m.directional_bias,
+    support_resistance: m.support_resistance, upper_stall: m.upper_stall,
+    sharp_decline_recovery: m.sharp_decline_recovery, five_minute_rebound: m.five_minute_rebound,
+    overnight: latest >= six ? stats(six - 6 * 3600000, six) : {status: "NOT_YET_06_JST"},
+    six_to_nine: latest >= nine ? stats(six, nine) : {status: "NOT_YET_09_JST"},
+    fundamentals: a.fundamentals,
+    macro_evidence: {
+      status: macro.status, news: macro.news, news_sources: macro.news_sources,
+      calendar: macro.calendar, economic_calendar: macro.economic_calendar,
+      economic_releases: macro.economic_releases,
+      economic_release_freshness: macro.economic_release_freshness,
+      cross_market: macro.cross_market, saved_markets: macro.saved_markets,
+      report_windows: Object.fromEntries(Object.entries(macro.report_windows || {}).map(
+        ([key, articles]) => [key, articles.slice(0, 3).map(article => ({
+          title: article.title, url: article.url, source_timestamp_utc: article.source_timestamp_utc,
+          source_timestamp_kind: article.source_timestamp_kind
+        }))]))
+    },
+    decision: a.decision,
+    series_audit: Object.fromEntries(Object.entries(data.series).map(([key, series]) =>
+      [key, {returned_bars: series.returned_bars, latest_confirmed_bar: series.latest_confirmed_bar,
+        ...(series.returned_bars === 1 ? {latest: series.values[0]} : {})}])),
+    full_analysis_location: "structuredContent.analysis"
+  };
+  return projection;
 }
 
 async function handleMCP(request, env) {
@@ -977,6 +1096,7 @@ async function handleMCP(request, env) {
           data = await analysisWithFreshPython(env,args);
           const releaseCutoff = timestamp(data.latest_confirmed_1min_bar) + 60000;
           const releaseLookup = liveEconomicReleases(releaseCutoff);
+          const marketLookup = savedMarketEvidence(releaseCutoff);
           let scheduledReleases = [];
           try {
             const macro=await github("macro_brief_latest.json");
@@ -994,7 +1114,14 @@ async function handleMCP(request, env) {
               generated_at_utc:macro.generated_at_utc,age_minutes:age,news_sources:macro.news_sources,
               calendar:macro.calendar,economic_calendar:macro.economic_calendar ? {
                 status:macro.economic_calendar.status,source:macro.economic_calendar.source,
-                checked_at_utc:macro.economic_calendar.checked_at_utc
+                checked_at_utc:macro.economic_calendar.checked_at_utc,
+                error:macro.economic_calendar.error,
+                events:(macro.economic_calendar.events || []).filter(event => {
+                  const at = Date.parse(event.at_utc);
+                  return at >= end - 72 * 3600000 && at <= end + 72 * 3600000;
+                }).map(event => ({title:event.title,currency:event.currency,at_utc:event.at_utc,
+                  impact:event.impact,actual:event.vendor_actual,forecast:event.pre_release_forecast ?? event.vendor_forecast,
+                  previous:event.pre_release_previous ?? event.vendor_previous,result_status:event.result_status}))
               } : null,cross_market:macro.cross_market,intraday_evidence:macro.intraday_evidence,
               report_windows:(()=>{const day=new Date(end+32400000).toISOString().slice(0,10);
                 const six=timestamp(day+" 06:00:00"),nine=timestamp(day+" 09:00:00");
@@ -1009,6 +1136,7 @@ async function handleMCP(request, env) {
             data.macro_evidence={status:"UNAVAILABLE",news:{status:"UNAVAILABLE",error}};
           }
           const {sources, ...freshness} = releaseEvidence(await releaseLookup, scheduledReleases, releaseCutoff, Date.now());
+          data.macro_evidence.saved_markets = await marketLookup;
           data.macro_evidence.economic_releases = sources;
           data.macro_evidence.economic_release_freshness = freshness;
           data.macro_evidence.economic_calendar = {
@@ -1059,13 +1187,17 @@ async function handleMCP(request, env) {
           throw Error("Unknown tool");
         }
 
-        result = {
-          content:[
-            {type:"text",text:JSON.stringify(name === "get_usdjpy_analysis" ? reportProjection(data) : data)}
-          ],
-          structuredContent:data,
-          isError:false
-        };
+        let output = data;
+        let structured = data;
+        if (name === "get_usdjpy_analysis") {
+          output = reportProjection(data);
+          const {report_minutes, ...full} = data;
+          structured = args.detail === "legacy"
+            ? {...full, python_analysis_snapshot: full.analysis}
+            : {...full, macro_evidence: output.macro_evidence, six_to_nine: output.six_to_nine};
+        }
+        result = {content: [{type: "text", text: JSON.stringify(output)}],
+          structuredContent: structured, isError: false};
         break;
       }
 
@@ -1153,13 +1285,16 @@ function validateToolArgs(name, args) {
     ? ["interval","size","start_date","end_date"]
     : name==="get_latest_usdjpy" ? ["interval","size"]
     : name==="get_usdjpy_analysis" || name==="get_usdjpy_bundle"
-      ? ["minute_bars","five_minute_bars","fifteen_minute_bars","hourly_bars","four_hour_bars","daily_bars"]
+      ? ["minute_bars","five_minute_bars","fifteen_minute_bars","hourly_bars","four_hour_bars","daily_bars",
+         ...(name === "get_usdjpy_analysis" ? ["detail"] : [])]
       : [];
   if(!fields.length || Object.keys(args).some(k=>!fields.includes(k))) {
     throw Error("UNKNOWN_TOOL_OR_ARGUMENT");
   }
   for(const [k,v] of Object.entries(args)){
-    if(k==="interval"){
+    if(k==="detail"){
+      if (!["report", "legacy"].includes(v)) throw Error("INVALID_DETAIL");
+    }else if(k==="interval"){
       const intervals=name==="get_usdjpy_history" ?
         ["1h","4h","1day"] : ["1min","5min","15min","1h","4h","1day"];
       if(!intervals.includes(v)) throw Error("INVALID_INTERVAL");

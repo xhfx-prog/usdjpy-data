@@ -5,7 +5,7 @@ const text=readFileSync("cloudflare/worker.js","utf8");
 const a=text.indexOf("async function analysisWithFreshPython(");
 const b=text.indexOf("// Historical OHLC exclusively from GitHub.",a);
 assert.ok(a>=0 && b>a,"Inline Python integration source exists");
-const make=new Function("bundle","history","merge","count","Request","recentMinuteArchive",
+const make=new Function("bundle","history","merge","count","Request","recentMinuteArchive","confirmedDaily","pack","aggregate","MAX",
  text.slice(a,b)+"return analysisWithFreshPython;");
 const candle={datetime:"2026-11-05 23:47:00",open:"158.20",high:"158.30",low:"158.19",close:"158.25"};
 const base={symbol:"USD/JPY",latest_confirmed_1min_bar:candle.datetime,
@@ -16,12 +16,14 @@ const base={symbol:"USD/JPY",latest_confirmed_1min_bar:candle.datetime,
 function instantiate(pyResult){
  const calls=[];
  const engine=make(async()=>base,async()=>({values:Array(1000).fill(candle)}),
-  (a,b)=>a.concat(b), (v,d)=>v??d,Request,async()=>[candle]);
+  (a,b)=>a.concat(b), (v,d)=>v??d,Request,async()=>[candle],rows=>rows,
+  (interval,rows,size)=>({interval,values:rows.slice(0,size),returned_bars:Math.min(size,rows.length)}),
+  rows=>rows,2000);
  const env={PYTHON_ANALYZER:{fetch:async request=>{
    calls.push(JSON.parse(await request.text()));
    return Response.json(pyResult);
  }}};
- return {call:()=>engine(env,{}),calls};
+ return {call:(args={})=>engine(env,args),calls};
 }
 test("one MCP call returns inline Python computation on identical confirmed minute",async()=>{
  const report={execution:"CLOUDFLARE_PYTHON_WORKER_INLINE",full_python_engine_recomputed:true,
@@ -37,7 +39,13 @@ test("one MCP call returns inline Python computation on identical confirmed minu
  assert.equal(result.analysis_integration.full_python_engine_recomputed_for_current_1min,true);
  assert.equal(result.analysis_integration.python_snapshot_lag_in_candles,0);
  assert.equal(result.analysis_integration.requires_on_demand_python_refresh,false);
- assert.deepEqual(result.python_analysis_snapshot,report.analysis);
+ assert.deepEqual(result.analysis,report.analysis);
+ assert.equal(result.python_analysis_snapshot,undefined);
+ assert.ok(Object.values(result.series).every(series=>series.returned_bars===1));
+ assert.equal(instance.calls[0]["1day"].length,1150,"requested output count does not cap Python input");
+ const detailed=await instance.call({hourly_bars:3,daily_bars:2});
+ assert.equal(detailed.series["1h"].returned_bars,3);
+ assert.equal(detailed.series["1day"].returned_bars,2);
 });
 test("reject Python output referencing an older minute",async()=>{
  const report={execution:"CLOUDFLARE_PYTHON_WORKER_INLINE",full_python_engine_recomputed:true,

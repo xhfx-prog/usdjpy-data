@@ -8,6 +8,18 @@ from economic_calendar import collect_calendar
 
 def economic_release_snapshot(previous, now):
     url = "https://usdjpy-chart.xxhappyfrenzyxx.workers.dev/economic-releases"
+    cutoff = now - timedelta(hours=36)
+    saved = {item["url"]: item for item in previous.get("sources", [])}
+
+    def with_fallback(item):
+        older = saved.get(item["url"], {})
+        events = [event for event in older.get("events", [])
+                  if cutoff <= datetime.fromisoformat(event["at_utc"]) <= now]
+        if events:
+            return {**older, "events": events, "status": "SCHEDULED_FALLBACK",
+                    "live_error": item.get("error")}
+        return item
+
     try:
         latest = json.loads(request_bytes(url, timeout=14))
         if not isinstance(latest.get("sources"), list) or not latest["sources"]:
@@ -15,10 +27,8 @@ def economic_release_snapshot(previous, now):
         if not isinstance(latest.get("checked_at_utc"), str):
             raise ValueError("Missing release check timestamp")
         checked = datetime.fromisoformat(latest["checked_at_utc"])
-        saved = {item["url"]: item for item in previous.get("sources", [])}
         seen_urls = set()
         sources = []
-        cutoff = now - timedelta(hours=36)
         for item in latest["sources"]:
             if not isinstance(item.get("url"), str) or not isinstance(item.get("events"), list):
                 raise ValueError("Invalid release source")
@@ -40,14 +50,13 @@ def economic_release_snapshot(previous, now):
                     event["first_scheduled_observed_at_utc"] = first
                     event["first_scheduled_observed_after_release_seconds"] = int(
                         (datetime.fromisoformat(first) - released).total_seconds())
-            if item.get("status") == "UNAVAILABLE" and item["url"] in saved:
-                older = saved[item["url"]]
-                events = [event for event in older["events"] if datetime.fromisoformat(event["at_utc"]) >= cutoff]
-                if events:
-                    item = {**older, "events": events, "status": "SCHEDULED_FALLBACK", "live_error": item.get("error")}
-            sources.append(item)
+            sources.append(with_fallback(item) if item.get("status") == "UNAVAILABLE" else item)
     except (OSError, ValueError, TypeError, AttributeError, KeyError) as error:
-        return {**previous, "last_attempt_utc": now.isoformat(), "error": str(error)[:200]}
+        message = str(error)[:200]
+        sources = [with_fallback({"name": source.get("name"), "url": source_url,
+                                  "events": [], "status": "UNAVAILABLE", "error": message})
+                   for source_url, source in saved.items()]
+        return {**previous, "sources": sources, "last_attempt_utc": now.isoformat(), "error": message}
     return {**latest, "sources": sources, "last_attempt_utc": now.isoformat()}
 
 

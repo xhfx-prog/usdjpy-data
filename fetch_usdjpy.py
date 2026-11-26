@@ -1,4 +1,4 @@
-"""USD/JPY collection: 10-day minute, 370-day hourly, 10-year daily archive.
+"""USD/JPY collection: unlimited minute, 370-day hourly, 10-year daily archive.
 
 Runtime hourly or on-demand. Daily and hourly archives are updated incrementally.
 Data coverage manifests report what actually exists, not the configured target.
@@ -22,7 +22,7 @@ DAYS = DATA / "history_1day"
 for folder in (DATA, MINS, HOURS, DAYS):
     folder.mkdir(exist_ok=True, parents=True)
 
-MIN_RETENTION_DAYS = 10
+MIN_RETENTION_DAYS = None
 HOUR_RETENTION_DAYS = 370
 DAY_RETENTION_DAYS = 3653
 STATE_PATH = DATA / "archive_state.json"
@@ -123,16 +123,18 @@ def due(last_timestamp, hours):
 def archive(interval, root, rows, name_fn, cutoff):
     grouped = {}
     for bar in rows:
-        if bar["datetime"][:10] < cutoff:
+        if cutoff is not None and bar["datetime"][:10] < cutoff:
             continue
         grouped.setdefault(name_fn(bar["datetime"]), []).append(bar)
     for name, batch in grouped.items():
         path = root / (name + ".json")
         prior = normalize(values(path), interval)
         merged = normalize(prior + batch, interval)
-        merged = [b for b in merged if b["datetime"][:10] >= cutoff]
+        merged = [b for b in merged if cutoff is None or b["datetime"][:10] >= cutoff]
         if merged != prior:
             store(path, payload(interval, merged, partition=name))
+    if cutoff is None:
+        return
     for path in root.glob("*.json"):
         old = normalize(values(path), interval)
         kept = [b for b in old if b["datetime"][:10] >= cutoff]
@@ -153,7 +155,7 @@ def manifest(root, interval, split):
             })
     store(DATA / ("history_" + interval + "_index.json"), {
         "updated_at": NOW.isoformat(), "interval": interval,
-        "retention_calendar_days": {"1min": 10, "1h": 370, "1day": 3653}[interval],
+        "retention_calendar_days": {"1min": None, "1h": 370, "1day": 3653}[interval],
         "sessions" if interval == "1min" else "partitions": result,
         "actual_oldest": result[-1]["first"] if result else None,
         "actual_newest": result[0]["last"] if result else None,
@@ -168,7 +170,7 @@ if is_closed(NOW):
 state = read(STATE_PATH)
 errors = []
 today = NOW.astimezone(JST).date()
-minute_cutoff = (today - timedelta(days=MIN_RETENTION_DAYS)).isoformat()
+minute_cutoff = None
 hour_cutoff = (today - timedelta(days=HOUR_RETENTION_DAYS)).isoformat()
 day_cutoff = (today - timedelta(days=DAY_RETENTION_DAYS)).isoformat()
 

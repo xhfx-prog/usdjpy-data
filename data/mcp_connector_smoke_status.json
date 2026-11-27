@@ -1,1 +1,33 @@
-{"tested_at_utc":"2026-11-26T23:59:57.423Z","latest_confirmed_1min_start_jst":"2026-11-27 08:58:00","source":"CONNECTED_MCP","checks":{"freshness":true,"inline_python":true,"recomputed":true,"lag_zero":true,"single_call":true,"api_at_most_one":true,"six_timeframes":true,"overlay_matches":true},"status":"PASS","twelve_data_requests":1,"note":"All six series returned requested counts; overlay and analysis input timestamp match. Fixed 09 JST window not yet available at fetch time."}
+{
+  "tested_at_utc": "2026-11-27T00:06:50.593Z",
+  "latest_confirmed_1min_start_jst": "2026-11-27 09:05:00",
+  "source": "CONNECTED_MCP",
+  "checks": {
+    "freshness": true,
+    "inline_python": true,
+    "recomputed": true,
+    "lag_zero": true,
+    "single_call": true,
+    "api_at_most_one": true,
+    "six_timeframes": true,
+    "overlay_matches": true
+  },
+  "status": "PASS",
+  "twelve_data_requests": 1,
+  "verify_round": 3,
+  "nine_window": {
+    "status": "COMPLETE",
+    "base_bar": "2026-11-27 05:59:00",
+    "end_bar": "2026-11-27 08:59:00",
+    "bars": 180,
+    "start_close": 159.26931,
+    "end_close": 159.29921,
+    "change_pips": 2.99,
+    "high": 159.30638,
+    "high_at": "2026-11-27 08:56:00",
+    "low": 159.23214,
+    "low_at": "2026-11-27 07:05:00",
+    "range_pips": 7.424
+  },
+  "worker_source_commit": "99fa2dab3d914661f15885e1ec1b2a67f930c57d"
+}

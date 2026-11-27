@@ -1,6 +1,7 @@
 {
-  "request_id": "archive-reconcile-validation-20261125",
+  "request_id": "archive-gap-provider-check-20261127",
   "requested_by": "chatgpt",
-  "reason": "Verify retention reconciliation and manifest consistency after publication",
-  "requested_at_utc": "2026-11-24T15:56:20.559Z"
+  "reason": "Verify the restored OHLC archive and fill only confirmed provider gaps",
+  "requested_at_utc": "2026-11-27T03:52:09.966197+00:00",
+  "verify_archive_gaps": true
 }

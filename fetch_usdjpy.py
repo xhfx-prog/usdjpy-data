@@ -5,6 +5,7 @@ Data coverage manifests report what actually exists, not the configured target.
 """
 import json
 import os
+import sys
 import urllib.parse
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
@@ -161,6 +162,47 @@ def manifest(root, interval, split):
         "actual_newest": result[0]["last"] if result else None,
         "total_bars": sum(item["count"] for item in result)
     })
+
+
+def verify_archive_gaps():
+    """Probe bounded saved gap candidates with the existing archive provider."""
+    from scripts.audit_data_quality import intraday_gap_candidates
+
+    summaries = []
+    for interval, root, partition_digits, key in (
+            ("1min", MINS, 10, "date_jst"), ("1h", HOURS, 7, "month_jst")):
+        dates = {bar["datetime"] for path in root.glob("*.json") for bar in values(path)}
+        gaps = intraday_gap_candidates(sorted(dates), interval)
+        days = read(DATA / f"history_{interval}_index.json")["retention_calendar_days"]
+        cutoff = (NOW.astimezone(JST).date() - timedelta(days=days)).isoformat() if days else None
+        for gap in gaps[-4:]:
+            left, right = gap["after"], gap["before"]
+            record = {"interval": interval, **gap, "restored_bars": 0}
+            try:
+                returned = fetch(interval, start_date=left, end_date=right)
+                anchors = {row["datetime"] for row in returned}
+                found = [row for row in returned if left < row["datetime"] < right
+                         and row["datetime"] not in dates]
+                if found:
+                    archive(interval, root, found, lambda stamp: stamp[:partition_digits], cutoff)
+                    dates.update(row["datetime"] for row in found)
+                    record.update(status="RESTORED_PROVIDER_BARS", restored_bars=len(found))
+                elif {left, right} <= anchors:
+                    record["status"] = "NO_PROVIDER_BARS_BETWEEN_ANCHORS"
+                else:
+                    record["status"] = "PROVIDER_COVERAGE_UNCONFIRMED"
+            except (OSError, ValueError, RuntimeError) as error:
+                record.update(status="PROVIDER_REQUEST_FAILED", error=str(error)[:220])
+            summaries.append(record)
+            print("Archive gap:", record)
+        manifest(root, interval, key)
+    store(DATA / "archive_gap_verification.json", {"checked_at_utc": NOW.isoformat(),
+          "source": "Twelve Data", "gaps": summaries})
+
+
+if "--verify-archive-gaps" in sys.argv:
+    verify_archive_gaps()
+    raise SystemExit(0)
 
 
 if is_closed(NOW):

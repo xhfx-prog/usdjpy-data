@@ -39,7 +39,13 @@ jobs:
         id: fetch
         env:
           TWELVE_API_KEY: ${{ secrets.TWELVE_API_KEY }}
-        run: python fetch_usdjpy.py
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = push ] && python -c 'import json,sys; sys.exit(not json.load(open("control/refresh_request.json")).get("verify_archive_gaps"))'; then
+            python fetch_usdjpy.py --verify-archive-gaps
+            python scripts/audit_data_quality.py --require-tfx
+          else
+            python fetch_usdjpy.py
+          fi
 
       - name: Run analyzer regression tests
         if: steps.fetch.outcome == 'success'
@@ -48,7 +54,12 @@ jobs:
       - name: Generate deterministic USDJPY analysis
         id: analyze
         if: steps.fetch.outcome == 'success'
-        run: python analyze_usdjpy.py
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = push ] && python -c 'import json,sys; sys.exit(not json.load(open("control/refresh_request.json")).get("verify_archive_gaps"))'; then
+            echo "Archive-only verification request"
+          else
+            python analyze_usdjpy.py
+          fi
 
       - name: Record run diagnostics
         if: always()

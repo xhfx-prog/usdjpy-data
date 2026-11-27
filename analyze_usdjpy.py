@@ -769,15 +769,35 @@ def long_candidates(levels, direction, close):
     for support in levels["support"]:
         if support["high"]>close: continue
         entry=support["center"]
-        above=[r for r in levels["resistance"] if r["low"]>support["high"]]
-        if not above: continue
-        resistance=min(above,key=lambda r:r["low"])
+        overhead=[r for r in levels["resistance"] if r["high"]>=entry]
+        if not overhead: continue
+        resistance=min(overhead,key=lambda r:r["low"])
         candidates.append({"support":support,"reference_entry":entry,
-            "first_resistance":resistance,"gross_room_pips":n((resistance["low"]-entry)*100),
+            "first_resistance":resistance,"gross_room_pips":n(max(0,resistance["low"]-entry)*100),
             "structural_invalidation_below":support["low"],
             "status":"CONDITIONAL_NOT_ORDER","macro_check_required":True})
     return {"status":"OBSERVATION_ONLY","candidates":candidates}
 
+
+def six_am_structure(minute, hourly, daily, asof):
+    """Reconstruct the technical view using only candles closed at 06:00 JST."""
+    baseline=asof.replace(hour=6,minute=0,second=0,microsecond=0)
+    if asof.hour<9:
+        return None
+    before=[bar for bar in minute if stamp(bar["t"])<baseline]
+    if not before or stamp(before[-1]["t"])+timedelta(minutes=1)!=baseline:
+        return None
+    h1=[bar for bar in hourly if stamp(bar["t"])+timedelta(hours=1)<=baseline]
+    h4=aggregate(h1,240)
+    daily=[bar for bar in daily if bar["t"]<baseline.date().isoformat()]
+    h5=aggregate(before,5)
+    h15=aggregate(before,15)
+    assessments,direction=multi_timeframe_structure(daily,h4,h1,h15,h5,before)
+    return {"asof_jst":iso(baseline),"parent_direction":direction,
+            "timeframe_assessments":{
+                name:{key: assessments[name].get(key) for key in ("state","swing_structure","atr14","last_complete_bar")}
+                for name in ("1day","4h","1h")},
+            "support_resistance":levels(h5,h15,h1,h4,daily,before[-1]["c"])}
 
 def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
     asof=asof.astimezone(JST)
@@ -872,6 +892,7 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
              "day_candles":len(daily),"hourly_atr14":atr(h1),
              "last_complete_5min":h5[-1]["t"],"last_complete_1h":h1[-1]["t"]},
         "market_structure":{"timeframe_assessments":timeframe_states,
+                            "six_am_reconstruction":six_am_structure(minute,h1,daily,asof),
                             "parent_direction":parent_direction,
                             "higher_timeframe_chart_context":{
                                 "4h":shape4,"1h":shape1},

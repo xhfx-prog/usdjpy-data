@@ -62,9 +62,8 @@ function merge(preferred, old) {
 // Index paths already include "data/".
 async function github(path) {
   const normalized = path.replace(/^data\//, "");
-  const url = normalized.startsWith("macro_")
-    ? ROOT + normalized + "?minute=" + Math.floor(Date.now() / 60000)
-    : ROOT + normalized;
+  const currentSnapshot = /^(macro_|fx_intraday[.]json$|fx_flow_sources[.]json$|mof_securities_weekly[.]json$)/.test(normalized);
+  const url = ROOT + normalized + (currentSnapshot ? "?minute=" + Math.floor(Date.now() / 60000) : "");
   const res = await fetch(url, {
     cf: { cacheTtl: 0 }
   });
@@ -984,6 +983,26 @@ async function savedMarketEvidence(cutoff) {
   return Object.fromEntries(entries);
 }
 
+function attachReleaseReactions(sources, rows) {
+  const candles = new Map(rows.map(bar => [timestamp(bar.datetime), Number(bar.close)]));
+  for (const source of sources) {
+    for (const release of source.events) {
+      const minute = Math.floor(Date.parse(release.at_utc) / 60000) * 60000;
+      const base = candles.get(minute - 60000);
+      if (!Number.isFinite(base)) continue;
+      const latest = Math.min(60, Math.max(0, Math.floor((timestamp(rows[0].datetime) - minute) / 60000) + 1));
+      const changes = {};
+      for (const minutes of [5, 60]) {
+        if (latest < minutes) continue;
+        const complete = Array.from({length: minutes}, (_, index) =>
+          candles.has(minute + index * 60000)).every(Boolean);
+        if (complete) changes[minutes + "m"] = Number(((candles.get(minute + (minutes-1)*60000) - base)*100).toFixed(3));
+      }
+      release.usdjpy_reaction = {pre_event_close_jst: label(minute - 60000), change_pips: changes};
+    }
+  }
+}
+
 function reportProjection(data) {
   const a=data.analysis, m=a.market_structure;
   const rows=data.report_minutes;
@@ -1015,6 +1034,7 @@ function reportProjection(data) {
     support_resistance: m.support_resistance, upper_stall: m.upper_stall,
     sharp_decline_recovery: m.sharp_decline_recovery, five_minute_rebound: m.five_minute_rebound,
     overnight: latest >= six ? stats(six - 6 * 3600000, six) : {status: "NOT_YET_06_JST"},
+    six_am_reconstruction: m.six_am_reconstruction,
     six_to_nine: latest >= nine ? stats(six, nine) : {
       status: "NOT_YET_09_JST", ...(latest > six ? {partial: stats(six, latest)} : {})
     },
@@ -1139,6 +1159,7 @@ async function handleMCP(request, env) {
           }
           const {sources, ...freshness} = releaseEvidence(await releaseLookup, scheduledReleases, releaseCutoff, Date.now());
           data.macro_evidence.saved_markets = await marketLookup;
+          attachReleaseReactions(sources, data.report_minutes);
           data.macro_evidence.economic_releases = sources;
           data.macro_evidence.economic_release_freshness = freshness;
           data.macro_evidence.economic_calendar = {

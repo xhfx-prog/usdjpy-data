@@ -1015,7 +1015,9 @@ function reportProjection(data) {
     support_resistance: m.support_resistance, upper_stall: m.upper_stall,
     sharp_decline_recovery: m.sharp_decline_recovery, five_minute_rebound: m.five_minute_rebound,
     overnight: latest >= six ? stats(six - 6 * 3600000, six) : {status: "NOT_YET_06_JST"},
-    six_to_nine: latest >= nine ? stats(six, nine) : {status: "NOT_YET_09_JST"},
+    six_to_nine: latest >= nine ? stats(six, nine) : {
+      status: "NOT_YET_09_JST", ...(latest > six ? {partial: stats(six, latest)} : {})
+    },
     fundamentals: a.fundamentals,
     macro_evidence: {
       status: macro.status, news: macro.news, news_sources: macro.news_sources,

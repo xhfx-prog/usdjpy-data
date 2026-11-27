@@ -1,6 +1,6 @@
 """Scheduled macro discovery, with explicit source coverage and no causal claims."""
 import json
-from datetime import datetime,timedelta,timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from investigate_world_news import collect, deduplicate, request_bytes
 import xml.etree.ElementTree as ET
@@ -60,6 +60,87 @@ def economic_release_snapshot(previous, now):
     return {**latest, "sources": sources, "last_attempt_utc": now.isoformat()}
 
 
+def japanese_daily_yields(now, fetcher=request_bytes):
+    """Read the Ministry of Finance's daily JGB reference yield curve."""
+    import csv
+    import io
+    import math
+    import re
+    from zoneinfo import ZoneInfo
+
+    today = now.astimezone(ZoneInfo("Asia/Tokyo")).date()
+    url = "https://www.mof.go.jp/jgbs/reference/interest_rate/jgbcm.csv"
+    maturities = {"jp_2y_yield": "2年", "jp_10y_yield": "10年"}
+    try:
+        rows = list(csv.reader(io.StringIO(fetcher(url).decode("cp932"))))
+        header = next(row for row in rows if row and row[0] == "基準日")
+        columns = {name: header.index(label) for name, label in maturities.items()}
+        values = {name: {} for name in maturities}
+        for row in rows:
+            match = re.fullmatch(r"R(\d+)\.(\d+)\.(\d+)", row[0].strip()) if row else None
+            if not match:
+                continue
+            year, month, day = map(int, match.groups())
+            observed = date(2018 + year, month, day)
+            if observed > today:
+                continue
+            for name, column in columns.items():
+                value = float(row[column])
+                if not math.isfinite(value):
+                    raise ValueError("Nonfinite JGB yield")
+                values[name][observed] = value
+        result = {}
+        for name, observations in values.items():
+            latest = sorted(observations.items())
+            if not latest:
+                raise ValueError("Missing JGB yield observations")
+            day, value = latest[-1]
+            previous_day, previous_value = latest[-2] if len(latest) > 1 else (None, None)
+            result[name] = {"status": "DAILY_ONLY", "source": url, "unit": "percent",
+                            "observation_date": day.isoformat(), "value": value,
+                            "previous_date": previous_day.isoformat() if previous_day else None,
+                            "previous_value": previous_value,
+                            "change": round(value - previous_value, 5) if previous_value is not None else None,
+                            "age_calendar_days": (today - day).days}
+        return result
+    except (OSError, UnicodeError, ValueError, StopIteration, IndexError) as error:
+        return {name: {"status": "ERROR", "source": url, "error": str(error)[:180]}
+                for name in maturities}
+
+
+def american_daily_yields(now, fetcher=request_bytes):
+    """Read official Treasury par yields and retain an explicit observation date."""
+    from zoneinfo import ZoneInfo
+
+    url = ("https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml"
+           "?data=daily_treasury_yield_curve&field_tdr_date_value_month=")
+    ny_day = now.astimezone(ZoneInfo("America/New_York")).date()
+    maturities = {"us_2y_yield": "BC_2YEAR", "us_10y_yield": "BC_10YEAR"}
+    data_ns = "{http://schemas.microsoft.com/ado/2007/08/dataservices}"
+    meta_ns = "{http://schemas.microsoft.com/ado/2007/08/dataservices/metadata}"
+    observations = {}
+    try:
+        for month in (ny_day, ny_day.replace(day=1) - timedelta(days=1)):
+            root = ET.fromstring(fetcher(url + month.strftime("%Y%m")))
+            for row in root.iter(meta_ns + "properties"):
+                observed = date.fromisoformat(row.findtext(data_ns + "NEW_DATE")[:10])
+                if observed <= ny_day:
+                    observations[observed] = {
+                        name: float(row.findtext(data_ns + field)) for name, field in maturities.items()
+                    }
+            if len(observations) >= 2:
+                break
+        day, previous = sorted(observations, reverse=True)[:2]
+        return {name: {"status": "DAILY_ONLY", "source": url + day.strftime("%Y%m"), "unit": "percent",
+                       "observation_date": day.isoformat(), "value": observations[day][name],
+                       "previous_date": previous.isoformat(), "previous_value": observations[previous][name],
+                       "change": round(observations[day][name] - observations[previous][name], 5),
+                       "age_calendar_days": (ny_day - day).days}
+                for name in maturities}
+    except (OSError, ET.ParseError, TypeError, ValueError):
+        return {}
+
+
 def cross_market(now):
     """Public daily observations; never label these as intraday reactions."""
     from concurrent.futures import ThreadPoolExecutor
@@ -79,8 +160,12 @@ def cross_market(now):
             d,v=values[-1]; p,pv=values[-2]
             return name,{"status":"DAILY_ONLY","source":url,"observation_date":d.isoformat(),"previous_date":p.isoformat(),"value":v,"previous_value":pv,"change":round(v-pv,5),"age_calendar_days":(now.date()-d).days}
         except Exception as e: return name,{"status":"ERROR","source":url,"error":str(e)[:200]}
-    with ThreadPoolExecutor(max_workers=5) as pool:
-        series=dict(pool.map(fetch,ids.items()))
+    with ThreadPoolExecutor(max_workers=7) as pool:
+        japan = pool.submit(japanese_daily_yields, now)
+        treasury = pool.submit(american_daily_yields, now)
+        series = dict(pool.map(fetch, ids.items()))
+        series.update(japan.result())
+        series.update(treasury.result())
     return {"status":"DAILY_CONTEXT_ONLY","series":series,"intraday_correlation":"NOT_AVAILABLE","dxy":"NOT_CONNECTED","sp500_futures":"NOT_CONNECTED"}
 
 def intraday_evidence(now, articles):

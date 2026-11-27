@@ -658,7 +658,7 @@ def multi_timeframe_structure(daily, h4, h1, m15, m5, minute):
                       if frames[k]["state"] in ("UP","DOWN")),"UNRESOLVED")
     return frames,parent
 
-def conditional_outlook(hourly, levels, close, direction):
+def conditional_outlook(hourly, levels, close, direction, asof=None):
     """Historical rolling excursions, not calibrated forecasts or probabilities."""
     runs=[]
     for bar in hourly:
@@ -686,6 +686,56 @@ def conditional_outlook(hourly, levels, close, direction):
             "median_realized_range_pips":n(width*100),"hourly_atr14":atr(hourly),
             "source_first_hour_jst":hourly[0]["t"],"source_last_hour_jst":hourly[-1]["t"],
             "direction":direction,"support":levels["support"],"resistance":levels["resistance"]}
+    if asof is not None:
+        for horizon in (24,72):
+            comparison=weekend_window_outlook(hourly, close, asof, horizon)
+            if comparison:
+                result[str(horizon)+"h"]["weekend_clock_comparison"]=comparison
+    return result
+
+
+def fx_hour_open(at):
+    ny=at.astimezone(NY)
+    return (ny.weekday()<4 or (ny.weekday()==4 and ny.hour<17)
+            or (ny.weekday()==6 and ny.hour>=17))
+
+
+def weekend_window_outlook(hourly, close, asof, horizon):
+    """Compare the same weekday and hour, including the weekly FX closure."""
+    start=asof.replace(minute=0,second=0,microsecond=0)
+    deadline=start+timedelta(hours=horizon)
+    open_hours=sum(fx_hour_open(start+timedelta(hours=offset)) for offset in range(horizon))
+    if open_hours==horizon:
+        return None
+    observed={stamp(bar["t"]):bar for bar in hourly}
+    up=[]; down=[]; widths=[]
+    ny_start=start.astimezone(NY)
+    for anchor, base in observed.items():
+        window_start=anchor+timedelta(hours=1)
+        ny_window_start=window_start.astimezone(NY)
+        if (ny_window_start.weekday(),ny_window_start.hour)!=(ny_start.weekday(),ny_start.hour):
+            continue
+        if window_start+timedelta(hours=horizon)>start:
+            continue
+        starts=[window_start+timedelta(hours=offset) for offset in range(horizon)]
+        expected=[hour for hour in starts if fx_hour_open(hour)]
+        if not expected or any(hour not in observed for hour in expected):
+            continue
+        high=max(observed[hour]["h"] for hour in expected)
+        low=min(observed[hour]["l"] for hour in expected)
+        up.append(max(0,high-base["c"]))
+        down.append(max(0,base["c"]-low))
+        widths.append(high-low)
+    result={"status":"INSUFFICIENT_MATCHED_WEEKEND_SAMPLES","samples":len(up),
+            "open_hours_at_hour_boundaries":open_hours,"closed_hours":horizon-open_hours,
+            "start_hour_jst":iso(start),"end_hour_jst":iso(deadline),
+            "clock":"NEW_YORK_WEEKLY_FX_SESSION_EXCLUDES_HOLIDAY_OVERRIDES"}
+    if len(up)>=4:
+        up_mid,down_mid,width=map(statistics.median,(up,down,widths))
+        result.update(status="MATCHED_WEEKDAY_HOUR_MEDIAN_EXCURSION",
+                      lower=n(close-down_mid),upper=n(close+up_mid),
+                      median_up_pips=n(up_mid*100),median_down_pips=n(down_mid*100),
+                      median_realized_range_pips=n(width*100))
     return result
 
 
@@ -846,7 +896,7 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
            "long":"NO_AUTOMATIC_ENTRY",
            "first_verified_resistance":first_res if price_usable else None,
            "first_verified_support":first_sup if price_usable else None,
-           "conditional_outlook":conditional_outlook(h1,ls,latest["c"],parent_direction) if price_usable else {},
+           "conditional_outlook":conditional_outlook(h1,ls,latest["c"],parent_direction,asof) if price_usable else {},
            "long_candidates":long_candidates(ls,parent_direction,latest["c"]) if price_usable else {},
            "prediction_24h":"NOT_CALIBRATED",
            "prediction_72h":"NOT_CALIBRATED",

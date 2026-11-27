@@ -1,1 +1,29 @@
-{"checked_at_utc":"2026-11-26T21:32:29.841130+00:00","bny":{"source":"https://www.bny.com/corporate/global/en/solutions/platforms/execution-services/iflow.html","status":"no_report_links","reports":[]},"ebs":{"source":"https://www.cmegroup.com/markets/ebs/fx-market-profile.html","status":"numeric_feed_not_configured","volume":null,"spread":null},"options":{"source":"https://www.cmegroup.com/markets/fx/g10/japanese-yen/quotes/options","status":"numeric_feed_not_configured","risk_reversal":null,"cvol":null},"tfx":{"source":"https://www.tfx.co.jp/kawase/document/PRT-010-CSV-003-20261125.CSV","status":"daily_exchange_statistics","market":"TFX Click 365","symbol":"USD/JPY","trade_date":"2026-11-25","volume":20307,"open_interest":353335}}
+{
+  "checked_at_utc": "2026-11-27T00:37:24.121842+00:00",
+  "bny": {
+    "source": "https://www.bny.com/corporate/global/en/solutions/platforms/execution-services/iflow.html",
+    "status": "no_report_links",
+    "reports": []
+  },
+  "ebs": {
+    "source": "https://www.cmegroup.com/markets/ebs/fx-market-profile.html",
+    "status": "numeric_feed_not_configured",
+    "volume": null,
+    "spread": null
+  },
+  "options": {
+    "source": "https://www.cmegroup.com/markets/fx/g10/japanese-yen/quotes/options",
+    "status": "numeric_feed_not_configured",
+    "risk_reversal": null,
+    "cvol": null
+  },
+  "tfx": {
+    "source": "https://www.tfx.co.jp/kawase/document/PRT-010-CSV-003-20261126.CSV",
+    "status": "daily_exchange_statistics",
+    "market": "TFX Click 365",
+    "symbol": "USD/JPY",
+    "trade_date": "2026-11-26",
+    "volume": 9034,
+    "open_interest": 353770
+  }
+}

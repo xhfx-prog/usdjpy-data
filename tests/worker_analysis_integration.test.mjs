@@ -121,3 +121,27 @@ test("calendar reconciliation keeps forecasts separate and matches only the exac
   sources[0].events.push({...release, vendor_actual:"3.1%"});
   assert.deepEqual(join([schedule], sources, Date.parse(at)), [schedule]);
 });
+
+const tfxStart = code.indexOf("function tfxAt(");
+const tfxEnd = code.indexOf("async function savedMarketEvidence(", tfxStart);
+const tfxEvidence = new Function(code.slice(tfxStart, tfxEnd) + "return tfxEvidence;")();
+
+test("TFX daily availability follows observation time, with weekly data independent", () => {
+  const older = {trade_date: "2026-11-25", publication_date_jst: "2026-11-26",
+    first_observed_at_utc: "2026-11-26T00:00:00Z", volume: 20307, open_interest: 353335};
+  const newer = {trade_date: "2026-11-26", publication_date_jst: "2026-11-27",
+    first_observed_at_utc: "2026-11-26T23:20:00Z", volume: 9034, open_interest: 353770};
+  const weekly = {trade_date: "2026-11-17", publication_date_jst: "2026-11-24",
+    first_observed_at_utc: "2026-11-24T01:40:00Z", sell_open_interest: 358202, buy_open_interest: 133289};
+  const evidence = tfxEvidence({schema_version: 1, market: "TFX Click 365", symbol: "USD/JPY",
+    unit: "contracts", contract_size_usd: 10000,
+    daily: {history: [older, newer], status: "SOURCE_VERIFIED", checked_at_utc: "2026-11-26T23:21:00Z"},
+    weekly: {history: [weekly], status: "SCHEDULED_FALLBACK", checked_at_utc: "2026-11-26T23:21:00Z"},
+  }, Date.parse("2026-11-27T00:00:00Z"));
+  assert.equal(evidence.report_windows["06"].daily.latest.volume, 20307);
+  assert.equal(evidence.report_windows["09"].daily.latest.volume, 9034);
+  assert.equal(evidence.daily.status, "LATEST_PUBLISHED");
+  assert.equal(evidence.weekly.status, "SCHEDULED_FALLBACK");
+  assert.equal(evidence.weekly.latest.sell_open_interest, 358202);
+  assert.equal(evidence.report_windows["06"].weekly.latest.buy_open_interest, 133289);
+});

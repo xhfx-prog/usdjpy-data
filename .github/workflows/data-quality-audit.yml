@@ -12,7 +12,7 @@ on:
       - '.github/workflows/data-quality-audit.yml'
   workflow_dispatch:
   workflow_run:
-    workflows: ['Update USDJPY Data']
+    workflows: ['Update USDJPY Data', 'Collect TFX USDJPY statistics']
     types: [completed]
     branches: [main]
   schedule:
@@ -24,7 +24,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   audit:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.name == 'Collect TFX USDJPY statistics'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -35,7 +35,14 @@ jobs:
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Validate saved datasets
         if: always()
-        run: python3 scripts/audit_data_quality.py
+        env:
+          TRIGGER_WORKFLOW: ${{ github.event.workflow_run.name }}
+        run: |
+          if [ "$TRIGGER_WORKFLOW" = 'Collect TFX USDJPY statistics' ]; then
+            python3 scripts/audit_data_quality.py --require-tfx
+          else
+            python3 scripts/audit_data_quality.py
+          fi
       - name: Upload detailed audit even on failure
         if: always()
         uses: actions/upload-artifact@v4

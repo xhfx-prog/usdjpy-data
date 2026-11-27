@@ -62,7 +62,7 @@ function merge(preferred, old) {
 // Index paths already include "data/".
 async function github(path) {
   const normalized = path.replace(/^data\//, "");
-  const currentSnapshot = /^(macro_|fx_intraday[.]json$|fx_flow_sources[.]json$|mof_securities_weekly[.]json$)/.test(normalized);
+  const currentSnapshot = /^(macro_|fx_intraday[.]json$|fx_flow_sources[.]json$|tfx_usdjpy[.]json$|mof_securities_weekly[.]json$)/.test(normalized);
   const url = ROOT + normalized + (currentSnapshot ? "?minute=" + Math.floor(Date.now() / 60000) : "");
   const res = await fetch(url, {
     cf: { cacheTtl: 0 }
@@ -933,11 +933,70 @@ async function liveEconomicReleases(through) {
   }));
 }
 
+function tfxAt(feed, name, asOf) {
+  const quantities = name === "daily" ? ["volume", "open_interest"] : ["sell_open_interest", "buy_open_interest"];
+  const dayJst = new Date(asOf + 9 * 3600000).toISOString().slice(0, 10);
+  const checked = Date.parse(feed?.checked_at_utc);
+  if (!Array.isArray(feed?.history) || !Number.isFinite(checked) ||
+      !["SOURCE_VERIFIED", "SCHEDULED_FALLBACK", "UNAVAILABLE"].includes(feed.status))
+    return {status: "INVALID_SNAPSHOT"};
+  const history = feed.history.filter(row => row.trade_date < dayJst && (
+    Date.parse(row.first_observed_at_utc) <= asOf ||
+    (row.publication_date_jst && row.publication_date_jst < dayJst)
+  )).slice(name === "daily" ? -6 : -5);
+  const latest = history.at(-1);
+  if (!latest) return {status: "NOT_OBSERVED_AS_OF"};
+  if (!history.every(row => quantities.every(field => Number.isSafeInteger(row[field]) && row[field] >= 0)))
+    return {status: "INVALID_SNAPSHOT"};
+
+  // Use soft publication windows. TFX can trade on Japanese holidays, and
+  // official publication may move or be delayed. The trade date is explicit.
+  const dayMs = 86400000;
+  const lastDate = Date.parse(latest.publication_date_jst || latest.trade_date);
+  const reportDay = Date.parse(dayJst);
+  let weekdays = 0;
+  for (let day = Math.max(lastDate + dayMs, reportDay - 7 * dayMs); day <= reportDay; day += dayMs) {
+    const weekday = new Date(day).getUTCDay();
+    if (weekday > 0 && weekday < 6) weekdays++;
+  }
+  const beforeNoon = (asOf + 9 * 3600000) % dayMs < 12 * 3600000;
+  const awaiting = name === "daily" ? weekdays === 1 && beforeNoon :
+    (reportDay - lastDate >= 7 * dayMs && (reportDay - lastDate < 9 * dayMs || beforeNoon));
+  const delayed = name === "daily" ? weekdays >= 3 : reportDay - lastDate >= 10 * dayMs;
+  const historical = checked > asOf;
+  let status = "LATEST_PUBLISHED";
+  if (historical) status = "HISTORICAL_AS_OF";
+  else if (feed.status === "SCHEDULED_FALLBACK") status = feed.status;
+  else if (asOf - checked > 18 * 3600000) status = "COLLECTOR_LATE";
+  else if (delayed) status = "PUBLICATION_UNCONFIRMED";
+  else if (awaiting) status = "AWAITING_PUBLICATION";
+  return {status, latest, recent: history, ...(historical ? {} : {
+    collector_checked_at_utc: feed.checked_at_utc, last_success_at_utc: feed.last_success_at_utc,
+    missing_source_trade_dates: feed.missing_source_trade_dates,
+  })};
+}
+
+function tfxEvidence(data, asOf) {
+  if (data.schema_version !== 1 || data.market !== "TFX Click 365" ||
+      data.symbol !== "USD/JPY" || data.unit !== "contracts" || data.contract_size_usd !== 10000)
+    throw Error("INVALID_TFX_SCHEMA");
+  const day = new Date(asOf + 9 * 3600000).toISOString().slice(0, 10);
+  const at = time => Object.fromEntries(["daily", "weekly"].map(name => [name, tfxAt(data[name], name, time)]));
+  const report_windows = {};
+  for (const hour of ["06", "09"]) {
+    const reference = Date.parse(day + "T" + hour + ":00:00+09:00");
+    if (reference <= asOf) report_windows[hour] = at(reference);
+  }
+  return {schema_version: data.schema_version, market: data.market, symbol: data.symbol, unit: data.unit,
+    contract_size_usd: data.contract_size_usd, ...at(asOf), report_windows};
+}
+
 async function savedMarketEvidence(cutoff) {
-  const files = ["fx_intraday.json", "fx_flow_sources.json", "mof_securities_weekly.json"];
+  const files = ["fx_intraday.json", "fx_flow_sources.json", "mof_securities_weekly.json", "tfx_usdjpy.json"];
   const entries = await Promise.all(files.map(async file => {
     try {
       const data = await github(file);
+      if (file === "tfx_usdjpy.json") return [file, tfxEvidence(data, Date.now())];
       const retrieved = data.retrieved_at_utc ?? data.checked_at_utc;
       if (!Number.isFinite(Date.parse(retrieved))) throw Error("INVALID_RETRIEVAL_TIME");
       const ageMinutes = Math.round((Date.now() - Date.parse(retrieved)) / 60000);

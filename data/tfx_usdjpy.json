@@ -6,8 +6,8 @@
   "contract_size_usd": 10000,
   "daily": {
     "status": "SOURCE_VERIFIED",
-    "checked_at_utc": "2026-11-27T03:43:25.316369+00:00",
-    "last_success_at_utc": "2026-11-27T03:43:25.316369+00:00",
+    "checked_at_utc": "2026-11-27T03:46:49.767950+00:00",
+    "last_success_at_utc": "2026-11-27T03:46:49.767950+00:00",
     "source_trade_dates": [
       "2026-11-20",
       "2026-11-23",
@@ -79,8 +79,8 @@
   },
   "weekly": {
     "status": "SOURCE_VERIFIED",
-    "checked_at_utc": "2026-11-27T03:43:25.316527+00:00",
-    "last_success_at_utc": "2026-11-27T03:43:25.316527+00:00",
+    "checked_at_utc": "2026-11-27T03:46:49.767994+00:00",
+    "last_success_at_utc": "2026-11-27T03:46:49.767994+00:00",
     "source_trade_dates": [
       "2022-11-22",
       "2022-11-29",

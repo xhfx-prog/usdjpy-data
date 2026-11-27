@@ -76,6 +76,24 @@ def parse_daily_index(body):
     return reports
 
 
+def daily_catalogue(body):
+    match = re.search(r"historicalPullDownDownload\((\{[^\n]+?\}),\s*'#csv_download_year'",
+                      body.decode("utf-8"))
+    if not match:
+        raise ValueError("Missing TFX historical CSV catalogue")
+    dates = {}
+    for year, months in json.loads(match[1]).items():
+        for month, days in months.items():
+            for day, filename in days.items():
+                trade = date(int(year), int(month), int(day))
+                if filename != f"PRT-010-CSV-003-{trade:%Y%m%d}.CSV":
+                    raise ValueError(f"Invalid TFX catalogue report for {trade}")
+                dates[trade] = urljoin(DAILY, "/kawase/document/" + filename)
+    if not dates:
+        raise ValueError("Empty TFX historical CSV catalogue")
+    return dates
+
+
 def parse_daily(body, trade, source, publication_date):
     trade_label = trade.strftime("%Y%m%d")
     raw = list(csv.reader(io.StringIO(body.decode("cp932"))))
@@ -88,11 +106,11 @@ def parse_daily(body, trade, source, publication_date):
     if min(values) < 0:
         raise ValueError("Negative TFX daily quantity")
     created = datetime.strptime(raw[0][2] + raw[0][5], "%Y%m%d%H%M%S").replace(tzinfo=JST)
-    if not trade < created.date() <= publication_date:
+    if not trade < created.date() or (publication_date and created.date() > publication_date):
         raise ValueError("Invalid TFX daily report creation date")
     return {"trade_date": trade.isoformat(), "source": source,
             "report_created_at_jst": created.isoformat(),
-            "publication_date_jst": publication_date.isoformat(),
+            "publication_date_jst": publication_date.isoformat() if publication_date else None,
             "volume": values[0], "open_interest": values[1]}
 
 
@@ -125,10 +143,12 @@ def parse_weekly(body, modified):
     if len(dates) < 4 or any(not 4 <= (b - a).days <= 10 for a, b in zip(dates, dates[1:])):
         raise ValueError("Incomplete or irregular TFX weekly USD/JPY history")
     rows[dates[-1]]["publication_date_jst"] = publication_date.isoformat() if publication_date else None
+    if modified_at:
+        rows[dates[-1]]["source_last_modified_at_utc"] = modified_at.isoformat()
     return rows
 
 
-def available_snapshot(old, rows, expected, checked_at, errors):
+def available_snapshot(old, rows, expected, checked_at, errors, coverage=None):
     history = {r["trade_date"]: r for r in old.get("history", [])}
     for row, observed in rows:
         key = row["trade_date"]
@@ -151,7 +171,8 @@ def available_snapshot(old, rows, expected, checked_at, errors):
             "source_trade_dates": expected, "missing_source_trade_dates": missing,
             "errors": errors, "latest": latest, "history": items,
             "actual_oldest": items[0]["trade_date"] if items else None,
-            "actual_newest": latest["trade_date"] if latest else None, "total_records": len(items)}
+            "actual_newest": latest["trade_date"] if latest else None, "total_records": len(items),
+            "official_catalogue": coverage or old.get("official_catalogue")}
 
 
 def collect(previous):
@@ -159,15 +180,43 @@ def collect(previous):
     from concurrent.futures import ThreadPoolExecutor
 
     def daily():
-        reports = parse_daily_index(fetch(DAILY)[0])
+        index = fetch(DAILY)[0]
+        reports = parse_daily_index(index)
+        catalogue = {**daily_catalogue(index), **{day: entry[0] for day, entry in reports.items()}}
+        published_days = sorted(catalogue)
+        oldest_to_keep = published_days[-min(20, len(published_days))]
+        saved = {date.fromisoformat(row["trade_date"]) for row in previous.get("daily", {}).get("history", [])}
+        if saved:
+            oldest_to_keep = min(oldest_to_keep, min(saved))
+        expected = [day for day in published_days if day >= oldest_to_keep]
+        expected = sorted(set(expected) | {date.fromisoformat(day) for day in
+                          previous.get("daily", {}).get("missing_source_trade_dates", [])})
+
+        def retrieve(trade):
+            source, publication = reports.get(trade, (catalogue.get(trade), None))
+            if not source:
+                raise ValueError("Previously advertised report missing from catalogue")
+            body, modified = fetch(source)
+            row = parse_daily(body, trade, source, publication)
+            if modified:
+                row["source_last_modified_at_utc"] = parsedate_to_datetime(modified).isoformat()
+            return row, now_utc().isoformat()
+
         rows, errors = [], []
-        for trade, (source, published) in sorted(reports.items()):
-            try:
-                row = parse_daily(fetch(source)[0], trade, source, published)
-                rows.append((row, now_utc().isoformat()))
-            except (OSError, ValueError, csv.Error) as error:
-                errors.append(f"{trade}: {error}")
-        return rows, [day.isoformat() for day in sorted(reports)], errors
+        # Fill older advertised holes as well as rechecking the five latest
+        # exchange listings. Limit catch-up work per run after a long outage.
+        missing = [day for day in expected if day not in saved and day not in reports]
+        with ThreadPoolExecutor(max_workers=3) as downloads:
+            pending = {trade: downloads.submit(retrieve, trade) for trade in
+                       sorted(set(reports) | set(missing[:20]))}
+            for trade, future in pending.items():
+                try:
+                    rows.append(future.result())
+                except (OSError, ValueError, csv.Error) as error:
+                    errors.append(f"{trade}: {error}")
+        coverage = {"oldest": published_days[0].isoformat(), "newest": published_days[-1].isoformat(),
+                    "reports": len(published_days)}
+        return rows, [day.isoformat() for day in expected], errors, coverage
 
     def weekly():
         from xlrd.biffh import XLRDError
@@ -177,7 +226,9 @@ def collect(previous):
         except (XLRDError, TypeError, OverflowError, re.error, IndexError) as error:
             raise ValueError(f"Invalid TFX workbook: {error}") from error
         observed = now_utc().isoformat()
-        return [(rows[day], observed) for day in sorted(rows)], [day.isoformat() for day in sorted(rows)], []
+        dates = [day.isoformat() for day in sorted(rows)]
+        return [(rows[day], observed) for day in sorted(rows)], dates, [], {
+            "oldest": dates[0], "newest": dates[-1], "reports": len(dates)}
 
     data = {"schema_version": 1, "market": "TFX Click 365", "symbol": "USD/JPY",
             "unit": "contracts", "contract_size_usd": 10000}
@@ -186,10 +237,10 @@ def collect(previous):
         for name, future in futures.items():
             old = previous.get(name, {})
             try:
-                rows, dates, errors = future.result()
+                rows, dates, errors, coverage = future.result()
             except (OSError, ValueError) as error:
-                rows, dates, errors = [], old.get("source_trade_dates", []), [str(error)]
-            data[name] = available_snapshot(old, rows, dates, now_utc().isoformat(), errors)
+                rows, dates, errors, coverage = [], old.get("source_trade_dates", []), [str(error)], None
+            data[name] = available_snapshot(old, rows, dates, now_utc().isoformat(), errors, coverage)
     return data
 
 
@@ -235,7 +286,7 @@ def verify_snapshot(data):
                 raise ValueError(f"Invalid {name} row {trade}")
             if name == "daily":
                 created = datetime.fromisoformat(row["report_created_at_jst"])
-                if not published or not trade < created.date() <= date.fromisoformat(published):
+                if not trade < created.date() or (published and created.date() > date.fromisoformat(published)):
                     raise ValueError(f"Invalid daily creation date for {trade}")
 
 

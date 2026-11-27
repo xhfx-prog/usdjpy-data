@@ -99,3 +99,25 @@ test("release fallback excludes future and expired records and preserves live so
   assert.equal(reconcile([failed], saved, cutoff, cutoff).status, "SCHEDULED_FALLBACK");
   assert.equal(reconcile([failed], [], cutoff, cutoff).status, "UNAVAILABLE");
 });
+
+test("calendar reconciliation keeps forecasts separate and matches only the exact event", () => {
+  const first = code.indexOf("function releaseIdentity(");
+  const last = code.indexOf("function reportProjection", first);
+  const join = new Function(code.slice(first, last) + "return reconcileScheduleActuals;")();
+  const at = "2026-11-26T23:30:00Z";
+  const schedule = {title:"Tokyo Core CPI y/y", currency:"JPY", at_utc:at,
+    forecast:"3.0%", previous:"2.6%", result_status:"AWAITING_ACTUAL"};
+  const release = {title:"11月東京都区部消費者物価指数(CPI、生鮮食料品除く)(前年同月比)",
+    currency:"JPY", at_utc:at, vendor_actual:"2.9%", vendor_forecast:"2.9%"};
+  const otherTime = {...schedule, at_utc:"2026-11-26T23:31:00Z"};
+  const sources = [{url:"vendor", status:"VENDOR_ACTUALS", events:[release]}];
+  const [result, untouched] = join([schedule, otherTime], sources, Date.parse(at));
+  assert.equal(result.actual, "2.9%");
+  assert.equal(result.result_status, "VENDOR_ACTUAL");
+  assert.equal(result.forecast, "3.0%");
+  assert.equal(result.alternate_forecast, "2.9%");
+  assert.deepEqual(untouched, otherTime);
+  assert.deepEqual(join([schedule], sources, Date.parse(at) - 1), [schedule]);
+  sources[0].events.push({...release, vendor_actual:"3.1%"});
+  assert.deepEqual(join([schedule], sources, Date.parse(at)), [schedule]);
+});

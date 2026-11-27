@@ -94,5 +94,28 @@ class StructureTests(unittest.TestCase):
         self.assertIn("-04:00",s2["observed_sessions"]["new_york"]["local_time"])
 
 
+
+class WeekendReferenceTests(unittest.TestCase):
+    def test_weekend_band_uses_boundary_price_after_late_run(self):
+        start = datetime.fromisoformat("2026-12-04T09:00:00+09:00")
+        timedelta = engine.timedelta
+        hourly = []
+        for days in (28, 21, 14, 7):
+            base = start - timedelta(days=days)
+            for offset in range(-1, 72):
+                at = base + timedelta(hours=offset)
+                if engine.fx_hour_open(at):
+                    hourly.append({"t": at.strftime("%Y-%m-%d %H:%M:%S"), "h":160.0, "l":158.0, "c":159.0})
+        minute = [{"t": "2026-12-04 08:59:00", "c":159.30},
+                  {"t": "2026-12-04 09:18:00", "c":159.70}]
+        levels = {"support": [], "resistance": []}
+        for rows in (minute[:1], minute):
+            result = engine.conditional_outlook(hourly, levels, rows[-1]["c"], "RANGE", rows)
+            weekend = result["72h"]["weekend_clock_comparison"]
+            self.assertEqual(weekend["reference_bar_start_jst"], minute[0]["t"])
+            self.assertEqual((weekend["lower"], weekend["upper"]), (158.30, 160.30))
+        missing = engine.conditional_outlook(hourly, levels, 159.70, "RANGE", minute[1:])
+        self.assertEqual(missing["72h"]["weekend_clock_comparison"]["status"], "MISSING_HOUR_BOUNDARY_REFERENCE")
+
 if __name__=="__main__":
     unittest.main()

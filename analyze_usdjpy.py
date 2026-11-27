@@ -658,7 +658,7 @@ def multi_timeframe_structure(daily, h4, h1, m15, m5, minute):
                       if frames[k]["state"] in ("UP","DOWN")),"UNRESOLVED")
     return frames,parent
 
-def conditional_outlook(hourly, levels, close, direction, asof=None):
+def conditional_outlook(hourly, levels, close, direction, minute=None):
     """Historical rolling excursions, not calibrated forecasts or probabilities."""
     runs=[]
     for bar in hourly:
@@ -686,9 +686,13 @@ def conditional_outlook(hourly, levels, close, direction, asof=None):
             "median_realized_range_pips":n(width*100),"hourly_atr14":atr(hourly),
             "source_first_hour_jst":hourly[0]["t"],"source_last_hour_jst":hourly[-1]["t"],
             "direction":direction,"support":levels["support"],"resistance":levels["resistance"]}
-    if asof is not None:
+    if minute:
+        through=stamp(minute[-1]["t"])+timedelta(minutes=1)
+        start=through.replace(minute=0,second=0,microsecond=0)
+        reference_time=start-timedelta(minutes=1)
+        reference=next((bar for bar in reversed(minute) if stamp(bar["t"])==reference_time),None)
         for horizon in (24,72):
-            comparison=weekend_window_outlook(hourly, close, asof, horizon)
+            comparison=weekend_window_outlook(hourly, start, reference, horizon)
             if comparison:
                 result[str(horizon)+"h"]["weekend_clock_comparison"]=comparison
     return result
@@ -700,9 +704,8 @@ def fx_hour_open(at):
             or (ny.weekday()==6 and ny.hour>=17))
 
 
-def weekend_window_outlook(hourly, close, asof, horizon):
+def weekend_window_outlook(hourly, start, reference, horizon):
     """Compare the same weekday and hour, including the weekly FX closure."""
-    start=asof.replace(minute=0,second=0,microsecond=0)
     deadline=start+timedelta(hours=horizon)
     open_hours=sum(fx_hour_open(start+timedelta(hours=offset)) for offset in range(horizon))
     if open_hours==horizon:
@@ -719,7 +722,7 @@ def weekend_window_outlook(hourly, close, asof, horizon):
             continue
         starts=[window_start+timedelta(hours=offset) for offset in range(horizon)]
         expected=[hour for hour in starts if fx_hour_open(hour)]
-        if not expected or any(hour not in observed for hour in expected):
+        if not expected or len(expected)!=open_hours or any(hour not in observed for hour in expected):
             continue
         high=max(observed[hour]["h"] for hour in expected)
         low=min(observed[hour]["l"] for hour in expected)
@@ -732,10 +735,14 @@ def weekend_window_outlook(hourly, close, asof, horizon):
             "clock":"NEW_YORK_WEEKLY_FX_SESSION_EXCLUDES_HOLIDAY_OVERRIDES"}
     if len(up)>=4:
         up_mid,down_mid,width=map(statistics.median,(up,down,widths))
-        result.update(status="MATCHED_WEEKDAY_HOUR_MEDIAN_EXCURSION",
-                      lower=n(close-down_mid),upper=n(close+up_mid),
+        result.update(status="MISSING_HOUR_BOUNDARY_REFERENCE",
                       median_up_pips=n(up_mid*100),median_down_pips=n(down_mid*100),
                       median_realized_range_pips=n(width*100))
+        if reference is not None:
+            price=reference["c"]
+            result.update(status="MATCHED_WEEKDAY_HOUR_MEDIAN_EXCURSION",
+                          reference_bar_start_jst=reference["t"],reference_price=price,
+                          lower=n(price-down_mid),upper=n(price+up_mid))
     return result
 
 
@@ -917,7 +924,7 @@ def evaluate(minute, hourly, daily, asof, sources=None, extra=None):
            "long":"NO_AUTOMATIC_ENTRY",
            "first_verified_resistance":first_res if price_usable else None,
            "first_verified_support":first_sup if price_usable else None,
-           "conditional_outlook":conditional_outlook(h1,ls,latest["c"],parent_direction,asof) if price_usable else {},
+           "conditional_outlook":conditional_outlook(h1,ls,latest["c"],parent_direction,minute) if price_usable else {},
            "long_candidates":long_candidates(ls,parent_direction,latest["c"]) if price_usable else {},
            "prediction_24h":"NOT_CALIBRATED",
            "prediction_72h":"NOT_CALIBRATED",

@@ -1003,6 +1003,44 @@ function attachReleaseReactions(sources, rows) {
   }
 }
 
+function releaseIdentity(currency, title) {
+  if (currency === "JPY" && /^(Tokyo Core CPI y\/y|(?:[0-9]{1,2}月)?東京都区部消費者物価指数\(CPI、生鮮食料品除く\)\(前年同月比\))$/i.test(title))
+    return "TOKYO_CORE_CPI_YOY";
+  if (currency !== "USD") return null;
+  if (/^(Core PCE Price Index m\/m|コアPCE価格指数 前月比(?: \(.*\))?)$/i.test(title))
+    return "US_CORE_PCE_MOM";
+  if (/^(Prelim GDP q\/q|実質GDP 前期比年率 \(GDP \(Second Estimate\).*)$/i.test(title))
+    return "US_GDP_SECOND_ESTIMATE";
+  return null;
+}
+
+function reconcileScheduleActuals(events, sources, cutoff) {
+  const actuals = sources.flatMap(source => source.events.map(event => ({
+    ...event, identity: releaseIdentity(event.currency, event.title),
+    source: event.source_url ?? source.url, sourceStatus: source.status
+  })));
+  return events.map(event => {
+    const identity = releaseIdentity(event.currency, event.title);
+    const at = Date.parse(event.at_utc);
+    if (!identity || !Number.isFinite(at) || at > cutoff) return event;
+    const matches = actuals.filter(actual =>
+      actual.identity === identity && Date.parse(actual.at_utc) === at &&
+      (actual.official_actual != null || actual.vendor_actual != null));
+    const official = matches.filter(actual => actual.official_actual != null);
+    const preferred = official.length ? official : matches;
+    if (!preferred.length || new Set(preferred.map(actual =>
+      actual.official_actual ?? actual.vendor_actual)).size !== 1) return event;
+    const actual = preferred[0];
+    return {...event, actual:actual.official_actual ?? actual.vendor_actual,
+      actual_source:actual.source, actual_source_status:actual.sourceStatus,
+      result_status:actual.official_actual != null ? "OFFICIAL_ACTUAL" : "VENDOR_ACTUAL",
+      ...(actual.vendor_forecast != null && actual.vendor_forecast !== event.forecast
+        ? {alternate_forecast:actual.vendor_forecast, alternate_forecast_source:actual.source} : {}),
+      ...(actual.usdjpy_reaction ? {usdjpy_reaction:actual.usdjpy_reaction} : {})
+    };
+  });
+}
+
 function reportProjection(data) {
   const a=data.analysis, m=a.market_structure;
   const rows=data.report_minutes;
@@ -1164,6 +1202,7 @@ async function handleMCP(request, env) {
           data.macro_evidence.economic_release_freshness = freshness;
           data.macro_evidence.economic_calendar = {
             ...(data.macro_evidence.economic_calendar || {}),
+            events:reconcileScheduleActuals(data.macro_evidence.economic_calendar?.events || [], sources, releaseCutoff),
             schedule_feed_status:data.macro_evidence.economic_calendar?.status || "UNAVAILABLE",
             status:freshness.status,
             actuals_connected:freshness.status !== "UNAVAILABLE"

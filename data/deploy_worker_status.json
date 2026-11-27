@@ -1,1 +1,13 @@
-{"recorded_at_utc":"2026-11-27T00:22:21.815267+00:00","run_id":"45916287022","run_url":"https://github.com/xhfx-prog/usdjpy-data/actions/runs/45916287022","event":"push","request_sequence":5,"expected_worker_blob_sha":"ec69b592583b09c1d432cb070086e53927c39616","actual_worker_blob_sha":"8ad6fcd3cfc61e5f9bb8426188245f392f3012ab","github_sha":"733e2b6abc77f9dc75b2a8792156ff65f31cdb22","deploy_outcome":"success","mcp_verification_outcome":"success","job_state_before_audit":"success"}
+{
+  "recorded_at_utc": "2026-11-27T03:47:05.378608+00:00",
+  "run_id": "45936124255",
+  "run_url": "https://github.com/xhfx-prog/usdjpy-data/actions/runs/45936124255",
+  "event": "push",
+  "request_sequence": 5,
+  "expected_worker_blob_sha": "ec69b592583b09c1d432cb070086e53927c39616",
+  "actual_worker_blob_sha": "fbeb6d7a1543ee1bfaca6c2816fedd8b7caf98b6",
+  "github_sha": "84295562fde10b2d04f08922639dc0104c632aa7",
+  "deploy_outcome": "success",
+  "mcp_verification_outcome": "success",
+  "job_state_before_audit": "success"
+}

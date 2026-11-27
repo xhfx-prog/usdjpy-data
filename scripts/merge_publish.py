@@ -99,7 +99,8 @@ def publish(snapshot, target):
 
 def reconcile_archives(target):
     """Rebuild indexes from merged partitions without resurrecting expired bars."""
-    for interval, field in (("1min", "date_jst"), ("1h", "month_jst"), ("1day", "year_exchange")):
+    for interval, field, legacy_days in (
+            ("1min", "date_jst", 10), ("1h", "month_jst", 370), ("1day", "year_exchange", 3653)):
         root=target/("history_"+interval)
         index=target/("history_"+interval+"_index.json")
         if not root.exists() or not index.exists():
@@ -108,9 +109,7 @@ def reconcile_archives(target):
         if not isinstance(prior,dict) or not prior.get("updated_at"):
             raise ValueError("Missing archive index timestamp: "+str(index))
         asof=datetime.fromisoformat(prior["updated_at"].replace("Z","+00:00"))
-        if "retention_calendar_days" not in prior:
-            raise ValueError("Missing archive retention policy: " + str(index))
-        days = prior["retention_calendar_days"]
+        days = prior.get("retention_calendar_days", legacy_days)
         if days is not None and (type(days) is not int or days <= 0):
             raise ValueError("Invalid archive retention policy: " + str(index))
         cutoff = ((asof.astimezone(ZoneInfo("Asia/Tokyo")).date() - timedelta(days=days)).isoformat()

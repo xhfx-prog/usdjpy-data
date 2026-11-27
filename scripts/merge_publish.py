@@ -99,7 +99,7 @@ def publish(snapshot, target):
 
 def reconcile_archives(target):
     """Rebuild indexes from merged partitions without resurrecting expired bars."""
-    for interval, days, field in (("1min",10,"date_jst"),("1h",370,"month_jst"),("1day",3653,"year_exchange")):
+    for interval, field in (("1min", "date_jst"), ("1h", "month_jst"), ("1day", "year_exchange")):
         root=target/("history_"+interval)
         index=target/("history_"+interval+"_index.json")
         if not root.exists() or not index.exists():
@@ -108,14 +108,20 @@ def reconcile_archives(target):
         if not isinstance(prior,dict) or not prior.get("updated_at"):
             raise ValueError("Missing archive index timestamp: "+str(index))
         asof=datetime.fromisoformat(prior["updated_at"].replace("Z","+00:00"))
-        cutoff=(asof.astimezone(ZoneInfo("Asia/Tokyo")).date()-timedelta(days=days)).isoformat()
+        if "retention_calendar_days" not in prior:
+            raise ValueError("Missing archive retention policy: " + str(index))
+        days = prior["retention_calendar_days"]
+        if days is not None and (type(days) is not int or days <= 0):
+            raise ValueError("Invalid archive retention policy: " + str(index))
+        cutoff = ((asof.astimezone(ZoneInfo("Asia/Tokyo")).date() - timedelta(days=days)).isoformat()
+                  if days is not None else None)
         entries=[]
-        for path in sorted(root.glob("*.json"),reverse=True):
+        for path in sorted(root.glob("*.json"), reverse=True):
             obj=load(path)
             if not isinstance(obj,dict) or not isinstance(obj.get("data",{}).get("values"),list):
                 raise ValueError("Invalid archive partition "+str(path))
             rows=obj["data"]["values"]
-            kept=[b for b in rows if b["datetime"][:10]>=cutoff]
+            kept = rows if cutoff is None else [bar for bar in rows if bar["datetime"][:10] >= cutoff]
             if not kept:
                 path.unlink()
                 continue

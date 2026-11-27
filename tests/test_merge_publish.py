@@ -2,7 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from scripts.merge_publish import combine_bars, combine_status, publish
+from scripts.merge_publish import combine_bars, combine_status, publish, reconcile_archives
 
 
 def bars(ts, stamps):
@@ -67,6 +67,26 @@ class PublicationTests(unittest.TestCase):
             self.assertEqual(out["fetched_at"], new["fetched_at"])
             self.assertEqual(out["data"]["values"][0]["datetime"],
                              "2026-11-06 03:19:00")
+
+
+    def test_reconcile_respects_unlimited_minute_archive(self):
+        with tempfile.TemporaryDirectory() as temp:
+            target = Path(temp)
+            root = target / "history_1min"
+            root.mkdir()
+            path = root / "2026-11-02.json"
+            stamp = "2026-11-26T17:00:00+00:00"
+            index = target / "history_1min_index.json"
+            archive = bars(stamp, [("2026-11-02 12:00:00", "1.8")])
+            path.write_text(json.dumps(archive))
+            index.write_text(json.dumps({"updated_at": stamp, "retention_calendar_days": None}))
+            reconcile_archives(target)
+            self.assertEqual(json.loads(path.read_text()), archive)
+            self.assertEqual(json.loads(index.read_text())["total_bars"], 1)
+            index.write_text(json.dumps({"updated_at": stamp, "retention_calendar_days": 10}))
+            reconcile_archives(target)
+            self.assertFalse(path.exists())
+            self.assertEqual(json.loads(index.read_text())["total_bars"], 0)
 
 
 if __name__ == "__main__":

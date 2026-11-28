@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/collect_tfx.py'
+      - 'scripts/position_statistics.py'
       - '.github/workflows/tfx-usdjpy.yml'
   schedule:
     # JST 07:35, 08:35, 10:35, 12:35, 16:35 and 21:35.

@@ -985,10 +985,14 @@ function tfxEvidence(data, asOf) {
   const report_windows = {};
   for (const hour of ["06", "09"]) {
     const reference = Date.parse(day + "T" + hour + ":00:00+09:00");
-    if (reference <= asOf) report_windows[hour] = at(reference);
+    if (reference <= asOf) {
+      const statistics = data.statistics?.windows?.[day + "T" + hour + ":00:00+09:00"];
+      report_windows[hour] = {...at(reference), statistics: statistics ?? {status: "UNAVAILABLE"}};
+    }
   }
   return {schema_version: data.schema_version, market: data.market, symbol: data.symbol, unit: data.unit,
-    contract_size_usd: data.contract_size_usd, ...at(asOf), report_windows};
+    contract_size_usd: data.contract_size_usd, ...at(asOf), report_windows,
+    statistics: data.statistics?.current ?? {status: "UNAVAILABLE"}};
 }
 
 async function savedMarketEvidence(cutoff) {

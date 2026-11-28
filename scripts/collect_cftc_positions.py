@@ -63,14 +63,14 @@ def main():
     previous = json.loads(OUT.read_text())["history"] if OUT.exists() else []
     last_by_date = {row["date"]: row for row in previous}
     rows = list(previous)
-    params = urlencode({"cftc_contract_market_code": "097741", "$limit": 1000,
+    params = urlencode({"cftc_contract_market_code": "097741", "$limit": 5000,
                         "$order": "report_date_as_yyyy_mm_dd ASC"})
     error = None
     try:
         with urlopen(f"{API}?{params}", timeout=30) as response:
             received = [normalize(raw) for raw in json.load(response)]
         days = {row["date"] for row in received}
-        if len(received) < 157 or len(days) != len(received):
+        if not 157 <= len(received) < 5000 or len(days) != len(received):
             raise ValueError("CFTC response is incomplete or contains duplicate dates")
         if not set(last_by_date).issubset(days):
             raise ValueError("CFTC response omitted previously verified dates")
@@ -93,6 +93,8 @@ def main():
             if cutoff <= now:
                 windows[cutoff.isoformat()] = summary(rows, cutoff)
     status = "SOURCE_VERIFIED" if error is None else "SCHEDULED_FALLBACK" if rows else "UNAVAILABLE"
+    if status == "SOURCE_VERIFIED" and local.date() - datetime.fromisoformat(max(row["date"] for row in rows)).date() > timedelta(days=14):
+        status = "PUBLICATION_UNCONFIRMED"
     write(SUMMARY, {"source": API, "status": status, "checked_at_utc": now.isoformat(),
                     "error": error, "current": summary(rows, now), "windows": windows})
     print(status, len({row["date"] for row in rows}), error or "")

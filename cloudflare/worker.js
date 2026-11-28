@@ -62,7 +62,7 @@ function merge(preferred, old) {
 // Index paths already include "data/".
 async function github(path) {
   const normalized = path.replace(/^data\//, "");
-  const currentSnapshot = /^(macro_|fx_intraday[.]json$|fx_flow_sources[.]json$|tfx_usdjpy[.]json$|mof_securities_weekly[.]json$)/.test(normalized);
+  const currentSnapshot = /^(macro_|fx_intraday[.]json$|fx_flow_sources[.]json$|tfx_usdjpy[.]json$|cftc_positions_latest[.]json$|mof_securities_weekly[.]json$)/.test(normalized);
   const url = ROOT + normalized + (currentSnapshot ? "?minute=" + Math.floor(Date.now() / 60000) : "");
   const res = await fetch(url, {
     cf: { cacheTtl: 0 }
@@ -985,18 +985,32 @@ function tfxEvidence(data, asOf) {
   const report_windows = {};
   for (const hour of ["06", "09"]) {
     const reference = Date.parse(day + "T" + hour + ":00:00+09:00");
-    if (reference <= asOf) report_windows[hour] = at(reference);
+    if (reference <= asOf) {
+      const statistics = data.statistics?.windows?.[day + "T" + hour + ":00:00+09:00"];
+      report_windows[hour] = {...at(reference), statistics: statistics ?? {status: "UNAVAILABLE"}};
+    }
   }
   return {schema_version: data.schema_version, market: data.market, symbol: data.symbol, unit: data.unit,
-    contract_size_usd: data.contract_size_usd, ...at(asOf), report_windows};
+    contract_size_usd: data.contract_size_usd, ...at(asOf), report_windows,
+    statistics: data.statistics?.current ?? {status: "UNAVAILABLE"}};
 }
 
 async function savedMarketEvidence(cutoff) {
-  const files = ["fx_intraday.json", "fx_flow_sources.json", "mof_securities_weekly.json", "tfx_usdjpy.json"];
+  const files = ["fx_intraday.json", "fx_flow_sources.json", "mof_securities_weekly.json", "tfx_usdjpy.json", "cftc_positions_latest.json"];
   const entries = await Promise.all(files.map(async file => {
     try {
       const data = await github(file);
       if (file === "tfx_usdjpy.json") return [file, tfxEvidence(data, Date.now())];
+      if (file === "cftc_positions_latest.json") {
+        if (!data.current || !data.windows || !Number.isFinite(Date.parse(data.checked_at_utc)))
+          throw Error("INVALID_CFTC_SCHEMA");
+        const day = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10);
+        const report_windows = Object.fromEntries(["06", "09"].map(hour => [
+          hour, data.windows[day + "T" + hour + ":00:00+09:00"] ?? {status: "UNAVAILABLE"},
+        ]));
+        return [file, {source: data.source, status: data.status, checked_at_utc: data.checked_at_utc,
+          current: data.current, report_windows}];
+      }
       const retrieved = data.retrieved_at_utc ?? data.checked_at_utc;
       if (!Number.isFinite(Date.parse(retrieved))) throw Error("INVALID_RETRIEVAL_TIME");
       const ageMinutes = Math.round((Date.now() - Date.parse(retrieved)) / 60000);

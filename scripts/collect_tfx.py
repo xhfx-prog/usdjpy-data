@@ -6,7 +6,7 @@ import os
 import re
 import tempfile
 import time
-from datetime import date, datetime, timezone
+from datetime import date, datetime, time as clock_time, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 from urllib.parse import urljoin
@@ -296,6 +296,20 @@ def main():
         verify_snapshot(old)
     result = collect(old)
     verify_snapshot(result)
+    if __package__:
+        from .position_statistics import tfx_statistics
+    else:
+        from position_statistics import tfx_statistics
+
+    now = datetime.now(JST)
+    windows = {}
+    for offset in (0, 1):
+        day = now.date() - timedelta(days=offset)
+        for hour in (6, 9):
+            cutoff = datetime.combine(day, clock_time(hour), tzinfo=JST)
+            if cutoff <= now:
+                windows[cutoff.isoformat()] = tfx_statistics(result, cutoff)
+    result["statistics"] = {"current": tfx_statistics(result, now), "windows": windows}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=OUT.parent, delete=False) as stream:
         staged = Path(stream.name)

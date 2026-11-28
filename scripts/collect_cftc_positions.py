@@ -22,9 +22,10 @@ def normalize(raw):
         raise ValueError("Invalid contract or market open interest")
     groups = {}
     for group in GROUPS:
-        yen_long = int(raw[f"{group}_positions_long_all"])
-        yen_short = int(raw[f"{group}_positions_short_all"])
-        spread = None if group == "nonrept" else int(raw[f"{group}_positions_spread_all"])
+        suffix = "_all" if group in ("dealer", "nonrept") else ""
+        yen_long = int(raw[f"{group}_positions_long{suffix}"])
+        yen_short = int(raw[f"{group}_positions_short{suffix}"])
+        spread = None if group == "nonrept" else int(raw[f"{group}_positions_spread{suffix}"])
         if spread is not None and not 0 <= spread <= oi:
             raise ValueError("Invalid spreading position")
         groups[group] = {**position(day, yen_short, yen_long, oi),
